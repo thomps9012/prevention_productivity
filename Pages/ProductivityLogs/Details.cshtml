@@ -1,0 +1,117 @@
+﻿@page
+@model prevention_productivity.Pages.ProductivityLogs.DetailsModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+
+<div>
+    <h4>ProductivityLog</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Date)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.TeamMemberID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.TeamMemberID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.FocusArea)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.FocusArea)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Actions)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Actions)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Successes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Successes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Improvements)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Improvements)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.NextSteps)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.NextSteps)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Challenges)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Challenges)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Notes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Notes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductivityLog.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductivityLog.Status)
+        </dd>
+    </dl>
+</div>
+    @if (Model.ProductivityLog.Status != ApprovalStatus.Approved)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
+       ProductivityLogOperations.Approve)).Succeeded)
+        {
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.ProductivityLog.LogID" />
+                    <input type="hidden" name="status" value="@ApprovalStatus.Approved" />
+                    <button class="btn btn-success" type="submit">Approve</button>
+                </form>
+        }
+    }
+    @if (Model.ProductivityLog.Status != ApprovalStatus.Rejected)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
+       ProductivityLogOperations.Reject)).Succeeded)
+        {
+            <form method="post" style="display:inline;">
+                <input type="hidden" name="id" value="@Model.ProductivityLog.LogID" />
+                <input type="hidden" name="status" value="@ApprovalStatus.Rejected" />
+                <button class="btn btn-danger" type="submit">Reject</button>
+            </form>
+        }
+    }
+    <div>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
+        ProductivityLogOperations.Update)).Succeeded)
+        {   
+             <a asp-page="./Edit" asp-route-id="@Model.ProductivityLog.LogID">Edit</a> 
+             <text> | </text>
+        }
+    <a asp-page="./Index">Back to List</a>
+</div>
+</body>
+</html>
