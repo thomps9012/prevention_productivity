@@ -16,17 +16,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(
     options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("IsAdmin", policy => policy.RequireRole("Admin"));
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
+
 builder.Services.AddSingleton<IAuthorizationHandler, IsAdminHandler>();
 
 var app = builder.Build();

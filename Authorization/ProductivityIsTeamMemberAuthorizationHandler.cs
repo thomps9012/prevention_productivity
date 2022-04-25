@@ -25,6 +25,7 @@ namespace prevention_productivity.Authorization
             {
                 return Task.CompletedTask;
             }
+            
             if (requirement.Name != Constants.CreateOperationName &&
                 requirement.Name != Constants.ReadOperationName &&
                 requirement.Name != Constants.UpdateOperationName &&

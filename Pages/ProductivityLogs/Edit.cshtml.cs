@@ -23,13 +23,9 @@ namespace prevention_productivity.Pages.ProductivityLogs
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+           
             ProductivityLog? log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
 
             if (log == null)
