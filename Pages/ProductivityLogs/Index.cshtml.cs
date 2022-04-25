@@ -27,6 +27,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
         {
             var productivityLogs = from m in _context.ProductivityLog
                                    select m;
+            
             var isAuthorized = User.IsInRole(Constants.ProductivityLogsAdminRole);
 
             var currentUserId = UserManager.GetUserId(User);
@@ -36,6 +37,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Approved
                                                 || c.TeamMemberID == currentUserId);
             }
+            
             ProductivityLog = await productivityLogs.ToListAsync();
         }
     }

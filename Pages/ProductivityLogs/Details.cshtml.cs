@@ -24,19 +24,19 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+
+            ProductivityLog? _log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+
+            if (_log == null)
             {
                 return NotFound();
             }
-
-            ProductivityLog? log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
-
-            if (log == null)
-            {
-                return NotFound();
-            }
+            ProductivityLog = _log;
+            
             var isAdmin = User.IsInRole(Constants.ProductivityLogsAdminRole);
+            
             var currentUserId = UserManager.GetUserId(User);
+            
             if (!isAdmin 
                 && currentUserId != ProductivityLog.TeamMemberID 
                 && ProductivityLog.Status != ApprovalStatus.Approved)
@@ -48,15 +48,18 @@ namespace prevention_productivity.Pages.ProductivityLogs
         public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status)
         {
             var log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+            
             if (log == null)
             {
                 return NotFound();
             }
+            
             var operation = (status == ApprovalStatus.Approved) 
                 ? ProductivityLogOperations.Approve 
                 : ProductivityLogOperations.Reject;
 
             var isAuthorized = await AuthorizationService.AuthorizeAsync(User, log, operation);
+            
             if (!isAuthorized.Succeeded)
             {
                 return Forbid();
