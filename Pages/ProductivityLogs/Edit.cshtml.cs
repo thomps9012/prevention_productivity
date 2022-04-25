@@ -30,7 +30,9 @@ namespace prevention_productivity.Pages.ProductivityLogs
             {
                 return NotFound();
             }
+
             ProductivityLog = log;
+            
             if ((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
             {
                 return Page();
