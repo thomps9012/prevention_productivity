@@ -10,8 +10,8 @@ namespace prevention_productivity.Authorization
         : AuthorizationHandler<OperationAuthorizationRequirement, ProductivityLog>
     {
 
-            UserManager<IdentityUser> _userManager;
-        public IsTeamMemberHandler(UserManager<IdentityUser> userManager)
+            UserManager<ApplicationUser> _userManager;
+        public IsTeamMemberHandler(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }

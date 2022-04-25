@@ -17,14 +17,14 @@ namespace prevention_productivity.Data
             using (var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                var adminID = await EnsureUser(serviceProvider, testUserPw, "admin@test.com");
+                var adminID = await EnsureUser(serviceProvider, testUserPw, "admin@test.com", "admin", "Administrator");
                 await EnsureRole(serviceProvider, adminID, Constants.ProductivityLogsAdminRole);
 
-                var teamMember1 = await EnsureUser(serviceProvider, testUserPw, "test@test.com");
+                var teamMember1 = await EnsureUser(serviceProvider, testUserPw, "test@test.com", "first", "test");
                 await EnsureRole(serviceProvider, teamMember1, Constants.ProductivityLogsUserRole);
-                var teamMember2 = await EnsureUser(serviceProvider, testUserPw, "test2@test.com");
+                var teamMember2 = await EnsureUser(serviceProvider, testUserPw, "test2@test.com", "second", "test");
                 await EnsureRole(serviceProvider, teamMember2, Constants.ProductivityLogsUserRole);
-                var teamMember3 = await EnsureUser(serviceProvider, testUserPw, "test3@test.com");
+                var teamMember3 = await EnsureUser(serviceProvider, testUserPw, "test3@test.com", "third", "test");
                 await EnsureRole(serviceProvider, teamMember3, Constants.ProductivityLogsUserRole);
 
                 SeedDB(context, adminID, teamMember1, teamMember2, teamMember3);
@@ -32,15 +32,15 @@ namespace prevention_productivity.Data
         }
 
         private static async Task<string> EnsureUser(IServiceProvider serviceProvider,
-                                                    string testUserPw, string UserName)
+                                                    string testUserPw, string UserName, string FirstName, string LastName)
         {
 
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
 
             var user = await userManager.FindByNameAsync(UserName);
             if (user == null)
             {
-                user = new IdentityUser { UserName = UserName, EmailConfirmed = true };
+                user = new ApplicationUser { UserName = UserName, EmailConfirmed = true, FirstName = FirstName, LastName = LastName };
                 await userManager.CreateAsync(user, testUserPw);
             }
             if (user == null)
@@ -65,7 +65,7 @@ namespace prevention_productivity.Data
                 IR = await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
 
             var user = await userManager.FindByIdAsync(uid);
             if (user == null)
@@ -91,7 +91,6 @@ namespace prevention_productivity.Data
             context.ProductivityLog.AddRange(
                 new ProductivityLog
                 {
-                   // LogID = 1,
                     TeamMemberID = adminID,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 1",
@@ -105,7 +104,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                   // LogID = 2,
                     TeamMemberID = teamMember1,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 2",
@@ -119,7 +117,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                   // LogID = 3,
                     TeamMemberID = teamMember2,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 3",
@@ -133,7 +130,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                   // LogID = 4,
                     TeamMemberID = teamMember3,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 4",
@@ -147,7 +143,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                   // LogID = 5,
                     TeamMemberID = teamMember1,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 5",
@@ -161,7 +156,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                //    LogID = 6,
                     TeamMemberID = teamMember2,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 6",
@@ -175,7 +169,6 @@ namespace prevention_productivity.Data
                 },
                 new ProductivityLog
                 {
-                  //  LogID = 7,
                     TeamMemberID = teamMember3,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 7",
