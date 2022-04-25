@@ -9,7 +9,7 @@ namespace prevention_productivity.Models
         [Required]
         public System.DateTime Date { get; set; }
         [Required]
-        public string? TeamMemberID { get; set; }
+        public string TeamMemberID { get; set; }
         [Required]
        // public TeamMember TeamMember { get; set; }
        // [Required]
