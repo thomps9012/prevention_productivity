@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using prevention_productivity.Authorization;
 using prevention_productivity.Data;
+using Microsoft.AspNetCore.Authorization;
+using prevention_productivity.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 

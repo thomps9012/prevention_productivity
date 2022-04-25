@@ -13,10 +13,11 @@ namespace prevention_productivity.Authorization
                                    OperationAuthorizationRequirement requirement,
                                    ProductivityLog resource)
         {
-            if (context.User == null || resource == null)
+            if (context.User == null)
             {
                 return Task.CompletedTask;
             }
+            
             if (context.User.IsInRole(Constants.ProductivityLogsAdminRole))
             {
                 context.Succeed(requirement);

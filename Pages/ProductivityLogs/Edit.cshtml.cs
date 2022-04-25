@@ -15,10 +15,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
         public EditModel(ApplicationDbContext context,
             IAuthorizationService authorizationService,
             UserManager<IdentityUser> userManager)
-            : base(context, authorizationService, userManager)
-        {
-            _context = context;
-        }
+            : base(context, authorizationService, userManager) => _context = context;
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
@@ -26,20 +23,21 @@ namespace prevention_productivity.Pages.ProductivityLogs
         public async Task<IActionResult> OnGetAsync(int id)
         {
            
-            ProductivityLog? log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+            ProductivityLog? log = await _context.ProductivityLog
+                // .Include(p => p.
+                .FirstOrDefaultAsync(m => m.LogID == id);
 
             if (log == null)
             {
                 return NotFound();
             }
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        ProductivityLogOperations.Update);
-            if (!isAuthorized.Succeeded)
+            if((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
             {
+                return Page();
+            } else
+            {   
                 return Forbid();
             }
-            return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -50,6 +48,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             {
                 return Page();
             }
+            
             var log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
 
             if (log == null)
@@ -57,33 +56,34 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 return NotFound();
             }
 
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                    User, ProductivityLog,
-                                                    ProductivityLogOperations.Update);
-            if (!isAuthorized.Succeeded)
+            if ((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
+            {
+                ProductivityLog.TeamMemberID = log.TeamMemberID;
+
+                _context.Attach(ProductivityLog).State = EntityState.Modified;
+
+                if (ProductivityLog.Status == ApprovalStatus.Approved)
+                {
+                    var canApprove = await AuthorizationService.AuthorizeAsync(User,
+                                                                                ProductivityLog,
+                                                                                ProductivityLogOperations.Approve);
+                    if (!canApprove.Succeeded)
+                    {
+                        ProductivityLog.Status = ApprovalStatus.Pending;
+                    }
+                }
+
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToPage("./Index");
+            }
+            else
             {
                 return Forbid();
             }
 
-            ProductivityLog.TeamMemberID = log.TeamMemberID;
-
-            _context.Attach(ProductivityLog).State = EntityState.Modified;
-
-            if(ProductivityLog.Status == ApprovalStatus.Approved)
-            {
-                var canApprove = await AuthorizationService.AuthorizeAsync(User,
-                                                                            ProductivityLog,
-                                                                            ProductivityLogOperations.Approve);
-                if (!canApprove.Succeeded)
-                {
-                    ProductivityLog.Status = ApprovalStatus.Pending;
-                }
-            }
-
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            
         }
     }
 }
