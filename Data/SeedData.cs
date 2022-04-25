@@ -34,12 +34,13 @@ namespace prevention_productivity.Data
         private static async Task<string> EnsureUser(IServiceProvider serviceProvider,
                                                     string testUserPw, string UserName)
         {
+
             var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
 
             var user = await userManager.FindByNameAsync(UserName);
             if (user == null)
             {
-                user = new IdentityUser { UserName = UserName };
+                user = new IdentityUser { UserName = UserName, EmailConfirmed = true };
                 await userManager.CreateAsync(user, testUserPw);
             }
             if (user == null)
@@ -58,7 +59,7 @@ namespace prevention_productivity.Data
             {
                 throw new Exception("roleManager null");
             }
-            IdentityResult IR = null;
+            IdentityResult IR;
             if (!await roleManager.RoleExistsAsync(role))
             {
                 IR = await roleManager.CreateAsync(new IdentityRole(role));
@@ -78,7 +79,9 @@ namespace prevention_productivity.Data
         }
 
 
-        public static void SeedDB(ApplicationDbContext context, string adminID, string teamMember1, string teamMember2, string teamMember3)
+        public static void SeedDB(ApplicationDbContext context, string adminID, 
+            string teamMember1, string teamMember2, 
+            string teamMember3)
         {
             if (context.ProductivityLog.Any())
             {
@@ -88,7 +91,7 @@ namespace prevention_productivity.Data
             context.ProductivityLog.AddRange(
                 new ProductivityLog
                 {
-                    LogID = 1,
+                   // LogID = 1,
                     TeamMemberID = adminID,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 1",
@@ -98,11 +101,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 1",
                     NextSteps = "Next Steps 1",
                     Notes = "Notes 1",
-                    Status = (ApprovalStatus)2
+                    Status = ApprovalStatus.Rejected
                 },
                 new ProductivityLog
                 {
-                    LogID = 2,
+                   // LogID = 2,
                     TeamMemberID = teamMember1,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 2",
@@ -112,11 +115,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 2",
                     NextSteps = "Next Steps 2",
                     Notes = "Notes 2",
-                    Status = (ApprovalStatus)0
+                    Status = ApprovalStatus.Pending
                 },
                 new ProductivityLog
                 {
-                    LogID = 3,
+                   // LogID = 3,
                     TeamMemberID = teamMember2,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 3",
@@ -126,11 +129,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 3",
                     NextSteps = "Next Steps 3",
                     Notes = "Notes 3",
-                    Status = (ApprovalStatus)1
+                    Status = ApprovalStatus.Approved
                 },
                 new ProductivityLog
                 {
-                    LogID = 4,
+                   // LogID = 4,
                     TeamMemberID = teamMember3,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 4",
@@ -140,11 +143,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 4",
                     NextSteps = "Next Steps 4",
                     Notes = "Notes 4",
-                    Status = (ApprovalStatus)0
+                    Status = ApprovalStatus.Approved
                 },
                 new ProductivityLog
                 {
-                    LogID = 5,
+                   // LogID = 5,
                     TeamMemberID = teamMember1,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 5",
@@ -154,11 +157,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 5",
                     NextSteps = "Next Steps 5",
                     Notes = "Notes 5",
-                    Status = (ApprovalStatus)1
+                    Status = ApprovalStatus.Pending
                 },
                 new ProductivityLog
                 {
-                    LogID = 6,
+                //    LogID = 6,
                     TeamMemberID = teamMember2,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 6",
@@ -168,11 +171,11 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 6",
                     NextSteps = "Next Steps 6",
                     Notes = "Notes 6",
-                    Status = (ApprovalStatus)0
+                    Status = ApprovalStatus.Rejected
                 },
                 new ProductivityLog
                 {
-                    LogID = 7,
+                  //  LogID = 7,
                     TeamMemberID = teamMember3,
                     Date = System.DateTime.Now,
                     FocusArea = "Focus Area 7",
@@ -182,7 +185,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 7",
                     NextSteps = "Next Steps 7",
                     Notes = "Notes 7",
-                    Status = (ApprovalStatus)1
+                    Status = ApprovalStatus.Pending
                 }
 
 

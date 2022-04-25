@@ -31,23 +31,19 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            ProductivityLog = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
-            if (id == null)
+            ProductivityLog? _log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+            if (_log == null)
             {
                 return NotFound();
             }
 
-
-            if (ProductivityLog == null)
-            {
-                return NotFound();
-            }
+            ProductivityLog = _log;
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,
                                                         ProductivityLogOperations.Delete);
             if (!isAuthorized.Succeeded)
             {
-                return new ForbidResult();
+                return Forbid();
             }
             
             return Page();
@@ -55,25 +51,25 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null)
+            var log = await _context.ProductivityLog.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.LogID == id);
+            if (log == null)
             {
                 return NotFound();
             }
 
-            ProductivityLog = await _context.ProductivityLog.FindAsync(id);
 
-            if (ProductivityLog != null)
-            {
+           
                 var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,
                                                         ProductivityLogOperations.Delete);
                 if(!isAuthorized.Succeeded)
                 {
-                    return new ForbidResult();
+                    return Forbid();
                 }
-                _context.ProductivityLog.Remove(ProductivityLog);
+                _context.ProductivityLog.Remove(log);
                 await _context.SaveChangesAsync();
-            }
+            
 
             return RedirectToPage("./Index");
         }

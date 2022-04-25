@@ -8,8 +8,8 @@ namespace prevention_productivity.Authorization
     public class IsAdminHandler
         : AuthorizationHandler<OperationAuthorizationRequirement, ProductivityLog>
     {
-        protected override Task
-            HandleRequirementAsync(AuthorizationHandlerContext context,
+        protected override Task HandleRequirementAsync(
+                                    AuthorizationHandlerContext context,
                                    OperationAuthorizationRequirement requirement,
                                    ProductivityLog resource)
         {

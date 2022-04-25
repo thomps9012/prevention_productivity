@@ -6,17 +6,17 @@ namespace prevention_productivity.Pages.ProductivityLogs
 {
     public class DI_BasePageModel : PageModel
     {
-        protected ApplicationDbContext Context;
-        protected IAuthorizationService AuthorizationService;
-        protected UserManager<IdentityUser> UserManager;
+        protected ApplicationDbContext Context { get; }
+        protected IAuthorizationService AuthorizationService { get; }
+        protected UserManager<IdentityUser> UserManager { get; }
         public DI_BasePageModel(
             ApplicationDbContext context,
             IAuthorizationService authorizationService,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager): base()
         {
             Context = context;
-            AuthorizationService = authorizationService;
             UserManager = userManager;
+            AuthorizationService = authorizationService;
         }
     }
 }

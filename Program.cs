@@ -27,7 +27,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, IsAdminHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsAdminHandler>();
 
 var app = builder.Build();
 
@@ -37,8 +37,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 
-    var testUserPW = "Password123!";
-    await SeedData.Initialize(services, testUserPW);
+    var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
+    await SeedData.Initialize(services, testUserPw);
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

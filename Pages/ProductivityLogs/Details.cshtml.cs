@@ -22,16 +22,16 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public ProductivityLog ProductivityLog { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            ProductivityLog = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+            ProductivityLog? log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
 
-            if (ProductivityLog == null)
+            if (log == null)
             {
                 return NotFound();
             }
@@ -41,7 +41,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 && currentUserId != ProductivityLog.TeamMemberID 
                 && ProductivityLog.Status != ApprovalStatus.Approved)
             {
-                return new ForbidResult();
+                return Forbid();
             }
             return Page();
         }
@@ -59,11 +59,11 @@ namespace prevention_productivity.Pages.ProductivityLogs
             var isAuthorized = await AuthorizationService.AuthorizeAsync(User, log, operation);
             if (!isAuthorized.Succeeded)
             {
-                return new ForbidResult();
+                return Forbid();
             }
             log.Status = status;
-            Context.ProductivityLog.Update(log);
-            await Context.SaveChangesAsync();
+            _context.ProductivityLog.Update(log);
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
     }

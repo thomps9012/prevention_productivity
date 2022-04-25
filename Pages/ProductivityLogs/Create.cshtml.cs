@@ -30,12 +30,13 @@ namespace prevention_productivity.Pages.ProductivityLogs
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+           // if (!ModelState.IsValid)
+           // {
+             //   return Page();
+           // }
 
             ProductivityLog.TeamMemberID = UserManager.GetUserId(User);
+            ProductivityLog.Status = ApprovalStatus.Pending;
 
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,

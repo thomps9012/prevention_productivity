@@ -33,9 +33,10 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
             if (!isAuthorized)
             {
-                productivityLogs = productivityLogs.Where(i => i.TeamMemberID == currentUserId);
+                productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Approved
+                                                || c.TeamMemberID == currentUserId);
             }
-            ProductivityLog = await _context.ProductivityLog.ToListAsync();
+            ProductivityLog = await productivityLogs.ToListAsync();
         }
     }
 }
