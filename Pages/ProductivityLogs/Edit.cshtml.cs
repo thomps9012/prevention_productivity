@@ -24,14 +24,14 @@ namespace prevention_productivity.Pages.ProductivityLogs
         {
            
             ProductivityLog? log = await _context.ProductivityLog
-                // .Include(p => p.
                 .FirstOrDefaultAsync(m => m.LogID == id);
 
             if (log == null)
             {
                 return NotFound();
             }
-            if((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
+            ProductivityLog = log;
+            if ((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
             {
                 return Page();
             } else
