@@ -34,7 +34,7 @@ namespace prevention_productivity.Authorization
                 return Task.CompletedTask;
             }
 
-            if (resource.EventLead == _userManager.GetUserId(context.User))
+            if (resource.TeamMemberID == _userManager.GetUserId(context.User))
             {
                 context.Succeed(requirement);
             }

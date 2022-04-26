@@ -3,27 +3,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
+using prevention_productivity.Pages.ProductivityLogs;
 
 namespace prevention_productivity.Pages.Events.Summary
 {
-    public class CreateModel : PageModel
+    public class CreateModel : DI_BasePageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CreateModel(prevention_productivity.Data.ApplicationDbContext context)
+        public CreateModel(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<ApplicationUser> userManager)
+            : base(context, authorizationService, userManager)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["EventId"] = new SelectList(_context.Event, "Id", "Id");
-        ViewData["TeamMemberID"] = new SelectList(_context.Users, "Id", "Id");
+            //possible change here
+        ViewData["EventId"] = new SelectList(_context.Event, "Id", "Name");
             return Page();
         }
 
@@ -33,9 +40,15 @@ namespace prevention_productivity.Pages.Events.Summary
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            EventSummary.TeamMemberID = UserManager.GetUserId(User);
+            EventSummary.Status = ApprovalStatus.Pending;
+
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                User, EventSummary,
+                AuthOperations.Create);
+            if (!isAuthorized.Succeeded)
             {
-                return Page();
+                return Forbid();
             }
 
             _context.EventSummary.Add(EventSummary);
