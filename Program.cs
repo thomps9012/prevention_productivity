@@ -30,9 +30,11 @@ builder.Services.AddAuthorization(options =>
 //make sure to register the auth policy handler
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, IsEventLead>();
+builder.Services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
 
 builder.Services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsSummaryAdmin>();
 
 var app = builder.Build();
 

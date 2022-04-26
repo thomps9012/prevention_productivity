@@ -1,0 +1,79 @@
+﻿@page
+@model prevention_productivity.Pages.Events.Summary.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>EventSummary</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Event)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Event.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Attendees)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Attendees)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Challenges)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Challenges)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Outcomes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Outcomes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Notes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Notes)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.NextSteps)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.NextSteps)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.TeamMember)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.TeamMember.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EventSummary.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EventSummary.Status)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="EventSummary.EventSummaryId" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>
+</body>
+</html>
