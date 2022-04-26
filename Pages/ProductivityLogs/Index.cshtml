@@ -23,7 +23,7 @@
                 @Html.DisplayNameFor(model => model.ProductivityLog[0].Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductivityLog[0].TeamMemberID)
+               Team Member
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductivityLog[0].FocusArea)
@@ -53,13 +53,14 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ProductivityLog) {
-        <tr>
-            <td>
+            @foreach (var item in Model.ProductivityLog) {
+                <tr>
+                    <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TeamMemberID)
+                @Html.DisplayFor(modelItem => 
+                    Model.TeamMember.FirstOrDefault(x => x.Id == item.TeamMemberID).FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FocusArea)

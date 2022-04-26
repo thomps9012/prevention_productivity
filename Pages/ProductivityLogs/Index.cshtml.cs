@@ -22,11 +22,14 @@ namespace prevention_productivity.Pages.ProductivityLogs
        
 
         public IList<ProductivityLog> ProductivityLog { get;set; }
+        public IList<ApplicationUser> TeamMember { get; set; }
 
         public async Task OnGetAsync()
         {
             var productivityLogs = from m in _context.ProductivityLog
                                    select m;
+            var teamMembers = from m in _context.Users
+                              select m;
 
             var isAuthorized = User.IsInRole(Constants.AdminRole);
 
@@ -39,6 +42,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
             
             ProductivityLog = await productivityLogs.ToListAsync();
+            TeamMember = await teamMembers.ToListAsync();
         }
     }
 }
