@@ -11,11 +11,9 @@ namespace prevention_productivity.Models
         [Required]
         public string TeamMemberID { get; set; }
         [Required]
-       // public TeamMember TeamMember { get; set; }
-       // [Required]
-        // public int GrantProgramID { get; set; }
-        // [Required]
-        // public GrantProgram GrantProgram { get; set; }
+        public int GrantProgramID { get; set; }
+        [Required]
+        public GrantProgram GrantProgram { get; set; }
         public string FocusArea { get; set; }
         [Required]
         public string Actions { get; set; }

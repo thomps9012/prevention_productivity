@@ -26,6 +26,16 @@ ViewData["Title"] = "Create";
                 <span asp-validation-for="ProductivityLog.Date" class="text-danger"></span>
             </div>
             <div class="form-group">
+                    <label asp-for="ProductivityLog.GrantProgramID" class="control-label">Grant</label>
+                    <select asp-for="ProductivityLog.GrantProgramID" class="form-control">
+                        <option value="">Select Grant</option>
+                        @foreach(var item in Model.GrantPrograms)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            <div class="form-group">
                 <label asp-for="ProductivityLog.FocusArea" class="control-label"></label>
                 <input asp-for="ProductivityLog.FocusArea" class="form-control" />
                 <span asp-validation-for="ProductivityLog.FocusArea" class="text-danger"></span>

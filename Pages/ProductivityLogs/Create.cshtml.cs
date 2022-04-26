@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
 using prevention_productivity.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace prevention_productivity.Pages.ProductivityLogs
 {
@@ -26,8 +27,13 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
+        public IList<GrantProgram> GrantPrograms { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        public async Task OnGetAsync()
+        {
+            GrantPrograms = await _context.GrantProgram.ToListAsync();
+        }
         public async Task<IActionResult> OnPostAsync()
         {
            
