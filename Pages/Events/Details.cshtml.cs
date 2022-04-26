@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
 using prevention_productivity.Pages.ProductivityLogs;
@@ -38,11 +39,41 @@ namespace prevention_productivity.Pages.Events
             Event = await _context.Event
                 .Include(a => a.GrantProgram).FirstOrDefaultAsync(m => m.Id == id);
 
+            var isAdmin = User.IsInRole(Constants.AdminRole);
+            var currentUserId = UserManager.GetUserId(User);
+
             if (Event == null)
             {
                 return NotFound();
             }
+            if (!isAdmin
+                && currentUserId != Event.EventLead
+                && Event.Status != ApprovalStatus.Approved)
+            {
+                return Forbid();
+            }
             return Page();
         }
+        public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status)
+        {
+            var _event = await _context.Event.FirstOrDefaultAsync(m => m.Id == id);
+            if(_event == null)
+            {
+            return NotFound();
+        }
+        var operation = (status == ApprovalStatus.Approved) 
+            ? AuthOperations.Approve 
+            : AuthOperations.Reject;
+        
+        var isAuthorized = await AuthorizationService.AuthorizeAsync(User, _event, operation);
+        if(!isAuthorized.Succeeded)
+        {
+            return Forbid();
     }
+    _event.Status = status;
+    _context.Event.Update(_event);
+    await _context.SaveChangesAsync();
+    return RedirectToPage("./Index");
+    }
+}
 }

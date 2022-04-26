@@ -27,6 +27,7 @@ builder.Services.AddAuthorization(options =>
     .Build();
 });
 
+//make sure to register the auth policy handler
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, IsEventLead>();
 

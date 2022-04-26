@@ -255,7 +255,37 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Event.Id">Edit</a> |
+        @if(Model.Event.Status != ApprovalStatus.Approved)
+        {
+                    @if((await AuthorizationService.AuthorizeAsync(User, Model.Event, 
+           AuthOperations.Approve)).Succeeded)
+            {
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.Event.Id" />
+                    <input type="hidden" name="status" value="@ApprovalStatus.Approved" />
+                    <button class="btn btn-success" type="submit">Approve</button>
+                </form>
+            }
+        }
+        @if (Model.Event.Status != ApprovalStatus.Rejected){
+            @if((await AuthorizationService.AuthorizeAsync(User, Model.Event,
+           AuthOperations.Reject)).Succeeded)
+            {
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.Event.Id" />
+                    <input type="hidden" name="status" value="@ApprovalStatus.Rejected" />
+                    <button class="btn btn-danger" type="submit">Reject</button>
+                </form>
+            }
+        }
+        <div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.Event,
+            AuthOperations.Update)).Succeeded)
+            {
+            <a asp-page="./Edit" asp-route-id="@Model.Event.Id">Edit</a> 
+            <text> | </text>    
+            }
+        </div>
     <a asp-page="./Index">Back to List</a>
 </div>
 </body>
