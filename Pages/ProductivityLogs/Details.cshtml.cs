@@ -33,7 +33,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
             ProductivityLog = _log;
             
-            var isAdmin = User.IsInRole(Constants.ProductivityLogsAdminRole);
+            var isAdmin = User.IsInRole(Constants.AdminRole);
             
             var currentUserId = UserManager.GetUserId(User);
             

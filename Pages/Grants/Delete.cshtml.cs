@@ -37,7 +37,7 @@ namespace prevention_productivity.Pages.Grants
             {
                 return NotFound();
             }
-            var isAuthorized = User.IsInRole(Constants.ProductivityLogsAdminRole);
+            var isAuthorized = User.IsInRole(Constants.AdminRole);
 
             if (!isAuthorized)
             {

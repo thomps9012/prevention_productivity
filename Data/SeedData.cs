@@ -18,14 +18,14 @@ namespace prevention_productivity.Data
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
                 var adminID = await EnsureUser(serviceProvider, testUserPw, "admin@test.com", "admin", "Administrator");
-                await EnsureRole(serviceProvider, adminID, Constants.ProductivityLogsAdminRole);
+                await EnsureRole(serviceProvider, adminID, Constants.AdminRole);
 
                 var teamMember1 = await EnsureUser(serviceProvider, testUserPw, "test@test.com", "first", "test");
-                await EnsureRole(serviceProvider, teamMember1, Constants.ProductivityLogsUserRole);
+                await EnsureRole(serviceProvider, teamMember1, Constants.UserRole);
                 var teamMember2 = await EnsureUser(serviceProvider, testUserPw, "test2@test.com", "second", "test");
-                await EnsureRole(serviceProvider, teamMember2, Constants.ProductivityLogsUserRole);
+                await EnsureRole(serviceProvider, teamMember2, Constants.UserRole);
                 var teamMember3 = await EnsureUser(serviceProvider, testUserPw, "test3@test.com", "third", "test");
-                await EnsureRole(serviceProvider, teamMember3, Constants.ProductivityLogsUserRole);
+                await EnsureRole(serviceProvider, teamMember3, Constants.UserRole);
 
                 SeedDB(context, adminID, teamMember1, teamMember2, teamMember3);
             }

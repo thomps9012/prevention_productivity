@@ -29,7 +29,7 @@ namespace prevention_productivity.Pages.Grants
 
         public IActionResult OnGet()
         {
-            var isAuthorized = User.IsInRole(Constants.ProductivityLogsAdminRole);
+            var isAuthorized = User.IsInRole(Constants.AdminRole);
             if (!isAuthorized)
             {
                 return Forbid();
@@ -43,10 +43,11 @@ namespace prevention_productivity.Pages.Grants
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var isAuthorized = User.IsInRole(Constants.AdminRole);
+            if (!isAuthorized)
             {
-                return Page();
-            }
+                return Forbid();
+            }            
 
             _context.GrantProgram.Add(GrantProgram);
             await _context.SaveChangesAsync();
