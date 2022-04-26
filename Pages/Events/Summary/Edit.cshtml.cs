@@ -57,8 +57,9 @@ namespace prevention_productivity.Pages.Events.Summary
             }
         }
 
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> OnPostAsync(string action)
         {
+            if (action == "delete") { 
            
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                      User, EventSummary,
@@ -74,23 +75,19 @@ namespace prevention_productivity.Pages.Events.Summary
             
 
             return RedirectToPage("./Index");
-        }
-
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> SaveEdit()
-        {
-            if (!ModelState.IsValid)
+            }else
             {
-                return Page();
-            }
-           
+                if (!ModelState.IsValid)
+                {
+                    return Page();
+                }
 
-            if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
-            {
-            
-                _context.Attach(EventSummary).State = EntityState.Modified;
-                if(EventSummary.Status == ApprovalStatus.Approved)
+
+                if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
+                {
+
+                    _context.Attach(EventSummary).State = EntityState.Modified;
+                    if (EventSummary.Status == ApprovalStatus.Approved)
                     {
                         var canApprove = await AuthorizationService.AuthorizeAsync(
                             User,
@@ -101,29 +98,31 @@ namespace prevention_productivity.Pages.Events.Summary
                             EventSummary.Status = ApprovalStatus.Pending;
                         }
                     }
-            } else
-            {
-                return Forbid();
-            }
-
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EventSummaryExists(EventSummary.EventSummaryId))
-                {
-                    return NotFound();
                 }
                 else
                 {
-                    throw;
+                    return Forbid();
                 }
-            }
 
-            return RedirectToPage("./Index");
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EventSummaryExists(EventSummary.EventSummaryId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return RedirectToPage("./Index");
+            }
         }
 
         private bool EventSummaryExists(int id)
