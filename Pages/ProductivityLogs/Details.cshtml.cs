@@ -14,7 +14,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public DetailsModel(ApplicationDbContext context,
             IAuthorizationService authorizationService,
-            UserManager<IdentityUser> userManager)
+            UserManager<ApplicationUser> userManager)
             : base(context, authorizationService, userManager)
         {
             _context = context;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using prevention_productivity.Data;
 
@@ -11,9 +12,10 @@ using prevention_productivity.Data;
 namespace prevention_productivity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220426123132_ModelsToDb")]
+    partial class ModelsToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,6 +250,9 @@ namespace prevention_productivity.Data.Migrations
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ItemId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -255,6 +260,8 @@ namespace prevention_productivity.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Comment");
                 });
@@ -564,6 +571,10 @@ namespace prevention_productivity.Data.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
+                    b.HasOne("prevention_productivity.Models.Event", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("EventId");
+
                     b.Navigation("Author");
                 });
 
@@ -589,6 +600,11 @@ namespace prevention_productivity.Data.Migrations
                     b.HasOne("prevention_productivity.Models.GrantProgram", null)
                         .WithMany("ProductivityLogs")
                         .HasForeignKey("GrantProgramId");
+                });
+
+            modelBuilder.Entity("prevention_productivity.Models.Event", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.GrantProgram", b =>

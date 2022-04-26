@@ -1,0 +1,52 @@
+﻿@page
+@model prevention_productivity.Pages.Grants.DetailsModel
+
+@{
+  ViewData["Title"] = "Details";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+
+<div>
+    <h4>GrantProgram</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GrantProgram.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GrantProgram.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GrantProgram.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GrantProgram.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GrantProgram.StartDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GrantProgram.StartDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GrantProgram.EndDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GrantProgram.EndDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.GrantProgram.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+</body>
+</html>

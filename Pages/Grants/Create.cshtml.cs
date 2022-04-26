@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿#nullable disable
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
-using prevention_productivity.Authorization;
+using prevention_productivity.Pages.ProductivityLogs;
 
-namespace prevention_productivity.Pages.ProductivityLogs
+namespace prevention_productivity.Pages.Grants
 {
     public class CreateModel : DI_BasePageModel
     {
@@ -21,27 +29,26 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public IActionResult OnGet()
         {
+            var isAuthorized = User.IsInRole(Constants.ProductivityLogsAdminRole);
+            if (!isAuthorized)
+            {
+                return Forbid();
+            }
             return Page();
         }
 
         [BindProperty]
-        public ProductivityLog ProductivityLog { get; set; }
+        public GrantProgram GrantProgram { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-           
-            ProductivityLog.TeamMemberID = UserManager.GetUserId(User);
-            ProductivityLog.Status = ApprovalStatus.Pending;
-
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        ProductivityLogOperations.Create);
-            if (!isAuthorized.Succeeded)
+            if (!ModelState.IsValid)
             {
-                return new ForbidResult();
+                return Page();
             }
-            _context.ProductivityLog.Add(ProductivityLog);
+
+            _context.GrantProgram.Add(GrantProgram);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

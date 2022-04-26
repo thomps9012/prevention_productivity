@@ -13,6 +13,9 @@ namespace prevention_productivity.Data
         {
         }
         public DbSet<ProductivityLog> ProductivityLog { get; set; }
+        public DbSet<Comment> Comment { get; set; }
+        public DbSet<Event> Event { get; set; }
+        public DbSet<GrantProgram> GrantProgram { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

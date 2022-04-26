@@ -30,7 +30,6 @@ namespace prevention_productivity.Models
         [Required]
         public string Notes { get; set; }
         public ApprovalStatus Status { get; set; }
-      //  public ICollection<LogComment> Comments { get; set; }
     }
     public enum ApprovalStatus
     {

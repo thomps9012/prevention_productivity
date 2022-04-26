@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using prevention_productivity.Data;
 
@@ -11,9 +12,10 @@ using prevention_productivity.Data;
 namespace prevention_productivity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220426122646_ModelCreation")]
+    partial class ModelCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,9 +184,6 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GrantProgramId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -224,8 +223,6 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrantProgramId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -239,209 +236,30 @@ namespace prevention_productivity.Data.Migrations
 
             modelBuilder.Entity("prevention_productivity.Models.Comment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"), 1L, 1);
 
                     b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ItemId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("ProductivityLogLogID")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("ProductivityLogLogID");
+
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("prevention_productivity.Models.Event", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AgeGroup")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Agenda")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("AnnualEvent")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Caterer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CleanUpTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Duration")
-                        .HasColumnType("float");
-
-                    b.Property<string>("EventAffiliates")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("EventBudget")
-                        .HasColumnType("float");
-
-                    b.Property<string>("EventLeadId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("EventStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FoodBeverage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FoodHeadCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GrantProgramId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LocationDetail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Marketing")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NORAClients")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("NewEvent")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherSpecialOrder")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PartingGift")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Performance")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PreventionTeamMembers")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PublicEvent")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("RSVPRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Raffle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SepcialOrderDesignElements")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SetUpTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SpecialOrderGear")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StaffDuties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("StaffTimeCommitment")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Supplies")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TargetPopulation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Vendors")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VolunteerList")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Volunteers")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventLeadId");
-
-                    b.HasIndex("GrantProgramId");
-
-                    b.ToTable("Event");
-                });
-
-            modelBuilder.Entity("prevention_productivity.Models.GrantProgram", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GrantProgram");
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.ProductivityLog", b =>
@@ -467,9 +285,6 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GrantProgramId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Improvements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -494,8 +309,6 @@ namespace prevention_productivity.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LogID");
-
-                    b.HasIndex("GrantProgramId");
 
                     b.ToTable("ProductivityLog");
                 });
@@ -551,53 +364,24 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("prevention_productivity.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("prevention_productivity.Models.GrantProgram", null)
-                        .WithMany("TeamMembers")
-                        .HasForeignKey("GrantProgramId");
-                });
-
             modelBuilder.Entity("prevention_productivity.Models.Comment", b =>
                 {
                     b.HasOne("prevention_productivity.Models.ApplicationUser", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("prevention_productivity.Models.ProductivityLog", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductivityLogLogID");
 
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("prevention_productivity.Models.Event", b =>
-                {
-                    b.HasOne("prevention_productivity.Models.ApplicationUser", "EventLead")
-                        .WithMany()
-                        .HasForeignKey("EventLeadId");
-
-                    b.HasOne("prevention_productivity.Models.GrantProgram", "GrantProgram")
-                        .WithMany("Events")
-                        .HasForeignKey("GrantProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EventLead");
-
-                    b.Navigation("GrantProgram");
-                });
-
             modelBuilder.Entity("prevention_productivity.Models.ProductivityLog", b =>
                 {
-                    b.HasOne("prevention_productivity.Models.GrantProgram", null)
-                        .WithMany("ProductivityLogs")
-                        .HasForeignKey("GrantProgramId");
-                });
-
-            modelBuilder.Entity("prevention_productivity.Models.GrantProgram", b =>
-                {
-                    b.Navigation("Events");
-
-                    b.Navigation("ProductivityLogs");
-
-                    b.Navigation("TeamMembers");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

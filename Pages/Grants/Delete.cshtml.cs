@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using prevention_productivity.Authorization;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
+using prevention_productivity.Pages.ProductivityLogs;
 
-namespace prevention_productivity.Pages.ProductivityLogs
+namespace prevention_productivity.Pages.Grants
 {
     public class DeleteModel : DI_BasePageModel
     {
@@ -20,6 +21,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public DeleteModel(ApplicationDbContext context,
             IAuthorizationService authorizationService,
+            // possible error her
             UserManager<ApplicationUser> userManager)
             : base(context, authorizationService, userManager)
         {
@@ -27,49 +29,43 @@ namespace prevention_productivity.Pages.ProductivityLogs
         }
 
         [BindProperty]
-        public ProductivityLog ProductivityLog { get; set; }
+        public GrantProgram GrantProgram { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            ProductivityLog? _log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
-            if (_log == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            var isAuthorized = User.IsInRole(Constants.ProductivityLogsAdminRole);
 
-            ProductivityLog = _log;
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        ProductivityLogOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            if (!isAuthorized)
             {
                 return Forbid();
             }
-            
+            GrantProgram = await _context.GrantProgram.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (GrantProgram == null)
+            {
+                return NotFound();
+            }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            var log = await _context.ProductivityLog.AsNoTracking()
-                    .FirstOrDefaultAsync(m => m.LogID == id);
-            if (log == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
+            GrantProgram = await _context.GrantProgram.FindAsync(id);
 
-           
-                var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        ProductivityLogOperations.Delete);
-                if(!isAuthorized.Succeeded)
-                {
-                    return Forbid();
-                }
-                _context.ProductivityLog.Remove(log);
+            if (GrantProgram != null)
+            {
+                _context.GrantProgram.Remove(GrantProgram);
                 await _context.SaveChangesAsync();
-            
+            }
 
             return RedirectToPage("./Index");
         }
