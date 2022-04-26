@@ -20,11 +20,6 @@ namespace prevention_productivity.Pages.ProductivityLogs
             _context = context;
         }
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
-
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
         public IList<GrantProgram> GrantPrograms { get; set; }

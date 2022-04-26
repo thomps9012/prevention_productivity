@@ -29,7 +29,7 @@
                 @Html.DisplayNameFor(model => model.ProductivityLog[0].FocusArea)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductivityLog[0].Notes)
+                @Html.DisplayNameFor(model => model.ProductivityLog[0].GrantProgramID)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductivityLog[0].Status)
@@ -51,7 +51,7 @@
                 @Html.DisplayFor(modelItem => item.FocusArea)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Notes)
+                        @Html.DisplayFor(modelItem => item.GrantProgram.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
