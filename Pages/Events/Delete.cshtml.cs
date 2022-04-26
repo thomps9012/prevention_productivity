@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
 using prevention_productivity.Pages.ProductivityLogs;
@@ -51,6 +52,13 @@ namespace prevention_productivity.Pages.Events
             if (id == null)
             {
                 return NotFound();
+            }
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                                                     User, Event,
+                                                     AuthOperations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
             }
 
             Event = await _context.Event.FindAsync(id);

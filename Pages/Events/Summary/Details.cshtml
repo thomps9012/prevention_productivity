@@ -69,11 +69,37 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.EventSummary.EventSummaryId">Edit</a> |
-    <form method="post">
-        <input type="hidden" asp-for="EventSummary.EventSummaryId" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
-    </form>    
+     @if(Model.EventSummary.Status != ApprovalStatus.Approved)
+        {
+                    @if((await AuthorizationService.AuthorizeAsync(User, Model.EventSummary, 
+           AuthOperations.Approve)).Succeeded)
+            {
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.EventSummary.EventSummaryId" />
+                    <input type="hidden" name="status" value="@ApprovalStatus.Approved" />
+                    <button class="btn btn-success" type="submit">Approve</button>
+                </form>
+            }
+        }
+        @if (Model.EventSummary.Status != ApprovalStatus.Rejected){
+            @if((await AuthorizationService.AuthorizeAsync(User, Model.EventSummary,
+           AuthOperations.Reject)).Succeeded)
+            {
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.EventSummary.EventSummaryId" />
+                    <input type="hidden" name="status" value="@ApprovalStatus.Rejected" />
+                    <button class="btn btn-danger" type="submit">Reject</button>
+                </form>
+            }
+        }
+        <div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.EventSummary,
+            AuthOperations.Update)).Succeeded)
+            {
+            <a asp-page="./Edit" asp-route-id="@Model.EventSummary.EventSummaryId">Edit</a> 
+            <text> | </text>    
+            }
+        </div>
     <a asp-page="../Details" asp-route-id="@Model.EventSummary.EventId">Back to Event</a>
 </div>
 </body>

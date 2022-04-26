@@ -3,20 +3,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
+using prevention_productivity.Pages.ProductivityLogs;
 
 namespace prevention_productivity.Pages.Events.Summary
 {
-    public class EditModel : PageModel
+    public class EditModel : DI_BasePageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public EditModel(prevention_productivity.Data.ApplicationDbContext context)
+        public EditModel(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<ApplicationUser> userManager)
+            : base(context, authorizationService, userManager)
         {
             _context = context;
         }
@@ -39,21 +46,66 @@ namespace prevention_productivity.Pages.Events.Summary
             {
                 return NotFound();
             }
-           ViewData["EventId"] = new SelectList(_context.Event, "Id", "Id");
-           ViewData["TeamMemberID"] = new SelectList(_context.Users, "Id", "Id");
-            return Page();
+            if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
+            {
+                ViewData["EventId"] = new SelectList(_context.Event, "Id", "Name");
+                ViewData["TeamMemberID"] = new SelectList(_context.Users, "Id", "FullName");
+                return Page();
+            } else
+            {
+                return Forbid();
+            }
+        }
+
+        public async Task<IActionResult> Delete()
+        {
+           
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                                                     User, EventSummary,
+                                                     AuthOperations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+            
+                
+                _context.EventSummary.Remove(EventSummary);
+                await _context.SaveChangesAsync();
+            
+
+            return RedirectToPage("./Index");
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> SaveEdit()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+           
 
-            _context.Attach(EventSummary).State = EntityState.Modified;
+            if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
+            {
+            
+                _context.Attach(EventSummary).State = EntityState.Modified;
+                if(EventSummary.Status == ApprovalStatus.Approved)
+                    {
+                        var canApprove = await AuthorizationService.AuthorizeAsync(
+                            User,
+                            EventSummary,
+                            AuthOperations.Approve);
+                        if (!canApprove.Succeeded)
+                        {
+                            EventSummary.Status = ApprovalStatus.Pending;
+                        }
+                    }
+            } else
+            {
+                return Forbid();
+            }
+
 
             try
             {

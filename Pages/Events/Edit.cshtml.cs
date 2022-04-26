@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
 using prevention_productivity.Pages.ProductivityLogs;
@@ -47,7 +48,7 @@ namespace prevention_productivity.Pages.Events
            ViewData["GrantProgramId"] = new SelectList(_context.GrantProgram, "Id", "Id");
             return Page();
         }
-
+        
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
@@ -57,8 +58,26 @@ namespace prevention_productivity.Pages.Events
                 return Page();
             }
 
-            _context.Attach(Event).State = EntityState.Modified;
+            if ((await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update)).Succeeded)
+            {
 
+                _context.Attach(Event).State = EntityState.Modified;
+                if (Event.Status == ApprovalStatus.Approved)
+                {
+                    var canApprove = await AuthorizationService.AuthorizeAsync(
+                        User,
+                        Event,
+                        AuthOperations.Approve);
+                    if (!canApprove.Succeeded)
+                    {
+                        Event.Status = ApprovalStatus.Pending;
+                    }
+                }
+            }
+            else
+            {
+                return Forbid();
+            }
             try
             {
                 await _context.SaveChangesAsync();
