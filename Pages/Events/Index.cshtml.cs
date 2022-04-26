@@ -28,11 +28,18 @@ namespace prevention_productivity.Pages.Events
         }
 
         public IList<Event> Event { get;set; }
+        public IList<ApplicationUser> TeamList { get; set; }
+        public IList<GrantProgram> Grants { get; set; }
 
         public async Task OnGetAsync()
         {
             var events = from e in _context.Event
                          select e;
+
+            var teamList = from t in _context.Users
+                           select t;
+            var grants = from g in _context.GrantProgram
+                         select g;
 
             var currentUserId = UserManager.GetUserId(User);
 
@@ -44,6 +51,8 @@ namespace prevention_productivity.Pages.Events
                 || e.EventLead == currentUserId);
             }
             Event = await events.ToListAsync();
+            TeamList = await teamList.ToListAsync();
+            Grants = await grants.ToListAsync();
         }
     }
 }

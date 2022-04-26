@@ -49,17 +49,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationDetail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GrantProgram.Name)
+           <td>
+                        @Html.DisplayFor(modelItem => 
+                            Model.Grants.FirstOrDefault(y => y.Id == item.GrantProgramId).Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EventStart)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EventLead)
+                @Html.DisplayFor(modelItem => 
+                    Model.TeamList.FirstOrDefault(x => x.Id == item.EventLead).FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
