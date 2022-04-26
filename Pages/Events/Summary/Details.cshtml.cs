@@ -13,9 +13,9 @@ namespace prevention_productivity.Pages.Events.Summary
 {
     public class DetailsModel : PageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DetailsModel(prevention_productivity.Data.ApplicationDbContext context)
+        public DetailsModel(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -38,6 +38,20 @@ namespace prevention_productivity.Pages.Events.Summary
                 return NotFound();
             }
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync(int? id)
+        {
+            if(id == null){
+                return NotFound();
+            }
+            EventSummary = await _context.EventSummary.FindAsync(id);
+            if (EventSummary != null)
+            {
+                _context.EventSummary.Remove(EventSummary);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToPage("./Index");
         }
     }
 }

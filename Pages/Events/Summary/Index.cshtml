@@ -52,14 +52,14 @@
             <td>
                 @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                 {
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                <a asp-page="./Edit" asp-route-id="@item.EventSummaryId">Edit</a>
                 <text> | </text>
                 }
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                <a asp-page="./Details" asp-route-id="@item.EventSummaryId">Details</a>
                 @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Delete)).Succeeded)
                 {
                 <text> | </text>
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-page="./Delete" asp-route-id="@item.EventSummaryId">Delete</a>
                 }
             </td>
         </tr>
