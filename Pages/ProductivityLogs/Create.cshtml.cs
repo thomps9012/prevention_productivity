@@ -36,7 +36,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,
-                                                        ProductivityLogOperations.Create);
+                                                        AuthOperations.Create);
             if (!isAuthorized.Succeeded)
             {
                 return new ForbidResult();

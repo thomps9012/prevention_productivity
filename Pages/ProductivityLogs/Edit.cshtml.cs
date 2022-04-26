@@ -33,7 +33,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
             ProductivityLog = log;
             
-            if ((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
+            if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {
                 return Page();
             } else
@@ -58,7 +58,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 return NotFound();
             }
 
-            if ((await AuthorizationService.AuthorizeAsync(User, log, ProductivityLogOperations.Update)).Succeeded)
+            if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {
                 ProductivityLog.TeamMemberID = log.TeamMemberID;
 
@@ -68,7 +68,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 {
                     var canApprove = await AuthorizationService.AuthorizeAsync(User,
                                                                                 ProductivityLog,
-                                                                                ProductivityLogOperations.Approve);
+                                                                                AuthOperations.Approve);
                     if (!canApprove.Succeeded)
                     {
                         ProductivityLog.Status = ApprovalStatus.Pending;

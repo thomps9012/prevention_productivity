@@ -86,13 +86,13 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, item, ProductivityLogOperations.Update)).Succeeded)
+                        @if ((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                         {
                             <a asp-page="./Edit" asp-route-id="@item.LogID">Edit</a>
                             <text> | </text>
                         }
                 <a asp-page="./Details" asp-route-id="@item.LogID">Details</a>
-                        @if((await AuthorizationService.AuthorizeAsync(User, item, ProductivityLogOperations.Delete)).Succeeded)
+                        @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Delete)).Succeeded)
                         {
                             <text> | </text>
                             <a asp-page="./Delete" asp-route-id="@item.LogID">Delete</a>

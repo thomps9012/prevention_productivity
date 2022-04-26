@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
 namespace prevention_productivity.Authorization
 {
-    public class ProductivityLogOperations
+    public class AuthOperations
     {
         public static OperationAuthorizationRequirement Create =
           new OperationAuthorizationRequirement { Name = Constants.CreateOperationName };
@@ -25,7 +25,7 @@ namespace prevention_productivity.Authorization
         public static readonly string ApproveOperationName = "Approve";
         public static readonly string RejectOperationName = "Reject";
 
-        public static readonly string ProductivityLogsAdminRole = "ProductivityLogsAdmin";
-        public static readonly string ProductivityLogsUserRole = "ProductivityLogsUser";
+        public static readonly string AdminRole = "Admin";
+        public static readonly string UserRole = "User";
     }
 }

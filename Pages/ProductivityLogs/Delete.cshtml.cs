@@ -40,7 +40,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             ProductivityLog = _log;
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,
-                                                        ProductivityLogOperations.Delete);
+                                                        AuthOperations.Delete);
             if (!isAuthorized.Succeeded)
             {
                 return Forbid();
@@ -62,7 +62,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
            
                 var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,
-                                                        ProductivityLogOperations.Delete);
+                                                        AuthOperations.Delete);
                 if(!isAuthorized.Succeeded)
                 {
                     return Forbid();

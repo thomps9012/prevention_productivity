@@ -18,7 +18,7 @@ namespace prevention_productivity.Authorization
                 return Task.CompletedTask;
             }
             
-            if (context.User.IsInRole(Constants.ProductivityLogsAdminRole))
+            if (context.User.IsInRole(Constants.AdminRole))
             {
                 context.Succeed(requirement);
             }

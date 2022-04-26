@@ -83,7 +83,7 @@
     @if (Model.ProductivityLog.Status != ApprovalStatus.Approved)
     {
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
-       ProductivityLogOperations.Approve)).Succeeded)
+       AuthOperations.Approve)).Succeeded)
         {
                 <form method="post" style="display:inline;">
                     <input type="hidden" name="id" value="@Model.ProductivityLog.LogID" />
@@ -95,7 +95,7 @@
     @if (Model.ProductivityLog.Status != ApprovalStatus.Rejected)
     {
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
-       ProductivityLogOperations.Reject)).Succeeded)
+       AuthOperations.Reject)).Succeeded)
         {
             <form method="post" style="display:inline;">
                 <input type="hidden" name="id" value="@Model.ProductivityLog.LogID" />
@@ -106,7 +106,7 @@
     }
     <div>
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
-        ProductivityLogOperations.Update)).Succeeded)
+        AuthOperations.Update)).Succeeded)
         {   
              <a asp-page="./Edit" asp-route-id="@Model.ProductivityLog.LogID">Edit</a> 
              <text> | </text>

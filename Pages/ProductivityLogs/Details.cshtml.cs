@@ -55,8 +55,8 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
             
             var operation = (status == ApprovalStatus.Approved) 
-                ? ProductivityLogOperations.Approve 
-                : ProductivityLogOperations.Reject;
+                ? AuthOperations.Approve 
+                : AuthOperations.Reject;
 
             var isAuthorized = await AuthorizationService.AuthorizeAsync(User, log, operation);
             

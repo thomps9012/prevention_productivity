@@ -44,7 +44,7 @@ namespace prevention_productivity.Models
         public double EventBudget { get; set; }
         public string EventAffiliates { get; set; }
         public string Notes { get; set; }
-        public ApplicationUser EventLead { get; set; }
+        public string EventLead { get; set; }
         public ApprovalStatus Status { get; set; }
     }
 }
