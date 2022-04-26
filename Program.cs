@@ -28,8 +28,10 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, IsEventLead>();
 
-builder.Services.AddSingleton<IAuthorizationHandler, IsAdminHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
 
 var app = builder.Build();
 

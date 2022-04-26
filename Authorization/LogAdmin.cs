@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace prevention_productivity.Authorization
 {
-    public class IsAdminHandler
+    public class IsLogAdmin
         : AuthorizationHandler<OperationAuthorizationRequirement, ProductivityLog>
     {
         protected override Task HandleRequirementAsync(

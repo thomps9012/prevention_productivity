@@ -23,6 +23,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Freelance/prevention_productivity/Pages/Events/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/Events/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/Events/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/Events/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/Events/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Freelance/prevention_productivity/Pages/Grants/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcR3JhbnRzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
