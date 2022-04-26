@@ -26,18 +26,6 @@
                 @Html.DisplayNameFor(model => model.EventSummary[0].Attendees)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EventSummary[0].Challenges)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventSummary[0].Outcomes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventSummary[0].Notes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventSummary[0].NextSteps)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.EventSummary[0].TeamMember)
             </th>
             <th>
@@ -50,33 +38,29 @@
 @foreach (var item in Model.EventSummary) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Event.Id)
+                @Html.DisplayFor(modelItem => item.Event.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Attendees)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Challenges)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Outcomes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NextSteps)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeamMember.Id)
+                @Html.DisplayFor(modelItem => item.TeamMember.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.EventSummaryId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.EventSummaryId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.EventSummaryId">Delete</a>
+                @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
+                {
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                <text> | </text>
+                }
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Delete)).Succeeded)
+                {
+                <text> | </text>
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                }
             </td>
         </tr>
 }
