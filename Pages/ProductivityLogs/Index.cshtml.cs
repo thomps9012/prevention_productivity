@@ -23,9 +23,12 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         public IList<ProductivityLog> ProductivityLog { get;set; }
         public IList<ApplicationUser> TeamMember { get; set; }
+        public IList<GrantProgram> Grants { get; set; }
 
         public async Task OnGetAsync()
         {
+            var grants = from g in _context.GrantProgram
+                         select g;
             var productivityLogs = from m in _context.ProductivityLog
                                    select m;
             var teamMembers = from m in _context.Users
@@ -43,6 +46,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             
             ProductivityLog = await productivityLogs.ToListAsync();
             TeamMember = await teamMembers.ToListAsync();
+            Grants = await grants.ToListAsync();
         }
     }
 }

@@ -51,7 +51,8 @@
                 @Html.DisplayFor(modelItem => item.FocusArea)
             </td>
             <td>
-                        @Html.DisplayFor(modelItem => item.GrantProgram.Name)
+                        @Html.DisplayFor(modelItem => 
+                            Model.Grants.FirstOrDefault(y => y.Id == item.GrantProgramID).Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
