@@ -21,7 +21,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="EventSummary.EventId" class="control-label"></label>
+                <label asp-for="EventSummary.EventId" class="control-label">Event</label>
                 <select asp-for="EventSummary.EventId" class ="form-control" asp-items="ViewBag.EventId"></select>
             </div>
             <div class="form-group">
@@ -31,22 +31,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="EventSummary.Challenges" class="control-label"></label>
-                <input asp-for="EventSummary.Challenges" class="form-control" />
+                <textarea asp-for="EventSummary.Challenges" class="form-control"></textarea>
                 <span asp-validation-for="EventSummary.Challenges" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EventSummary.Outcomes" class="control-label"></label>
-                <input asp-for="EventSummary.Outcomes" class="form-control" />
+                <textarea asp-for="EventSummary.Outcomes" class="form-control"></textarea>
                 <span asp-validation-for="EventSummary.Outcomes" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EventSummary.Notes" class="control-label"></label>
-                <input asp-for="EventSummary.Notes" class="form-control" />
+                <textarea asp-for="EventSummary.Notes" class="form-control"></textarea>
                 <span asp-validation-for="EventSummary.Notes" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EventSummary.NextSteps" class="control-label"></label>
-                <input asp-for="EventSummary.NextSteps" class="form-control" />
+                <label asp-for="EventSummary.NextSteps" class="control-label">Next Steps</label>
+                <textarea asp-for="EventSummary.NextSteps" class="form-control"></textarea>
                 <span asp-validation-for="EventSummary.NextSteps" class="text-danger"></span>
             </div>
             <div class="form-group">
