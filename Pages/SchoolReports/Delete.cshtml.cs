@@ -3,19 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
+using prevention_productivity.Pages.ProductivityLogs;
 
 namespace prevention_productivity.Pages.SchoolReports
 {
-    public class DeleteModel : PageModel
+    public class DeleteModel : DI_BasePageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DeleteModel(prevention_productivity.Data.ApplicationDbContext context)
+        public DeleteModel(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<ApplicationUser> userManager)
+            : base(context, authorizationService, userManager)
         {
             _context = context;
         }
@@ -25,34 +32,41 @@ namespace prevention_productivity.Pages.SchoolReports
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
+            SchoolReport? _report = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
+            if (_report == null)
             {
                 return NotFound();
             }
 
-            SchoolReport = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
-
-            if (SchoolReport == null)
+            SchoolReport = _report;
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                                                                   User, SchoolReport,
+                                                                   AuthOperations.Delete);
+            if (!isAuthorized.Succeeded)
             {
-                return NotFound();
+                return Forbid();
             }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null)
+            var report = await _context.SchoolReport.AsNoTracking()
+                        .FirstOrDefaultAsync(m => m.SchoolReportId == id);
+            if (report == null)
             {
                 return NotFound();
             }
 
-            SchoolReport = await _context.SchoolReport.FindAsync(id);
-
-            if (SchoolReport != null)
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                                                        User, SchoolReport,
+                                                        AuthOperations.Delete);
+            if (!isAuthorized.Succeeded)
             {
-                _context.SchoolReport.Remove(SchoolReport);
-                await _context.SaveChangesAsync();
+                return Forbid();
             }
+            _context.SchoolReport.Remove(SchoolReport);
+                await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

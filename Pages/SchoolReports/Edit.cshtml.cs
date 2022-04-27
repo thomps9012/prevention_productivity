@@ -3,76 +3,95 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using prevention_productivity.Authorization;
 using prevention_productivity.Data;
 using prevention_productivity.Models;
+using prevention_productivity.Pages.ProductivityLogs;
 
 namespace prevention_productivity.Pages.SchoolReports
 {
-    public class EditModel : PageModel
+    public class EditModel : DI_BasePageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public EditModel(prevention_productivity.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public EditModel(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<ApplicationUser> userManager)
+            : base(context, authorizationService, userManager) => _context = context;
+
 
         [BindProperty]
         public SchoolReport SchoolReport { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
+            SchoolReport? report = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
+            if (report == null)
             {
                 return NotFound();
             }
 
-            SchoolReport = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
-
-            if (SchoolReport == null)
+            SchoolReport = report;
+            if ((await AuthorizationService.AuthorizeAsync(User, report, AuthOperations.Update)).Succeeded)
             {
-                return NotFound();
+                return Page();
+            } else
+            {
+                return Forbid();
             }
-            return Page();
+
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(SchoolReport).State = EntityState.Modified;
+            var report = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
 
-            try
+            if (report == null)
             {
+                return NotFound();
+            }
+
+            if ((await AuthorizationService.AuthorizeAsync(User, report, AuthOperations.Update)).Succeeded)
+            {
+                SchoolReport.TeamMemberId = report.TeamMemberId;
+
+                _context.Attach(SchoolReport).State = EntityState.Modified;
+
+                if (SchoolReport.Status == ApprovalStatus.Approved)
+                {
+                    var canApprove = await AuthorizationService.AuthorizeAsync(User,
+                                                                                SchoolReport,
+                                                                                AuthOperations.Approve);
+                    if (!canApprove.Succeeded)
+                    {
+                        SchoolReport.Status = ApprovalStatus.Pending;
+                    }
+                }
+
+
                 await _context.SaveChangesAsync();
+
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!SchoolReportExists(SchoolReport.SchoolReportId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Forbid();
             }
 
-            return RedirectToPage("./Index");
-        }
 
-        private bool SchoolReportExists(int id)
-        {
-            return _context.SchoolReport.Any(e => e.SchoolReportId == id);
         }
     }
 }

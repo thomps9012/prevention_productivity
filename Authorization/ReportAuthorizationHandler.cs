@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace prevention_productivity.Authorization
 {
     public class IsReportHandler
-        : AuthorizationHandler<OperationAuthorizationRequirement, EventSummary>
+        : AuthorizationHandler<OperationAuthorizationRequirement, SchoolReport>
     {
 
             UserManager<ApplicationUser> _userManager;
@@ -19,7 +19,7 @@ namespace prevention_productivity.Authorization
         protected override Task
             HandleRequirementAsync(AuthorizationHandlerContext context,
                                    OperationAuthorizationRequirement requirement,
-                                   EventSummary resource)
+                                   SchoolReport resource)
         {
             if (context.User == null || resource == null)
             {
@@ -34,7 +34,7 @@ namespace prevention_productivity.Authorization
                 return Task.CompletedTask;
             }
 
-            if (resource.TeamMemberID == _userManager.GetUserId(context.User))
+            if (resource.TeamMemberId == _userManager.GetUserId(context.User))
             {
                 context.Succeed(requirement);
             }

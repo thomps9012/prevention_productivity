@@ -15,6 +15,6 @@ namespace prevention_productivity.Models
         public string Successes { get; set; }
         public string Notes { get; set; }
         public ApprovalStatus Status { get; set; }
-        public ApplicationUser TeamMember { get; set; }
+        public string TeamMemberId { get; set; }
     }
 }

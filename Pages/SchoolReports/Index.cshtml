@@ -29,7 +29,7 @@
                 @Html.DisplayNameFor(model => model.SchoolReport[0].SchoolName)
             </th>
            <th>
-                    @Html.DisplayNameFor(model => model.SchoolReport[0].TeamMember.FullName)
+                    @Html.DisplayNameFor(model => model.SchoolReport[0].TeamMemberId)
            </th>
             <th>
                 @Html.DisplayNameFor(model => model.SchoolReport[0].Status)
@@ -50,15 +50,24 @@
                 @Html.DisplayFor(modelItem => item.SchoolName)
             </td>
            <td>
-                        @Html.DisplayFor(modelItem => item.TeamMember.FullName)
+                        @Html.DisplayFor(modelItem => 
+                            Model.TeamMember.FirstOrDefault(x => x.Id == item.TeamMemberId).FullName)
            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.SchoolReportId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.SchoolReportId">Details</a> |
+                 @if ((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
+                        {
+                <a asp-page="./Edit" asp-route-id="@item.SchoolReportId">Edit</a>
+                 <text> | </text>
+                        }                
+                <a asp-page="./Details" asp-route-id="@item.SchoolReportId">Details</a>
+                @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Delete)).Succeeded)
+                        {
+                            <text> | </text>                
                 <a asp-page="./Delete" asp-route-id="@item.SchoolReportId">Delete</a>
+                        }
             </td>
         </tr>
 }

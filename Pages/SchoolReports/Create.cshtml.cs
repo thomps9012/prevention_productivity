@@ -38,7 +38,7 @@ namespace prevention_productivity.Pages.SchoolReports
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            SchoolReport.TeamMember.Id = UserManager.GetUserId(User);
+           SchoolReport.TeamMemberId = UserManager.GetUserId(User);
             SchoolReport.Status = ApprovalStatus.Pending;
 
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
