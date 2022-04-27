@@ -19,7 +19,6 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
-        public IList<Comment> Comments { get; set; }
         public IList<ApplicationUser> TeamMembers { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -35,8 +34,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
 
             ProductivityLog = log;
-            Comments = comments;
-            TeamMembers = await _context.ApplicationUser.ToListAsync();
+            TeamMembers = await _context.Users.ToListAsync();
 
             if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {

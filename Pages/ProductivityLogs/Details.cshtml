@@ -104,12 +104,9 @@
             </form>
         }
     }
-    <form method="post" style="display:inline">
-        <label asp-for="Comment.Content">Comment</label>
-        <input asp-for="Comment.Content" />
-        <input type="hidden" name="comment" />
-        <button type="submit" class="btn btn-primary">Submit Comment</button>
-    </form>
+   
+       
+                
     <div>
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
         AuthOperations.Update)).Succeeded)

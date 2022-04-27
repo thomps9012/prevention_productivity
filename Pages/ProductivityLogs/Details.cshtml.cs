@@ -48,16 +48,12 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
             return Page();
         }
-        public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status, string? action)
+        public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status)
         {
-            if(action == "comment")
-            {
-                Comment.AuthorId = UserManager.GetUserId(User);
-                Comment.CreatedAt = DateTime.Now;
-                _context.Comment.Add(Comment);
-            }
             var log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+
             
+
             if (log == null)
             {
                 return NotFound();
@@ -73,6 +69,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             {
                 return Forbid();
             }
+                   
             log.Status = status;
             _context.ProductivityLog.Update(log);
             await _context.SaveChangesAsync();

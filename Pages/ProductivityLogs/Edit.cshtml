@@ -65,12 +65,7 @@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
-        </form>
-         @foreach (var item in Model.Comments) {
-        <p>@item.Content</p>
-        Model.TeamMembers.FirstOrDefault(x => x.Id == item.AuthorId).FullName.ToString();
-        <p>@item.CreatedAt</p>
-    }        
+        </form>       
     </div>
 </div>
 
