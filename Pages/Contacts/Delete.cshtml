@@ -26,17 +26,11 @@
             @Html.DisplayFor(model => model.Contact.Type)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Contact.FirstName)
+      Name
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Contact.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Contact.LastName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Contact.LastName)
-        </dd>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Contact.FullName)
+            </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Contact.Email)
         </dt>
@@ -50,7 +44,7 @@
             @Html.DisplayFor(model => model.Contact.Phone)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Contact.AffiliatedOrg)
+      Affiliated Organization
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Contact.AffiliatedOrg)
