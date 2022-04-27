@@ -31,10 +31,12 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, IsEventLead>();
 builder.Services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
+builder.Services.AddScoped<IAuthorizationHandler, IsReportHandler>();
 
 builder.Services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsSummaryAdmin>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsReportAdmin>();
 
 var app = builder.Build();
 

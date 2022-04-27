@@ -1,0 +1,84 @@
+﻿@page
+@model prevention_productivity.Pages.SchoolReports.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+</head>
+<body>
+
+<h4>SchoolReport</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SchoolReport.SchoolReportId" />
+            <div class="form-group">
+                <label asp-for="SchoolReport.Curriculum" class="control-label"></label>
+                <input asp-for="SchoolReport.Curriculum" class="form-control" />
+                <span asp-validation-for="SchoolReport.Curriculum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.LessonPlan" class="control-label"></label>
+                <input asp-for="SchoolReport.LessonPlan" class="form-control" />
+                <span asp-validation-for="SchoolReport.LessonPlan" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.SchoolName" class="control-label"></label>
+                <input asp-for="SchoolReport.SchoolName" class="form-control" />
+                <span asp-validation-for="SchoolReport.SchoolName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.TopicsCovered" class="control-label"></label>
+                <input asp-for="SchoolReport.TopicsCovered" class="form-control" />
+                <span asp-validation-for="SchoolReport.TopicsCovered" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.StudentList" class="control-label"></label>
+                <input asp-for="SchoolReport.StudentList" class="form-control" />
+                <span asp-validation-for="SchoolReport.StudentList" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.Challenges" class="control-label"></label>
+                <input asp-for="SchoolReport.Challenges" class="form-control" />
+                <span asp-validation-for="SchoolReport.Challenges" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.Successes" class="control-label"></label>
+                <input asp-for="SchoolReport.Successes" class="form-control" />
+                <span asp-validation-for="SchoolReport.Successes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.Notes" class="control-label"></label>
+                <input asp-for="SchoolReport.Notes" class="form-control" />
+                <span asp-validation-for="SchoolReport.Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchoolReport.Status" class="control-label"></label>
+                <select asp-for="SchoolReport.Status" class="form-control"></select>
+                <span asp-validation-for="SchoolReport.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+</body>
+</html>

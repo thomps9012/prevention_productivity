@@ -127,6 +127,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdGl2aXR5TG9nc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Freelance/prevention_productivity/Pages/SchoolReports/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2Nob29sUmVwb3J0c1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/SchoolReports/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2Nob29sUmVwb3J0c1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/SchoolReports/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2Nob29sUmVwb3J0c1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/SchoolReports/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2Nob29sUmVwb3J0c1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Freelance/prevention_productivity/Pages/SchoolReports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2Nob29sUmVwb3J0c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Freelance/prevention_productivity/Pages/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
