@@ -30,11 +30,15 @@ namespace prevention_productivity.Pages.Events
         public IList<Event> Event { get;set; }
         public IList<ApplicationUser> TeamList { get; set; }
         public IList<GrantProgram> Grants { get; set; }
+        public IList<EventSummary> EventSummary { get; set; }
 
         public async Task OnGetAsync()
         {
             var events = from e in _context.Event
                          select e;
+
+            var eventSummaries = from es in _context.EventSummary
+                                 select es;
 
             var teamList = from t in _context.Users
                            select t;
@@ -53,6 +57,7 @@ namespace prevention_productivity.Pages.Events
             Event = await events.ToListAsync();
             TeamList = await teamList.ToListAsync();
             Grants = await grants.ToListAsync();
+            EventSummary = await eventSummaries.ToListAsync();
         }
     }
 }

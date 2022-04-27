@@ -14,7 +14,7 @@
 </head>
 <body>
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">Create New Event</a>
 </p>
 <p>
     <a asp-page="./Summary/Create">Create an Event Summary</a>
@@ -78,6 +78,13 @@
                 <text> | </text>
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
                 }
+                        @foreach (var summary in Model.EventSummary)
+            {   @if(item.Id == summary.EventId)
+                {
+                <text> | </text>
+            <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Event Summary</a>
+            }
+            }            
             </td>
         </tr>
 }
