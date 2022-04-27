@@ -35,7 +35,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
            
             ProductivityLog = _log;
-            TeamMembers = await _context.ApplicationUser.ToListAsync();
+            TeamMembers = await _context.Users.ToListAsync();
 
             var isAdmin = User.IsInRole(Constants.AdminRole);
             

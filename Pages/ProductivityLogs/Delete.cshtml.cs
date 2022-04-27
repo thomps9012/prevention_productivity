@@ -28,6 +28,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
+        public ApplicationUser TeamMember { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -37,6 +38,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 return NotFound();
             }
 
+            TeamMember = await _context.Users.FirstOrDefaultAsync(u => u.Id == _log.TeamMemberID);
             ProductivityLog = _log;
             var isAuthorized = await AuthorizationService.AuthorizeAsync(
                                                         User, ProductivityLog,

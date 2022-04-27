@@ -19,22 +19,18 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
-        public IList<ApplicationUser> TeamMembers { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
            
             ProductivityLog? log = await _context.ProductivityLog
                 .FirstOrDefaultAsync(m => m.LogID == id);
-            var comments = await _context.Comment.Where(c => c.ItemId == "Log"+id).ToListAsync();
-
             if (log == null)
             {
                 return NotFound();
             }
 
             ProductivityLog = log;
-            TeamMembers = await _context.Users.ToListAsync();
 
             if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {
