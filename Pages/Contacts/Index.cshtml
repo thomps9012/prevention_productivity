@@ -56,9 +56,13 @@
                 @Html.DisplayFor(modelItem => item.AffiliatedOrg)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ContactId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ContactId">Details</a> |
+                @if (User.IsInRole("Admin")){   
+                <a asp-page="./Edit" asp-route-id="@item.ContactId">Edit</a> 
+                <text> | </text>
                 <a asp-page="./Delete" asp-route-id="@item.ContactId">Delete</a>
+                <text> | </text>                
+                }
+                <a asp-page="./Details" asp-route-id="@item.ContactId">Details</a>
             </td>
         </tr>
 }

@@ -22,13 +22,15 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Contact.Type" class="control-label"></label>
-                <select asp-for="Contact.Type" class="form-control"></select>
+                <select asp-for="Contact.Type" class="form-control">
+                        <option value="@ContactType.Student">Student</option>
+                        <option value="@ContactType.Parent">Parent</option>
+                        <option value="@ContactType.Teacher">Teacher</option>
+                        <option value="@ContactType.NonProfit">Non-Profit</option>
+                        <option value="@ContactType.Private">Private Sector</option>
+                        <option value="@ContactType.Other">Other</option>
+                    </select>
                 <span asp-validation-for="Contact.Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Contact.Event" class="control-label"></label>
-                <input asp-for="Contact.Event" class="form-control" />
-                <span asp-validation-for="Contact.Event" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Contact.FirstName" class="control-label"></label>

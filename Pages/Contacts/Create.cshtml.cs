@@ -13,9 +13,9 @@ namespace prevention_productivity.Pages.Contacts
 {
     public class CreateModel : PageModel
     {
-        private readonly prevention_productivity.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CreateModel(prevention_productivity.Data.ApplicationDbContext context)
+        public CreateModel(ApplicationDbContext context)
         {
             _context = context;
         }

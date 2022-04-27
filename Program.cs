@@ -37,6 +37,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsSummaryAdmin>();
 builder.Services.AddSingleton<IAuthorizationHandler, IsReportAdmin>();
+builder.Services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
 
 var app = builder.Build();
 

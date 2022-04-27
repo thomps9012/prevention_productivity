@@ -7,7 +7,6 @@ namespace prevention_productivity.Models
         [Key]
         public int ContactId { get; set; }
         public ContactType Type { get; set; }
-        public string Event { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName
