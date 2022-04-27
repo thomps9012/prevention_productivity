@@ -26,7 +26,7 @@
                 <a asp-page="./Summary/Create">Create an Event Summary</a>
             }
 </p>
-    <dl class="row">
+       <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Event.Name)
         </dt>
@@ -46,43 +46,43 @@
             @Html.DisplayFor(model => model.Event.Location)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.LocationDetail)
+            Location Detail
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.LocationDetail)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.GrantProgram)
+          Grant
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Event.GrantProgram.Id)
+            @Html.DisplayFor(model => model.Event.GrantProgram.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.PublicEvent)
+           Open to the Public?
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.PublicEvent)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.RSVPRequired)
+            RSVP Required?
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.RSVPRequired)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.AnnualEvent)
+           Annual Event?
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.AnnualEvent)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.NewEvent)
+         New Event?
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.NewEvent)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.EventStart)
+           Event Start
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.EventStart)
@@ -94,13 +94,13 @@
             @Html.DisplayFor(model => model.Event.Duration)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.SetUpTime)
+           Setup Time
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.SetUpTime)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.CleanUpTime)
+        Cleanup Time
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.CleanUpTime)
@@ -112,19 +112,19 @@
             @Html.DisplayFor(model => model.Event.Agenda)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.TargetPopulation)
+     Target Population
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.TargetPopulation)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.AgeGroup)
+           Target Age Group
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.AgeGroup)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.PartingGift)
+         Parting Gifts
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.PartingGift)
@@ -142,16 +142,16 @@
             @Html.DisplayFor(model => model.Event.Marketing)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.SpecialOrderGear)
+     Special Order Gear
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.SpecialOrderGear)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.SepcialOrderDesignElements)
+     Special Order Design Elements
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Event.SepcialOrderDesignElements)
+            @Html.DisplayFor(model => model.Event.SpecialOrderDesignElements)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Event.Performance)
@@ -166,7 +166,7 @@
             @Html.DisplayFor(model => model.Event.Vendors)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.FoodBeverage)
+      Food & Beverage Needs
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.FoodBeverage)
@@ -178,49 +178,49 @@
             @Html.DisplayFor(model => model.Event.Caterer)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.FoodHeadCount)
+          Head Count for Food
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.FoodHeadCount)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.OtherSpecialOrder)
+        Other Special Order Gear
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.OtherSpecialOrder)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.PreventionTeamMembers)
+         Prevention Team Members
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.PreventionTeamMembers)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.StaffTimeCommitment)
+Staff Time Commitment
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.StaffTimeCommitment)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.StaffDuties)
+         Staff Duties
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.StaffDuties)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.NORAClients)
+    NORA Clients Attending
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.NORAClients)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.Volunteers)
+  Volunteers Needed?
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.Volunteers)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.VolunteerList)
+          List of Volunteers
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.VolunteerList)
@@ -232,13 +232,13 @@
             @Html.DisplayFor(model => model.Event.Supplies)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.EventBudget)
+       Total Budget
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.EventBudget)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.EventAffiliates)
+Affiliated Organizations
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.EventAffiliates)
@@ -250,7 +250,7 @@
             @Html.DisplayFor(model => model.Event.Notes)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.EventLead)
+       Event Lead
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Event.EventLead)

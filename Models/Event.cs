@@ -27,7 +27,7 @@ namespace prevention_productivity.Models
         public string Raffle { get; set; }
         public string Marketing { get; set; }
         public string SpecialOrderGear { get; set; }
-        public string SepcialOrderDesignElements { get; set; }
+        public string SpecialOrderDesignElements { get; set; }
         public string Performance { get; set; }
         public string Vendors { get; set; }
         public string FoodBeverage { get; set; }
