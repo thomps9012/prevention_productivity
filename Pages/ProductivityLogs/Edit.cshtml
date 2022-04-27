@@ -17,6 +17,7 @@
 <h4>ProductivityLog</h4>
 <hr />
 <div class="row">
+   
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -65,6 +66,11 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+         @foreach (var item in Model.Comments) {
+        <p>@item.Content</p>
+        Model.TeamMembers.FirstOrDefault(x => x.Id == item.AuthorId).FullName.ToString();
+        <p>@item.CreatedAt</p>
+    }        
     </div>
 </div>
 

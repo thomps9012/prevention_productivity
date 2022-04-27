@@ -21,6 +21,8 @@ namespace prevention_productivity.Pages.ProductivityLogs
         }
 
         public ProductivityLog ProductivityLog { get; set; }
+        [BindProperty]
+        public Comment Comment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -31,12 +33,13 @@ namespace prevention_productivity.Pages.ProductivityLogs
             {
                 return NotFound();
             }
+           
             ProductivityLog = _log;
             
             var isAdmin = User.IsInRole(Constants.AdminRole);
             
             var currentUserId = UserManager.GetUserId(User);
-            
+
             if (!isAdmin 
                 && currentUserId != ProductivityLog.TeamMemberID 
                 && ProductivityLog.Status != ApprovalStatus.Approved)
@@ -45,8 +48,14 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
             return Page();
         }
-        public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status)
+        public async Task<IActionResult> OnPostAsync(int id, ApprovalStatus status, string? action)
         {
+            if(action == "comment")
+            {
+                Comment.AuthorId = UserManager.GetUserId(User);
+                Comment.CreatedAt = DateTime.Now;
+                _context.Comment.Add(Comment);
+            }
             var log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
             
             if (log == null)

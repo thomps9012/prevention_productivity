@@ -19,12 +19,15 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
+        public IList<Comment> Comments { get; set; }
+        public IList<ApplicationUser> TeamMembers { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
            
             ProductivityLog? log = await _context.ProductivityLog
                 .FirstOrDefaultAsync(m => m.LogID == id);
+            var comments = await _context.Comment.Where(c => c.ItemId == "Log"+id).ToListAsync();
 
             if (log == null)
             {
@@ -32,7 +35,9 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
 
             ProductivityLog = log;
-            
+            Comments = comments;
+            TeamMembers = await _context.ApplicationUser.ToListAsync();
+
             if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {
                 return Page();
