@@ -21,6 +21,11 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="GrantProgram.Id" />
+             <div class="form-group">
+                    <label asp-for="GrantProgram.AwardNumber" class="control-label">Award Number</label>
+                    <input asp-for="GrantProgram.AwardNumber" class="form-control" />
+                    <span asp-validation-for="GrantProgram.AwardNumber" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="GrantProgram.Name" class="control-label"></label>
                 <input asp-for="GrantProgram.Name" class="form-control" />

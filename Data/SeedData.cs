@@ -100,7 +100,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 1",
                     NextSteps = "Next Steps 1",
                     Notes = "Notes 1",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Rejected
                 },
                 new ProductivityLog
@@ -114,7 +114,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 2",
                     NextSteps = "Next Steps 2",
                     Notes = "Notes 2",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Pending
                 },
                 new ProductivityLog
@@ -128,7 +128,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 3",
                     NextSteps = "Next Steps 3",
                     Notes = "Notes 3",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Approved
                 },
                 new ProductivityLog
@@ -142,7 +142,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 4",
                     NextSteps = "Next Steps 4",
                     Notes = "Notes 4",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Approved
                 },
                 new ProductivityLog
@@ -156,7 +156,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 5",
                     NextSteps = "Next Steps 5",
                     Notes = "Notes 5",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Pending
                 },
                 new ProductivityLog
@@ -170,7 +170,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 6",
                     NextSteps = "Next Steps 6",
                     Notes = "Notes 6",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Rejected
                 },
                 new ProductivityLog
@@ -184,7 +184,7 @@ namespace prevention_productivity.Data
                     Challenges = "Challenges 7",
                     NextSteps = "Next Steps 7",
                     Notes = "Notes 7",
-                    GrantProgramID = 1,
+                    GrantProgramID = 3,
                     Status = ApprovalStatus.Pending
                 }
 

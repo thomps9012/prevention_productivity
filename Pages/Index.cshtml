@@ -7,12 +7,13 @@
 <div class="text-center">
     <h1 class="display-4">Welcome to the Prevention Homepage</h1>
     <br />
-    <h3>On this application you can:</h3>
+    <h2>On this application you can:</h2>
     <br />
-    <p>1. Log and track your productivity throughout the week</p>
-    <p>2. Enter details about an event, in order to track progress towards grant goals</p>
-    <p>3. Add members to the Prevention Team</p>
-    <p>4. View established contacts throughout the program</p>
+    <h3>1. <a asp-page="/ProductivityLogs/Create">Create Productivity Logs</a> and <a asp-page="/ProductivityLogs/Index">Track Your Productivity</a> throughout the week</h3>
+    <h3>2.  <a asp-page="/Events/Create">Create Events</a>, in order to meet grant Goals</h3>
+    <h3>3. <a asp-page="/Grants/Create">Add Grants</a> or track <a asp-page="/Grants/Index">Existing Ones</a></h3>
+    <h3>4. <a asp-page="/Contacts/Index">View Established Contacts</a>, or <a asp-area="" asp-page="/Contacts/Create">Add New Contacts</a></h3>
+    <h3>5.<a asp-page="/Events/Index">View Events</a>  and <a asp-page="/Events/Summary/Index">Event Summaries</a></h3>
     <br />
     <p>The time on the server is @DateTime.Now</p>
 
