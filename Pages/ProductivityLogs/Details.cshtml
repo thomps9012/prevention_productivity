@@ -25,10 +25,17 @@
             @Html.DisplayFor(model => model.ProductivityLog.Date)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductivityLog.TeamMemberID)
+            Grant Program
+        </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ProductivityLog.GrantProgram.Name)
+            </dd>
+        <dt class="col-sm-2">
+           Team Member
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProductivityLog.TeamMemberID)
+            @Html.DisplayFor(model => 
+                 Model.TeamMembers.FirstOrDefault(x => x.Id == model.ProductivityLog.TeamMemberID).FullName)                
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.FocusArea)
