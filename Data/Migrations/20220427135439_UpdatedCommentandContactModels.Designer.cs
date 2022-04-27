@@ -12,8 +12,8 @@ using prevention_productivity.Data;
 namespace prevention_productivity.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220426170640_UpdatedModels")]
-    partial class UpdatedModels
+    [Migration("20220427135439_UpdatedCommentandContactModels")]
+    partial class UpdatedCommentandContactModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -248,15 +248,14 @@ namespace prevention_productivity.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.ToTable("Comment");
                 });
@@ -277,6 +276,10 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Event")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -288,6 +291,9 @@ namespace prevention_productivity.Data.Migrations
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("ContactId");
 
@@ -620,15 +626,14 @@ namespace prevention_productivity.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeamMemberId")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TopicsCovered")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SchoolReportId");
-
-                    b.HasIndex("TeamMemberId");
 
                     b.ToTable("SchoolReport");
                 });
@@ -691,15 +696,6 @@ namespace prevention_productivity.Data.Migrations
                         .HasForeignKey("GrantProgramId");
                 });
 
-            modelBuilder.Entity("prevention_productivity.Models.Comment", b =>
-                {
-                    b.HasOne("prevention_productivity.Models.ApplicationUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.Navigation("Author");
-                });
-
             modelBuilder.Entity("prevention_productivity.Models.Event", b =>
                 {
                     b.HasOne("prevention_productivity.Models.GrantProgram", "GrantProgram")
@@ -739,15 +735,6 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("GrantProgram");
-                });
-
-            modelBuilder.Entity("prevention_productivity.Models.SchoolReport", b =>
-                {
-                    b.HasOne("prevention_productivity.Models.ApplicationUser", "TeamMember")
-                        .WithMany()
-                        .HasForeignKey("TeamMemberId");
-
-                    b.Navigation("TeamMember");
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.GrantProgram", b =>

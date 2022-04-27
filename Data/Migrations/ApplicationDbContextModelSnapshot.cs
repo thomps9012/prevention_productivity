@@ -246,7 +246,8 @@ namespace prevention_productivity.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemId")
                         .IsRequired()
@@ -254,9 +255,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.Contact", b =>
@@ -271,11 +270,11 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ContactType")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("Event")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -291,9 +290,12 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("ContactId");
 
-                    b.ToTable("Conttact");
+                    b.ToTable("Contact", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.Event", b =>
@@ -450,7 +452,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasIndex("GrantProgramId");
 
-                    b.ToTable("Event");
+                    b.ToTable("Event", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.EventSummary", b =>
@@ -496,7 +498,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasIndex("TeamMemberID");
 
-                    b.ToTable("EventSummary");
+                    b.ToTable("EventSummary", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.GrantProgram", b =>
@@ -523,7 +525,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GrantProgram");
+                    b.ToTable("GrantProgram", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.ProductivityLog", b =>
@@ -579,7 +581,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasIndex("GrantProgramID");
 
-                    b.ToTable("ProductivityLog");
+                    b.ToTable("ProductivityLog", (string)null);
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.SchoolReport", b =>
@@ -631,7 +633,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasKey("SchoolReportId");
 
-                    b.ToTable("SchoolReport");
+                    b.ToTable("SchoolReport", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -690,15 +692,6 @@ namespace prevention_productivity.Data.Migrations
                     b.HasOne("prevention_productivity.Models.GrantProgram", null)
                         .WithMany("TeamMembers")
                         .HasForeignKey("GrantProgramId");
-                });
-
-            modelBuilder.Entity("prevention_productivity.Models.Comment", b =>
-                {
-                    b.HasOne("prevention_productivity.Models.ApplicationUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.Event", b =>

@@ -6,7 +6,7 @@ namespace prevention_productivity.Models
     {
         [Key]
         public int Id { get; set; }
-        public ApplicationUser Author { get; set; }
+        public string AuthorId { get; set; }
         public string ItemId { get; set; }
     }
 }

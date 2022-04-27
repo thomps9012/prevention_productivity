@@ -6,7 +6,8 @@ namespace prevention_productivity.Models
     {
         [Key]
         public int ContactId { get; set; }
-        public string ContactType { get; set; }
+        public ContactType Type { get; set; }
+        public string Event { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName
@@ -28,4 +29,14 @@ namespace prevention_productivity.Models
             }
         }
     }
+        public enum ContactType
+        {
+            Student,
+            Parent,
+            Teacher,
+            NonProfit,
+            Public,
+            Private,
+            Other
+        }
 }

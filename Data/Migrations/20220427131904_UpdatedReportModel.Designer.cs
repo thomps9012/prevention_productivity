@@ -273,10 +273,6 @@ namespace prevention_productivity.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ContactType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -295,7 +291,7 @@ namespace prevention_productivity.Data.Migrations
 
                     b.HasKey("ContactId");
 
-                    b.ToTable("Conttact");
+                    b.ToTable("Contact");
                 });
 
             modelBuilder.Entity("prevention_productivity.Models.Event", b =>

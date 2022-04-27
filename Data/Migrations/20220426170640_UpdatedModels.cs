@@ -33,7 +33,7 @@ namespace prevention_productivity.Data.Migrations
                 oldNullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Conttact",
+                name: "Contact",
                 columns: table => new
                 {
                     ContactId = table.Column<int>(type: "int", nullable: false)
@@ -47,7 +47,7 @@ namespace prevention_productivity.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Conttact", x => x.ContactId);
+                    table.PrimaryKey("PK_Contact", x => x.ContactId);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,7 +140,7 @@ namespace prevention_productivity.Data.Migrations
                 table: "ProductivityLog");
 
             migrationBuilder.DropTable(
-                name: "Conttact");
+                name: "Contact");
 
             migrationBuilder.DropTable(
                 name: "EventSummary");
