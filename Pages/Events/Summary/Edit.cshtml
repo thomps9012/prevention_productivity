@@ -21,6 +21,8 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="EventSummary.EventSummaryId" />
+            <input type="hidden" asp-for="EventSummary.EventId" />
+            <input type="hidden" asp-for="EventSummary.TeamMemberID" />
             <div class="form-group">
                 <label asp-for="EventSummary.Attendees" class="control-label"></label>
                 <input asp-for="EventSummary.Attendees" class="form-control" />
@@ -46,31 +48,28 @@
                 <textarea asp-for="EventSummary.NextSteps" class="form-control"></textarea>
                 <span asp-validation-for="EventSummary.NextSteps" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                 <form method="post" style="display:inline;">
-                    <!--
-                        add in conditional auth for this button
-                     <input type="hidden" name="id" value="@Model.EventSummary.EventSummaryId" />
-                    -->
+            <br />
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+           <!--
+               
+           <form method="post" style="display:inline;">
                     <input type="hidden" name="status" value="save" />
-                    <button class="btn btn-danger" type="submit">Save</button>
-                </form>
-                <form method="post" style="display:inline;">
-                   <!--
-                   <input type="hidden" name="id" value="@Model.EventSummary.EventSummaryId" />
-                       
-                   --> 
+                    <button class="btn btn-success" type="submit">Save Changes</button>
+            </form>
+            <br />
+         <form method="post" style="display:inline;">
                     <input type="hidden" name="status" value="delete" />
-                    <button class="btn btn-danger" type="submit">Delete</button>
-                </form>
-            </div
+                    <button class="btn btn-danger" type="submit">Delete Report</button>
+          </form>
+           --> 
+                
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

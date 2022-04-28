@@ -30,12 +30,13 @@ namespace prevention_productivity.Pages.Events.Summary
         public IActionResult OnGet()
         {
             //possible change here
-        ViewData["EventId"] = new SelectList(_context.Event, "Id", "Name");
+            Events = _context.Event.ToList();
             return Page();
         }
 
         [BindProperty]
         public EventSummary EventSummary { get; set; }
+        public IList<Event> Events { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -54,7 +55,7 @@ namespace prevention_productivity.Pages.Events.Summary
             _context.EventSummary.Add(EventSummary);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("../Index");
         }
     }
 }

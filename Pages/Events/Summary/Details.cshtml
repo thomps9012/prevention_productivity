@@ -15,7 +15,22 @@
 <body>
 
 <div>
-    <h4>EventSummary</h4>
+    <h4>Event Summary Report</h4>
+      <div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.EventSummary,
+            AuthOperations.Update)).Succeeded)
+            {
+                <p>
+                    
+            <a asp-page="./Edit" asp-route-id="@Model.EventSummary.EventSummaryId">Edit Report</a>   
+                </p>
+            }
+        </div>
+        <p>
+            
+    <a asp-page="../Details" asp-route-id="@Model.EventSummary.EventId">View Event Detail</a>
+        </p>
+       
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -92,16 +107,7 @@
                 </form>
             }
         }
-        <div>
-            @if ((await AuthorizationService.AuthorizeAsync(User, Model.EventSummary,
-            AuthOperations.Update)).Succeeded)
-            {
-            <a asp-page="./Edit" asp-route-id="@Model.EventSummary.EventSummaryId">Edit</a> 
-            <text> | </text>    
-            }
-        </div>
-    <a asp-page="../Details" asp-route-id="@Model.EventSummary.EventId">Back to Event Summary</a>
-        <a asp-page="../Index" asp-route-id="@Model.EventSummary.EventId">All Events</a>
+      
 </div>
 </body>
 </html>

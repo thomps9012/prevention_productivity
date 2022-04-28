@@ -16,9 +16,12 @@
 <p>
     <a asp-page="Create">Create New Event</a>
 </p>
+<!--
+    
 <p>
     <a asp-page="./Summary/Create">Create an Event Summary</a>
 </p>
+-->
 <table class="table">
     <thead>
         <tr>
@@ -82,7 +85,7 @@
             {   @if(item.Id == summary.EventId)
                 {
                 <text> | </text>
-            <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Event Summary</a>
+            <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
             }
             }            
             </td>

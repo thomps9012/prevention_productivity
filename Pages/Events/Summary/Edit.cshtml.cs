@@ -30,7 +30,6 @@ namespace prevention_productivity.Pages.Events.Summary
 
         [BindProperty]
         public EventSummary EventSummary { get; set; }
-
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -48,8 +47,7 @@ namespace prevention_productivity.Pages.Events.Summary
             }
             if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
             {
-                ViewData["EventId"] = new SelectList(_context.Event, "Id", "Name");
-                ViewData["TeamMemberID"] = new SelectList(_context.Users, "Id", "FullName");
+
                 return Page();
             } else
             {
@@ -59,75 +57,59 @@ namespace prevention_productivity.Pages.Events.Summary
 
         public async Task<IActionResult> OnPostAsync(string action)
         {
-            if (action == "delete") { 
-           
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                     User, EventSummary,
-                                                     AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
-            {
-                return Forbid();
-            }
-            
-                
-                _context.EventSummary.Remove(EventSummary);
-                await _context.SaveChangesAsync();
-            
+           // if (action == "delete") {
 
-            return RedirectToPage("./Index");
-            }else
-            {
-                if (!ModelState.IsValid)
+//                var isAuthorized = await AuthorizationService.AuthorizeAsync(
+  //                                                       User, EventSummary,
+    //                                                     AuthOperations.Delete);
+      //          if (!isAuthorized.Succeeded)
+        //        {
+          //          return Forbid();
+            //    }
+            //
+
+              //  Context.EventSummary.Remove(EventSummary);
+                //await Context.SaveChangesAsync();
+
+
+               // return RedirectToPage("../Index");
+           // }
+           // else if (action == "save")
+           // {
+
+                //   if (!ModelState.IsValid)
+                //  {
+                //     return Page();
+                // }
+
+                var summaryToUpdate = await Context.EventSummary.AsNoTracking().FirstOrDefaultAsync(s => s.EventSummaryId == EventSummary.EventSummaryId);
+                if (summaryToUpdate == null)
                 {
-                    return Page();
+                    return NotFound();
                 }
-
-
-                if ((await AuthorizationService.AuthorizeAsync(User, EventSummary, AuthOperations.Update)).Succeeded)
-                {
-
-                    _context.Attach(EventSummary).State = EntityState.Modified;
-                    if (EventSummary.Status == ApprovalStatus.Approved)
-                    {
-                        var canApprove = await AuthorizationService.AuthorizeAsync(
-                            User,
-                            EventSummary,
-                            AuthOperations.Approve);
-                        if (!canApprove.Succeeded)
-                        {
-                            EventSummary.Status = ApprovalStatus.Pending;
-                        }
-                    }
-                }
-                else
+                var isAuthorized = await AuthorizationService.AuthorizeAsync(
+                                                     User, summaryToUpdate,
+                                                     AuthOperations.Update);
+                if (!isAuthorized.Succeeded)
                 {
                     return Forbid();
                 }
-
-
-                try
+                Context.Attach(EventSummary).State = EntityState.Modified;
+                if (EventSummary.Status == ApprovalStatus.Approved)
                 {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EventSummaryExists(EventSummary.EventSummaryId))
+                    var canApprove = await AuthorizationService.AuthorizeAsync(
+                        User,
+                        EventSummary,
+                        AuthOperations.Approve);
+                    if (!canApprove.Succeeded)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        EventSummary.Status = ApprovalStatus.Pending;
                     }
                 }
-
+                await Context.SaveChangesAsync();
                 return RedirectToPage("./Index");
-            }
-        }
-
-        private bool EventSummaryExists(int id)
-        {
-            return _context.EventSummary.Any(e => e.EventSummaryId == id);
+           // }
+         //   return Page();
         }
     }
 }
