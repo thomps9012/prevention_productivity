@@ -23,9 +23,9 @@
               <div class="col-md-4">
                  
              <div class="form-group">
-                    <label asp-for="Event.GrantProgramId" class="control-label">Associated Grant</label>
+          
                     <select asp-for="Event.GrantProgramId" class="form-control">
-                        <option value="">Select Grant</option>
+                        <option value="">Select Associated Grant</option>
                         @foreach(var item in Model.Grants)
                         {
                             <option value="@item.Id">@item.Name</option>

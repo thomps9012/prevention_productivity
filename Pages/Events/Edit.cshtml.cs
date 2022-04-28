@@ -30,6 +30,7 @@ namespace prevention_productivity.Pages.Events
 
         [BindProperty]
         public Event Event { get; set; }
+        public IList<GrantProgram> Grants { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -40,12 +41,12 @@ namespace prevention_productivity.Pages.Events
 
             Event = await _context.Event
                 .Include(a => a.GrantProgram).FirstOrDefaultAsync(m => m.Id == id);
-
+            Grants = await _context.GrantProgram.ToListAsync();
             if (Event == null)
             {
                 return NotFound();
             }
-            ViewData["GrantProgramId"] = new SelectList(_context.GrantProgram, "Id", "Id");
+          
             if ((await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update)).Succeeded)
             {
                 return Page();
