@@ -45,61 +45,45 @@ namespace prevention_productivity.Pages.Events
             {
                 return NotFound();
             }
-           ViewData["GrantProgramId"] = new SelectList(_context.GrantProgram, "Id", "Id");
-            return Page();
-        }
-        
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
+            ViewData["GrantProgramId"] = new SelectList(_context.GrantProgram, "Id", "Id");
             if ((await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update)).Succeeded)
             {
-
-                _context.Attach(Event).State = EntityState.Modified;
-                if (Event.Status == ApprovalStatus.Approved)
-                {
-                    var canApprove = await AuthorizationService.AuthorizeAsync(
-                        User,
-                        Event,
-                        AuthOperations.Approve);
-                    if (!canApprove.Succeeded)
-                    {
-                        Event.Status = ApprovalStatus.Pending;
-                    }
-                }
+                return Page();
             }
             else
             {
                 return Forbid();
             }
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EventExists(Event.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToPage("./Index");
         }
 
-        private bool EventExists(int id)
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see https://aka.ms/RazorPagesCRUD.
+        public async Task<IActionResult> OnPostAsync()
         {
-            return _context.Event.Any(e => e.Id == id);
+            //  if (!ModelState.IsValid)
+            // {
+            //    return Page();
+            // }
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
+            Context.Attach(Event).State = EntityState.Modified;
+            if (Event.Status == ApprovalStatus.Approved)
+            {
+                var canApprove = await AuthorizationService.AuthorizeAsync(
+                    User,
+                    Event,
+                    AuthOperations.Approve);
+                if (!canApprove.Succeeded)
+                {
+                    Event.Status = ApprovalStatus.Pending;
+                }
+            }
+            await Context.SaveChangesAsync();
+            return RedirectToPage("./Index");
         }
     }
 }

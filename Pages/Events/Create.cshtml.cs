@@ -26,12 +26,10 @@ namespace prevention_productivity.Pages.Events
         {
             _context = context;
         }
-
+        public IList<GrantProgram> Grants { get; set; }
         public IActionResult OnGet()
         {
-            // possibly need to replace with old solution
-        ViewData["GrantProgramId"] = new SelectList(_context.GrantProgram, "Id", "Name");
-            TeamMemberList = _context.Users.ToList();
+            Grants = _context.GrantProgram.ToList();
             return Page();
         }
 
