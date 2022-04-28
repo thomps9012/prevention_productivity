@@ -65,7 +65,12 @@ namespace prevention_productivity.Pages.Events
             // {
             //    return Page();
             // }
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update);
+            var eventToUpdate = await Context.Event.AsNoTracking().FirstOrDefaultAsync(m => m.Id == Event.Id);
+        if (eventToUpdate == null)
+            {
+            return NotFound();
+        }
+        var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Event, AuthOperations.Update);
             if (!isAuthorized.Succeeded)
             {
                 return Forbid();
