@@ -19,6 +19,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
         [BindProperty]
         public ProductivityLog ProductivityLog { get; set; }
+        public IList<GrantProgram> GrantPrograms { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -31,6 +32,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
 
             ProductivityLog = log;
+            GrantPrograms = await _context.GrantProgram.ToListAsync();
 
             if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
             {

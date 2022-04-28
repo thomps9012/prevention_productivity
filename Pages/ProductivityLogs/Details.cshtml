@@ -14,79 +14,90 @@
 </head>
 <body>
 
+    <h4>Log Details</h4>
 <div>
-    <h4>ProductivityLog</h4>
+     <div>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
+        AuthOperations.Update)).Succeeded)
+        {   
+             <a asp-page="./Edit" asp-route-id="@Model.ProductivityLog.LogID">Edit</a> 
+             <text> | </text>
+        }
+    <a asp-page="./Index">Back to List</a>
+</div>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Date)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Date)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             Grant Program
         </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ProductivityLog.GrantProgram.Name)
+            <dd class="col-md-10">
+                @Html.DisplayFor(model =>  
+                    Model.Grants.FirstOrDefault(y => y.Id == model.ProductivityLog.GrantProgramID).Name)
             </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
            Team Member
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => 
                  Model.TeamMembers.FirstOrDefault(x => x.Id == model.ProductivityLog.TeamMemberID).FullName)                
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.FocusArea)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.FocusArea)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Actions)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Actions)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Successes)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Successes)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Improvements)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Improvements)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.NextSteps)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.NextSteps)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Challenges)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Challenges)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Notes)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Notes)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.ProductivityLog.Status)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-md-10">
             @Html.DisplayFor(model => model.ProductivityLog.Status)
         </dd>
     </dl>
 </div>
+
     @if (Model.ProductivityLog.Status != ApprovalStatus.Approved)
     {
         @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
@@ -114,14 +125,6 @@
    
        
                 
-    <div>
-        @if ((await AuthorizationService.AuthorizeAsync(User, Model.ProductivityLog,
-        AuthOperations.Update)).Succeeded)
-        {   
-             <a asp-page="./Edit" asp-route-id="@Model.ProductivityLog.LogID">Edit</a> 
-             <text> | </text>
-        }
-    <a asp-page="./Index">Back to List</a>
-</div>
+   
 </body>
 </html>

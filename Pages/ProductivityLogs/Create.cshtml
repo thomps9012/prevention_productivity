@@ -14,17 +14,21 @@ ViewData["Title"] = "Create";
 </head>
 <body>
 
-<h4>ProductivityLog</h4>
+<h4>Create Log</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div style="align-content:center;">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+                <div class="col-md-2"></div>
+            <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="ProductivityLog.Date" class="control-label"></label>
                 <input asp-for="ProductivityLog.Date" class="form-control" />
                 <span asp-validation-for="ProductivityLog.Date" class="text-danger"></span>
             </div>
+            </div>
+             <div class="col-md-4">
             <div class="form-group">
                     <label asp-for="ProductivityLog.GrantProgramID" class="control-label">Grant</label>
                     <select asp-for="ProductivityLog.GrantProgramID" class="form-control">
@@ -35,6 +39,13 @@ ViewData["Title"] = "Create";
                         }
                     </select>
                 </div>
+            </div>
+    </div>
+    <div class="row">
+        
+     <div class="col-md-2"></div>
+    <div class="col-md-8">
+        
             <div class="form-group">
                 <label asp-for="ProductivityLog.FocusArea" class="control-label">Focus Area</label>
                 <textarea asp-for="ProductivityLog.FocusArea" class="form-control"></textarea>
@@ -70,16 +81,17 @@ ViewData["Title"] = "Create";
                 <textarea asp-for="ProductivityLog.Notes" class="form-control"></textarea>
                 <span asp-validation-for="ProductivityLog.Notes" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+    </div>
+    <br />
+      
+            <div style="text-align: center;" class="form-group col">
+                <input type="submit" value="Save Log" class="btn btn-primary" />
             </div>
         </form>
-    </div>
 </div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

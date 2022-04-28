@@ -23,6 +23,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
         public ProductivityLog ProductivityLog { get; set; }
         [BindProperty]
         public IList<ApplicationUser> TeamMembers { get; set; }
+        public IList<GrantProgram> Grants { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
@@ -36,6 +37,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
            
             ProductivityLog = _log;
             TeamMembers = await _context.Users.ToListAsync();
+            Grants = await _context.GrantProgram.ToListAsync();
 
             var isAdmin = User.IsInRole(Constants.AdminRole);
             
