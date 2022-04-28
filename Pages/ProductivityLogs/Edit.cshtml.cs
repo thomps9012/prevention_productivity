@@ -47,23 +47,21 @@ namespace prevention_productivity.Pages.ProductivityLogs
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
             
-            var log = await _context.ProductivityLog.FirstOrDefaultAsync(m => m.LogID == id);
+
+            var log = await Context.ProductivityLog.AsNoTracking().FirstOrDefaultAsync(m => m.LogID == id);
 
             if (log == null)
             {
                 return NotFound();
             }
-
-            if ((await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update)).Succeeded)
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, log, AuthOperations.Update);
+            if (!isAuthorized.Succeeded)
             {
-                ProductivityLog.TeamMemberID = log.TeamMemberID;
-
-                _context.Attach(ProductivityLog).State = EntityState.Modified;
+                return Forbid();
+            }
+            
+            Context.Attach(ProductivityLog).State = EntityState.Modified;
 
                 if (ProductivityLog.Status == ApprovalStatus.Approved)
                 {
@@ -77,14 +75,9 @@ namespace prevention_productivity.Pages.ProductivityLogs
                 }
 
 
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
 
                 return RedirectToPage("./Index");
-            }
-            else
-            {
-                return Forbid();
-            }
 
             
         }

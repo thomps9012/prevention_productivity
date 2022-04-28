@@ -20,6 +20,10 @@
 <div style="align-content:center;">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+              <input type="hidden" asp-for="ProductivityLog.GrantProgramID" />
+              <input type="hidden" asp-for="ProductivityLog.LogID" />
+              <input type="hidden" asp-for="ProductivityLog.TeamMemberID" />
+            
     <div class="row">
                 <div class="col-md-2"></div>
             <div class="col-md-4">
