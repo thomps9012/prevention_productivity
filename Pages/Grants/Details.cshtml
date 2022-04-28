@@ -10,12 +10,20 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
+    <title>Grant Details</title>
 </head>
 <body>
 
+    <h4>Grant Program Details</h4>
 <div>
-    <h4>GrantProgram</h4>
+    
+<div>
+    @if(User.IsInRole("Admin")){
+    <a asp-page="./Edit" asp-route-id="@Model.GrantProgram.Id">Edit</a> 
+    <text> | </text>
+    }
+    <a asp-page="./Index">Back to List</a>
+</div>    
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -49,13 +57,6 @@
             @Html.DisplayFor(model => model.GrantProgram.EndDate)
         </dd>
     </dl>
-</div>
-<div>
-    @if(User.IsInRole("Admin")){
-    <a asp-page="./Edit" asp-route-id="@Model.GrantProgram.Id">Edit</a> 
-    <text> | </text>
-    }
-    <a asp-page="./Index">Back to List</a>
 </div>
 </body>
 </html>
