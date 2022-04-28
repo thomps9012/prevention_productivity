@@ -38,9 +38,8 @@ namespace prevention_productivity.Pages.Contacts
                 return NotFound();
             }
             Contact = _contact;
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, Contact,
-                                                                AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
@@ -55,10 +54,8 @@ namespace prevention_productivity.Pages.Contacts
                 return NotFound();
             }
 
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                User, Contact, AuthOperations.Delete);
-
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
