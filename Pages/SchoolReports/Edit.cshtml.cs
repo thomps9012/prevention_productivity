@@ -52,23 +52,24 @@ namespace prevention_productivity.Pages.SchoolReports
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+           // if (!ModelState.IsValid)
+           // {
+            //    return Page();
+           // }
 
-            var report = await _context.SchoolReport.FirstOrDefaultAsync(m => m.SchoolReportId == id);
+            var report = await Context.SchoolReport.AsNoTracking().FirstOrDefaultAsync(m => m.SchoolReportId == id);
 
             if (report == null)
             {
                 return NotFound();
             }
-
-            if ((await AuthorizationService.AuthorizeAsync(User, report, AuthOperations.Update)).Succeeded)
+            var isAuthorized = await AuthorizationService.AuthorizeAsync(User, report, AuthOperations.Update);
+            if (!isAuthorized.Succeeded)
             {
-                SchoolReport.TeamMemberId = report.TeamMemberId;
+                return Forbid();
+            }
 
-                _context.Attach(SchoolReport).State = EntityState.Modified;
+                Context.Attach(SchoolReport).State = EntityState.Modified;
 
                 if (SchoolReport.Status == ApprovalStatus.Approved)
                 {
@@ -82,14 +83,10 @@ namespace prevention_productivity.Pages.SchoolReports
                 }
 
 
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
 
                 return RedirectToPage("./Index");
-            }
-            else
-            {
-                return Forbid();
-            }
+           
 
 
         }

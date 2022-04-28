@@ -19,6 +19,8 @@
 <div>
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SchoolReport.SchoolReportId" />
+            <input type="hidden" asp-for="SchoolReport.TeamMemberId" />
             <div class="row">
                  <div class="col-md-2"></div>
                   <div class="col-md-4">
