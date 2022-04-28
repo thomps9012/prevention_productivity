@@ -47,7 +47,10 @@ namespace prevention_productivity.Pages.ProductivityLogs
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            
+          //  if (!ModelState.IsValid)
+           // {
+             //   return Page();
+           // }
 
             var log = await Context.ProductivityLog.AsNoTracking().FirstOrDefaultAsync(m => m.LogID == id);
 

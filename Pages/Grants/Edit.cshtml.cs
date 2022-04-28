@@ -56,16 +56,16 @@ namespace prevention_productivity.Pages.Grants
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+          //  if (!ModelState.IsValid)
+           // {
+            //    return Page();
+           // }
 
-            _context.Attach(GrantProgram).State = EntityState.Modified;
+            Context.Attach(GrantProgram).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
