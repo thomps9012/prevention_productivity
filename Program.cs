@@ -40,7 +40,7 @@ services.AddAuthorization(options =>
 services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
 services.AddScoped<IAuthorizationHandler, IsEventLead>();
 services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
-builder.Services.AddScoped<IAuthorizationHandler, IsReportHandler>();
+services.AddScoped<IAuthorizationHandler, IsReportHandler>();
 
 services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
 services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
