@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2nBijw/1o0/8AgzUpNL+1XsIDexc2HowEOr+BNv9/zAv8SJwX7/ZE39NgX00BiBRLJAByn7qtg2s3z8FjEbbGg==",
+  "dgSpecHash": "ZLkHIhMsYqOApqXab7Ja+SF61FgDuoIABgPG/Qgw90PhLbZ83TvseFSDqdJKMK3TFHtmnzEoNweKrPMIuvF4/Q==",
   "success": true,
   "projectFilePath": "C:\\Freelance\\prevention_productivity\\prevention_productivity.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\thomp\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\messagepack.annotations\\2.1.152\\messagepack.annotations.2.1.152.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\messagepackanalyzer\\2.1.152\\messagepackanalyzer.2.1.152.nupkg.sha512",
+    "C:\\Users\\thomp\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\6.0.4\\microsoft.aspnetcore.authentication.google.6.0.4.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.4\\microsoft.aspnetcore.cryptography.internal.6.0.4.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.4\\microsoft.aspnetcore.cryptography.keyderivation.6.0.4.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.aspnetcore.diagnostics.entityframeworkcore\\6.0.4\\microsoft.aspnetcore.diagnostics.entityframeworkcore.6.0.4.nupkg.sha512",

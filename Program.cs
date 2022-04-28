@@ -6,21 +6,30 @@ using prevention_productivity.Authorization;
 using prevention_productivity.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+var configuration = builder.Configuration;
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+var connectionString = configuration.GetConnectionString("DefaultConnection");
+services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(
+services.AddDefaultIdentity<ApplicationUser>(
     options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddRazorPages();
+services.AddRazorPages();
 
-builder.Services.AddAuthorization(options =>
+services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    });
+
+services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
@@ -28,27 +37,27 @@ builder.Services.AddAuthorization(options =>
 });
 
 //make sure to register the auth policy handler
-builder.Services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, IsEventLead>();
-builder.Services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
+services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
+services.AddScoped<IAuthorizationHandler, IsEventLead>();
+services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
 builder.Services.AddScoped<IAuthorizationHandler, IsReportHandler>();
 
-builder.Services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
-builder.Services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
-builder.Services.AddSingleton<IAuthorizationHandler, IsSummaryAdmin>();
-builder.Services.AddSingleton<IAuthorizationHandler, IsReportAdmin>();
-builder.Services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
+services.AddSingleton<IAuthorizationHandler, IsLogAdmin>();
+services.AddSingleton<IAuthorizationHandler, IsEventAdmin>();
+services.AddSingleton<IAuthorizationHandler, IsSummaryAdmin>();
+services.AddSingleton<IAuthorizationHandler, IsReportAdmin>();
+services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    var scopeServices = scope.ServiceProvider;
+    var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 
     var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
-    await SeedData.Initialize(services, testUserPw);
+    await SeedData.Initialize(scopeServices, testUserPw);
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
