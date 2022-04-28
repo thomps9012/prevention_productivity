@@ -33,9 +33,8 @@ namespace prevention_productivity.Pages.Contacts
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-               User, Contact, AuthOperations.Update);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
             return Forbid();
             }
@@ -59,23 +58,22 @@ namespace prevention_productivity.Pages.Contacts
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                User, Contact, AuthOperations.Update);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
                 
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+          //  if (!ModelState.IsValid)
+           // {
+            //    return Page();
+           // }
 
-            _context.Attach(Contact).State = EntityState.Modified;
+            Context.Attach(Contact).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -95,7 +93,7 @@ namespace prevention_productivity.Pages.Contacts
 
         private bool ContactExists(int id)
         {
-            return _context.Contact.Any(e => e.ContactId == id);
+            return Context.Contact.Any(e => e.ContactId == id);
         }
     }
 }

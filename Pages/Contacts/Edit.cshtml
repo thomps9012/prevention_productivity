@@ -21,7 +21,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Contact.ContactId" />
-            <div class="form-group">
+             <div class="form-group">
                 <label asp-for="Contact.FirstName" class="control-label">First Name</label>
                 <input asp-for="Contact.FirstName" class="form-control" />
                 <span asp-validation-for="Contact.FirstName" class="text-danger"></span>
@@ -30,6 +30,23 @@
                 <label asp-for="Contact.LastName" class="control-label">Last Name</label>
                 <input asp-for="Contact.LastName" class="form-control" />
                 <span asp-validation-for="Contact.LastName" class="text-danger"></span>
+            </div>            
+            <div class="form-group">
+                <label asp-for="Contact.Type" class="control-label"></label>
+                <select asp-for="Contact.Type" class="form-control">
+                        <option value="@ContactType.Student">Student</option>
+                        <option value="@ContactType.Parent">Parent</option>
+                        <option value="@ContactType.Teacher">Teacher</option>
+                        <option value="@ContactType.NonProfit">Non-Profit</option>
+                        <option value="@ContactType.Private">Private Sector</option>
+                        <option value="@ContactType.Other">Other</option>
+                    </select>
+                <span asp-validation-for="Contact.Type" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Contact.AffiliatedOrg" class="control-label">Affiliated Organization</label>
+                <input asp-for="Contact.AffiliatedOrg" class="form-control" />
+                <span asp-validation-for="Contact.AffiliatedOrg" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Contact.Email" class="control-label"></label>
@@ -41,20 +58,12 @@
                 <input asp-for="Contact.Phone" class="form-control" />
                 <span asp-validation-for="Contact.Phone" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <label asp-for="Contact.AffiliatedOrg" class="control-label">Affiliated Organization</label>
-                <input asp-for="Contact.AffiliatedOrg" class="form-control" />
-                <span asp-validation-for="Contact.AffiliatedOrg" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save Edits" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {
