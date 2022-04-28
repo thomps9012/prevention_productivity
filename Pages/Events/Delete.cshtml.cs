@@ -29,14 +29,14 @@ namespace prevention_productivity.Pages.Events
 
         [BindProperty]
         public Event Event { get; set; }
-        
+        public ApplicationUser EventLead { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            EventLead = await _context.Users.FirstOrDefaultAsync(m => m.Id == Event.EventLead);
             Event = await _context.Event
                 .Include(a => a.GrantProgram).FirstOrDefaultAsync(m => m.Id == id);
 

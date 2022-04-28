@@ -29,6 +29,7 @@ namespace prevention_productivity.Pages.Events
 
         public Event Event { get; set; }
         public EventSummary EventSummary { get; set; }
+        public ApplicationUser EventLead { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -41,6 +42,7 @@ namespace prevention_productivity.Pages.Events
                 .Include(a => a.GrantProgram).FirstOrDefaultAsync(m => m.Id == id);
 
             EventSummary = await _context.EventSummary.Include(a => a.Event).FirstOrDefaultAsync(m => m.EventId == id);
+            EventLead = await _context.Users.FirstOrDefaultAsync(m => m.Id == Event.EventLead);
 
             var isAdmin = User.IsInRole(Constants.AdminRole);
             var currentUserId = UserManager.GetUserId(User);
