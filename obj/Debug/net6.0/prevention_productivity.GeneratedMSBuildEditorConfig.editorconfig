@@ -99,6 +99,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXFN1bW1hcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Freelance/prevention_productivity/Pages/Events/Summary/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXFN1bW1hcnlcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Freelance/prevention_productivity/Pages/Events/Summary/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXZlbnRzXFN1bW1hcnlcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
