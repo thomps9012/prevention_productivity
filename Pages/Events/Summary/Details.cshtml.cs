@@ -79,7 +79,7 @@ namespace prevention_productivity.Pages.Events.Summary
             EventSummary.Status = status;
             _context.EventSummary.Update(EventSummary);
             await _context.SaveChangesAsync();
-            return RedirectToPage("./Index");
+            return RedirectToPage("../Index");
         }
     }
 }

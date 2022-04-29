@@ -107,7 +107,7 @@ namespace prevention_productivity.Pages.Events.Summary
                     }
                 }
                 await Context.SaveChangesAsync();
-                return RedirectToPage("./Index");
+                return RedirectToPage("../Index");
            // }
          //   return Page();
         }

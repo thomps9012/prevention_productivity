@@ -81,13 +81,21 @@
                 <text> | </text>
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
                 }
-                        @foreach (var summary in Model.EventSummary)
-            {   @if(item.Id == summary.EventId)
+         @foreach (var summary in Model.EventSummary)
+            {   
+            @if(item.Id == summary.EventId &&
+            User.IsInRole("Admin"))
                 {
+                    <text> | </text>
+                <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
+                }
+            @if(item.Id == summary.EventId && 
+            summary.Status == ApprovalStatus.Approved &&
+            !User.IsInRole("Admin")){
                 <text> | </text>
-            <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
+                <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
+                }             
             }
-            }            
             </td>
         </tr>
 }
