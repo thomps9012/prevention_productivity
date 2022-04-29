@@ -282,18 +282,22 @@
                 <textarea asp-for="Event.FoodBeverage" class="form-control"></textarea>
                 <span asp-validation-for="Event.FoodBeverage" class="text-danger"></span>
                 </div>
-            </div>                
-            
+            </div>  
             <div class="form-group">
-                <label asp-for="Event.OtherSpecialOrder" class="control-label">Other Special Orders</label>
-                <textarea asp-for="Event.OtherSpecialOrder" class="form-control"></textarea>
-                <span asp-validation-for="Event.OtherSpecialOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+                            <label asp-for="Event.OtherSpecialOrder" class="control-label">Other Special Orders</label>
+                            <textarea asp-for="Event.OtherSpecialOrder" class="form-control"></textarea>
+                            <span asp-validation-for="Event.OtherSpecialOrder" class="text-danger"></span>
+                        </div>
+            <div class="row">
+                    <div class="col-md-4">
+                         <div class="form-group">
                     <label asp-for="Event.StaffTimeCommitment" class="control-label">Staff Time Commitment (in hours)</label>
                     <input asp-for="Event.StaffTimeCommitment" class="form-control" />
                     <span asp-validation-for="Event.StaffTimeCommitment" class="text-danger"></span>
                 </div>
+                       </div> 
+            </div>
+           
         <div class="row">
                 <div class="col-md-6">
                     
