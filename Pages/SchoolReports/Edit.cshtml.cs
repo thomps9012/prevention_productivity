@@ -85,8 +85,8 @@ namespace prevention_productivity.Pages.SchoolReports
 
                 await Context.SaveChangesAsync();
 
-                return RedirectToPage("./Index");
-           
+            return RedirectToPage("./Details", new { id = SchoolReport.SchoolReportId });
+
 
 
         }

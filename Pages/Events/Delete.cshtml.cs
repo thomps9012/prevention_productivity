@@ -53,10 +53,8 @@ namespace prevention_productivity.Pages.Events
             {
                 return NotFound();
             }
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                     User, Event,
-                                                     AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }

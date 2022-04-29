@@ -18,7 +18,7 @@
 <div>
     <h4>Event</h4>
     <hr />
-   <dl class="row">
+      <dl class="row">
         <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.Event.Name)
         </dt>
@@ -38,7 +38,7 @@
             @Html.DisplayFor(model => model.Event.Status)
         </dd>
         <dt class="col-md-2">
-Affiliated Organizations
+            Affiliated Organizations
         </dt>
         <dd class="col-md-10">
             @Html.DisplayFor(model => model.Event.EventAffiliates)
@@ -82,10 +82,48 @@ Affiliated Organizations
             @Html.DisplayFor(model => model.Event.GrantProgram.Name)
         </dd>
         <dt class="col-md-2">
-            @Html.DisplayNameFor(model => model.Event.Description)
+         Program Description
         </dt>
         <dd class="col-md-10">
             @Html.DisplayFor(model => model.Event.Description)
+        </dd>
+        <dt class="col-md-2">
+            Event Education Goal
+        </dt>
+        <dd class="col-md-10">
+                @Html.DisplayFor(model => model.Event.EducationGoal)
+        </dd>
+        <dt class="col-md-2">
+            Event Curriculum Component
+        </dt>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.Curriculum)
+        </dd>
+        <dt class="col-md-2">
+            Information Distribution Plan
+        </dt>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.InformationDistribution)
+        </dd>
+        <dt class="col-md-2">
+            Outreach Plan
+        </dt>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.Outreach)
+        </dd>
+        <dt class="col-md-2">
+            Grant Goals
+        </dt>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.GrantGoal1)
+        </dd>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.GrantGoal2)
+
+        </dd>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.GrantGoal3)
+
         </dd>
         <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.Event.Location)
@@ -252,7 +290,12 @@ Staff Time Commitment
         <dd class="col-md-10">
             @Html.DisplayFor(model => model.Event.OtherSpecialOrder)
         </dd>
-        
+        <dt class="col-md-2">
+            Guest List
+        </dt>
+        <dd class="col-md-10">
+            @Html.DisplayFor(model => model.Event.GuestList)
+        </dd>
         
         <dt class="col-md-2">
             @Html.DisplayNameFor(model => model.Event.Notes)

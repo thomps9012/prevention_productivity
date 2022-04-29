@@ -40,10 +40,8 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
             TeamMember = await _context.Users.FirstOrDefaultAsync(u => u.Id == _log.TeamMemberID);
             ProductivityLog = _log;
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
@@ -61,12 +59,10 @@ namespace prevention_productivity.Pages.ProductivityLogs
             }
 
 
-           
-                var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, ProductivityLog,
-                                                        AuthOperations.Delete);
-                if(!isAuthorized.Succeeded)
-                {
+
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
+            {
                     return Forbid();
                 }
                 _context.ProductivityLog.Remove(log);

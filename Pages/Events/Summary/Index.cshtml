@@ -56,11 +56,6 @@
                 <text> | </text>
                 }
                 <a asp-page="./Details" asp-route-id="@item.EventSummaryId">Details</a>
-                @if (User.IsInRole("Admin"))
-                {
-                <text> | </text>
-                <a asp-page="./Delete" asp-route-id="@item.EventSummaryId">Delete</a>
-                }
             </td>
         </tr>
 }

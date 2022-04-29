@@ -80,9 +80,9 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
                 await Context.SaveChangesAsync();
 
-                return RedirectToPage("./Index");
+            return RedirectToPage("./Details", new { id = ProductivityLog.LogID });
 
-            
+
         }
     }
 }

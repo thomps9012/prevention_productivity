@@ -45,6 +45,14 @@ namespace prevention_productivity.Models
         public string EventAffiliates { get; set; }
         public string Notes { get; set; }
         public string EventLead { get; set; }
+        public string EducationGoal { get; set; }
+        public string Curriculum { get; set; }
+        public string InformationDistribution { get; set; }
+        public string Outreach { get; set; }
+        public string GrantGoal1 { get; set; }
+        public string GrantGoal2 { get; set; }
+        public string? GrantGoal3 { get; set; }
+        public string GuestList { get; set; }
         public ApprovalStatus Status { get; set; }
     }
 }

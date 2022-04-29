@@ -89,7 +89,7 @@ namespace prevention_productivity.Pages.Events
                 }
             }
             await Context.SaveChangesAsync();
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Details", new { id = Event.Id });
         }
     }
 }

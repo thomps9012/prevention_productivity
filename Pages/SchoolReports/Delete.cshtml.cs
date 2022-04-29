@@ -39,10 +39,8 @@ namespace prevention_productivity.Pages.SchoolReports
             }
 
             SchoolReport = _report;
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                                   User, SchoolReport,
-                                                                   AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
@@ -58,10 +56,8 @@ namespace prevention_productivity.Pages.SchoolReports
                 return NotFound();
             }
 
-            var isAuthorized = await AuthorizationService.AuthorizeAsync(
-                                                        User, SchoolReport,
-                                                        AuthOperations.Delete);
-            if (!isAuthorized.Succeeded)
+            var isAuthorized = User.IsInRole("Admin");
+            if (!isAuthorized)
             {
                 return Forbid();
             }
