@@ -7,21 +7,28 @@
 <div class="text-center">
     <h1 class="display-4">Welcome to the Prevention Homepage</h1>
     <br />
-    <p>The time on the server is @DateTime.Now</p>
     <br />
     <h3>On this application you can:</h3>
     <hr />
     <br />
     <h4><a asp-page="/ProductivityLogs/Create">Create Productivity Logs</a> and <a asp-page="/ProductivityLogs/Index">Track Your Productivity</a> throughout the week</h4>
     <br />
-    <h4><a asp-page="/Events/Create">Create Events</a>, in order to meet grant Goals</h4>
+    <h4><a asp-page="/Events/Create">Create Events</a> in order to meet grant Goals, or <a asp-page="/Events/Index">View Past Events and Associated Reports</a> </h4>
     <br />
-    <h4><a asp-page="/Grants/Create">Add Grants</a> or track <a asp-page="/Grants/Index">Existing Ones</a></h4>
+    <h4><a asp-page="/SchoolReports/Create">Create Lesson Reports</a> and <a asp-page="/SchoolReports/Index">View Lessons Taught by Fellow Team Members</a></h4>
     <br />
-    <h4><a asp-page="/Contacts/Index">View Established Contacts</a>, or <a asp-area="" asp-page="/Contacts/Create">Add New Contacts</a></h4>
+    <h4><a asp-page="/Contacts/Index">View Established Contacts</a> or <a asp-area="" asp-page="/Contacts/Create">Add New Ones</a></h4>
     <br />
-    <h4><a asp-page="/Events/Index">View Events</a>  and <a asp-page="/Events/Summary/Index">Event Summaries</a></h4>
+    @if (User.IsInRole("Admin"))
+    {   
+        <h4><a asp-page="/Grants/Create">Add Grants</a> or view information about <a asp-page="/Grants/Index">Existing Ones</a></h4>
+    } else
+    {
+        <h4><a asp-page="/Grants/Index">View Grants</a></h4>
+    }
     <br />
+    <br />
+    <p>The time on the server is @DateTime.Now</p>
 
 </div>
 
