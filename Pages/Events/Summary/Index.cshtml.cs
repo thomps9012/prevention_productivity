@@ -40,8 +40,7 @@ namespace prevention_productivity.Pages.Events.Summary
 
             if (!isAuthorized)
             {
-                eventSummary = eventSummary.Where(e => e.Status == ApprovalStatus.Approved
-                || e.TeamMemberID == currentUserId);
+                eventSummary = eventSummary.Where(e => e.TeamMemberID == currentUserId);
             }
              EventSummary = await eventSummary.ToListAsync();
         }

@@ -51,8 +51,7 @@ namespace prevention_productivity.Pages.Events
             
             if (!isAuthorized)
             {
-                events = events.Where(e => e.Status == ApprovalStatus.Approved
-                || e.EventLead == currentUserId);
+                events = events.Where(e => e.EventLead == currentUserId);
             }
             Event = await events.ToListAsync();
             TeamList = await teamList.ToListAsync();

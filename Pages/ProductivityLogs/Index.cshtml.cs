@@ -40,8 +40,7 @@ namespace prevention_productivity.Pages.ProductivityLogs
 
             if (!isAuthorized)
             {
-                productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Approved
-                                                || c.TeamMemberID == currentUserId);
+                productivityLogs = productivityLogs.Where(c => c.TeamMemberID == currentUserId);
             }
             
             ProductivityLog = await productivityLogs.ToListAsync();

@@ -43,8 +43,7 @@ namespace prevention_productivity.Pages.SchoolReports
             
             if(!isAuthorized)
             {
-                reports = reports.Where(r => r.Status == ApprovalStatus.Approved
-                    || r.TeamMemberId == currentUserId);
+                reports = reports.Where(r => r.TeamMemberId == currentUserId);
             }
             SchoolReport = await reports.ToListAsync();
             TeamMember = await teamMembers.ToListAsync();
