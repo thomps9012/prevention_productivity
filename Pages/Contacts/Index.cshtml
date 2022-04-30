@@ -1,0 +1,72 @@
+﻿@page
+@model prevention_productivity.Pages.Contacts.IndexModel
+
+@{
+  ViewData["Title"] = "Index";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Contacts</title>
+</head>
+<body>
+<p>
+    <a asp-page="Create">Add New Contact</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Contact[0].Type)
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Contact[0].Email)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.Contact[0].Phone)
+            </th>
+            <th>
+                Affiliated Organization
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Contact) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AffiliatedOrg)
+            </td>
+            <td>
+                @if (User.IsInRole("Admin")){   
+                <a asp-page="./Edit" asp-route-id="@item.ContactId">Edit</a> 
+                <text> | </text>
+                <a asp-page="./Delete" asp-route-id="@item.ContactId">Delete</a>
+                <text> | </text>                
+                }
+                <a asp-page="./Details" asp-route-id="@item.ContactId">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

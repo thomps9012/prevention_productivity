@@ -1,0 +1,55 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  color: #294D4A;
+  margin-bottom: 60px;
+}
+
+#login-submit,
+.btn-primary {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #402942;
+    border-color: #402942;
+}
+    #login-submit:hover,
+    .btn-primary:hover {
+        background-color: #BD4089;
+        border-color: #BD4089;
+    }
+
+body {
+    background-color: #DFF2D8;
+}
+.form-floating {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+a {
+    color: #6622CC;
+}
+
+a:hover {
+    color: #BD4089;
+}
+
+.form-control {
+    background-color: #DFF2D8;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+

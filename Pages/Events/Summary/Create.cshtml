@@ -1,0 +1,70 @@
+﻿@page
+@model prevention_productivity.Pages.Events.Summary.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+
+<h4>Create a New Event Summary</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                    <label asp-for="EventSummary.EventId" class="control-label">Associated Event</label>
+                    <select asp-for="EventSummary.EventId" class="form-control">
+                        <option value="">Select Event Below</option>
+                        @foreach(var item in Model.Events)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            <div class="form-group">
+                <label asp-for="EventSummary.Attendees" class="control-label"></label>
+                <input asp-for="EventSummary.Attendees" class="form-control" />
+                <span asp-validation-for="EventSummary.Attendees" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventSummary.Challenges" class="control-label"></label>
+                <textarea asp-for="EventSummary.Challenges" class="form-control"></textarea>
+                <span asp-validation-for="EventSummary.Challenges" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventSummary.Outcomes" class="control-label"></label>
+                <textarea asp-for="EventSummary.Outcomes" class="form-control"></textarea>
+                <span asp-validation-for="EventSummary.Outcomes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventSummary.Notes" class="control-label"></label>
+                <textarea asp-for="EventSummary.Notes" class="form-control"></textarea>
+                <span asp-validation-for="EventSummary.Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventSummary.NextSteps" class="control-label">Next Steps</label>
+                <textarea asp-for="EventSummary.NextSteps" class="form-control"></textarea>
+                <span asp-validation-for="EventSummary.NextSteps" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create Summary" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+</body>
+</html>

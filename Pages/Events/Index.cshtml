@@ -1,0 +1,105 @@
+﻿@page
+@model prevention_productivity.Pages.Events.IndexModel
+
+@{
+   ViewData["Title"] = "Index";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-page="Create">Create New Event</a>
+</p>
+<!--
+    
+<p>
+    <a asp-page="./Summary/Create">Create an Event Summary</a>
+</p>
+-->
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].Location)
+            </th>
+            <th>
+                Grant
+            </th>
+            <th>
+               Date & Time
+            </th>
+            <th>
+               Event Lead
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Event) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+           <td>
+                        @Html.DisplayFor(modelItem => 
+                            Model.Grants.FirstOrDefault(y => y.Id == item.GrantProgramId).Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => 
+                    Model.TeamList.FirstOrDefault(x => x.Id == item.EventLead).FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
+                {
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                <text> | </text>
+                }
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                @if (User.IsInRole("Admin"))
+                {
+                <text> | </text>
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                }
+                 @foreach (var summary in Model.EventSummary)
+                    {   
+                    @if(item.Id == summary.EventId &&
+                    User.IsInRole("Admin"))
+                        {
+                            <text> | </text>
+                        <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
+                        }
+                    @if(item.Id == summary.EventId && 
+                    summary.Status == ApprovalStatus.Approved &&
+                    !User.IsInRole("Admin")){
+                        <text> | </text>
+                        <a asp-page="./Summary/Details/" asp-route-id="@summary.EventSummaryId">View Summary</a>
+                        }             
+                    }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>
