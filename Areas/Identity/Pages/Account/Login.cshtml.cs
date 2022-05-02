@@ -63,7 +63,7 @@ namespace prevention_productivity.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
         
-        public async Task GetTaskAsync(string returnUrl = null)
+        public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
