@@ -53,3 +53,17 @@ a:hover {
     margin-bottom: 10px;
 }
 
+#rejected {
+    font-weight: bolder;
+    color: #d30808
+}
+
+#approved {
+    font-weight: bolder;
+    color: #294D4A;
+}
+
+#pending {
+    font-weight: bolder;
+    color: #bda30f;
+}
