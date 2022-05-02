@@ -46,9 +46,23 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TeamMember.FullName)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+            @switch(item.Status){
+                 case ApprovalStatus.Pending:
+                    <td id="pending">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Approved:
+                    <td id="approved">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Rejected:
+                    <td id="rejected">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+             }
             <td>
                 @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                 {
