@@ -40,9 +40,23 @@
     <tbody>
 @foreach (var item in Model.SchoolReport) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Curriculum)
-            </td>
+             @switch(item.Status){
+                 case ApprovalStatus.Pending:
+                    <td id="pending">
+                    @Html.DisplayFor(modelItem => item.Curriculum)
+                    </td>
+                    break;
+                case ApprovalStatus.Approved:
+                    <td id="approved">
+                    @Html.DisplayFor(modelItem => item.Curriculum)
+                    </td>
+                    break;
+                case ApprovalStatus.Rejected:
+                    <td id="rejected">
+                        @Html.DisplayFor(modelItem => item.Curriculum)
+                    </td>
+                    break;
+             }
             <td>
                 @Html.DisplayFor(modelItem => item.LessonPlan)
             </td>
@@ -53,9 +67,23 @@
                         @Html.DisplayFor(modelItem => 
                             Model.TeamMember.FirstOrDefault(x => x.Id == item.TeamMemberId).FullName)
            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+            @switch(item.Status){
+                 case ApprovalStatus.Pending:
+                    <td id="pending">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Approved:
+                    <td id="approved">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Rejected:
+                    <td id="rejected">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+             }
             <td>
                  @if ((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                         {
