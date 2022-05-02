@@ -4,6 +4,8 @@ using prevention_productivity.Data;
 using Microsoft.AspNetCore.Authorization;
 using prevention_productivity.Authorization;
 using prevention_productivity.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using prevention_productivity.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -21,6 +23,8 @@ services.AddDefaultIdentity<ApplicationUser>(
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 services.AddRazorPages();
+services.AddTransient<IEmailSender, EmailSender>();
+services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 services.AddAuthentication()
     .AddGoogle(options =>
