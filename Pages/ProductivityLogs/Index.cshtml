@@ -41,22 +41,22 @@
             @foreach (var item in Model.ProductivityLog) {
                 <tr>
                      @switch(item.Status){
-                 case ApprovalStatus.Pending:
-                    <td id="pending">
-                      @item.Date.ToShortDateString()
+                        case ApprovalStatus.Pending:
+                            <td id="pending">
+                            @item.Date.ToShortDateString()
                             </td>
                             break;
                         case ApprovalStatus.Approved:
                             <td id="approved">
-                                @item.Date.ToShortDateString()
-                    </td>
-                    break;
-                case ApprovalStatus.Rejected:
-                    <td id="rejected">
-                         @item.Date.ToShortDateString()
-                    </td>
-                    break;
-             }
+                            @item.Date.ToShortDateString()
+                            </td>
+                            break;
+                        case ApprovalStatus.Rejected:
+                            <td id="rejected">
+                            @item.Date.ToShortDateString()
+                            </td>
+                        break;
+                    }
             <td>
                 @Html.DisplayFor(modelItem => 
                     Model.TeamMember.FirstOrDefault(x => x.Id == item.TeamMemberID).FullName)

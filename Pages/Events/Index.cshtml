@@ -49,9 +49,23 @@
     <tbody>
 @foreach (var item in Model.Event) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
+                @switch(item.Status){
+                        case ApprovalStatus.Pending:
+                            <td id="pending">
+                            @item.Name
+                            </td>
+                            break;
+                        case ApprovalStatus.Approved:
+                            <td id="approved">
+                            @item.Name
+                            </td>
+                            break;
+                        case ApprovalStatus.Rejected:
+                            <td id="rejected">
+                            @item.Name
+                            </td>
+                        break;
+                 }
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
@@ -60,15 +74,29 @@
                             Model.Grants.FirstOrDefault(y => y.Id == item.GrantProgramId).Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EventStart)
+                @item.EventStart.ToLongDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => 
                     Model.TeamList.FirstOrDefault(x => x.Id == item.EventLead).FullName)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
+             @switch(item.Status){
+                 case ApprovalStatus.Pending:
+                    <td id="pending">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Approved:
+                    <td id="approved">
+                    @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+                case ApprovalStatus.Rejected:
+                    <td id="rejected">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    break;
+             }
             <td>
                 @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                 {
