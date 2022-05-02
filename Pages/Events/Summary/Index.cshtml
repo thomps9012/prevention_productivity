@@ -19,6 +19,9 @@
 <table class="table">
     <thead>
         <tr>
+             <th>
+                @Html.DisplayNameFor(model => model.EventSummary[0].Status)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.EventSummary[0].Event)
             </th>
@@ -28,25 +31,14 @@
             <th>
                 Summary Creator
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventSummary[0].Status)
-            </th>
+           
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.EventSummary) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Event.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Attendees)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeamMember.FullName)
-            </td>
-            @switch(item.Status){
+             @switch(item.Status){
                  case ApprovalStatus.Pending:
                     <td id="pending">
                     @Html.DisplayFor(modelItem => item.Status)
@@ -63,6 +55,16 @@
                     </td>
                     break;
              }
+            <td>
+                @Html.DisplayFor(modelItem => item.Event.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Attendees)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TeamMember.FullName)
+            </td>
+           
             <td>
                 @if((await AuthorizationService.AuthorizeAsync(User, item, AuthOperations.Update)).Succeeded)
                 {

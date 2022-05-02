@@ -20,10 +20,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.SchoolReport[0].Curriculum)
+            Lesson Plan
             </th>
             <th>
-            Lesson Plan
+                @Html.DisplayNameFor(model => model.SchoolReport[0].Curriculum)
             </th>
             <th>
                School
@@ -40,25 +40,26 @@
     <tbody>
 @foreach (var item in Model.SchoolReport) {
         <tr>
+            
              @switch(item.Status){
                  case ApprovalStatus.Pending:
                     <td id="pending">
-                    @Html.DisplayFor(modelItem => item.Curriculum)
+                    @Html.DisplayFor(modelItem => item.LessonPlan)
                     </td>
                     break;
                 case ApprovalStatus.Approved:
                     <td id="approved">
-                    @Html.DisplayFor(modelItem => item.Curriculum)
+                    @Html.DisplayFor(modelItem => item.LessonPlan)
                     </td>
                     break;
                 case ApprovalStatus.Rejected:
                     <td id="rejected">
-                        @Html.DisplayFor(modelItem => item.Curriculum)
+                       @Html.DisplayFor(modelItem => item.LessonPlan)
                     </td>
                     break;
              }
             <td>
-                @Html.DisplayFor(modelItem => item.LessonPlan)
+                @Html.DisplayFor(modelItem => item.Curriculum)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SchoolName)

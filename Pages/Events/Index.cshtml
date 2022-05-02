@@ -29,13 +29,10 @@
                 @Html.DisplayNameFor(model => model.Event[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Event[0].Location)
+               Date & Time
             </th>
             <th>
                 Grant
-            </th>
-            <th>
-               Date & Time
             </th>
             <th>
                Event Lead
@@ -67,14 +64,11 @@
                         break;
                  }
             <td>
-                @Html.DisplayFor(modelItem => item.Location)
+                @item.EventStart.ToLongDateString()
             </td>
            <td>
                         @Html.DisplayFor(modelItem => 
                             Model.Grants.FirstOrDefault(y => y.Id == item.GrantProgramId).Name)
-            </td>
-            <td>
-                @item.EventStart.ToLongDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => 
