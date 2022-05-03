@@ -28,13 +28,19 @@ namespace prevention_productivity.Pages.Events.Summary
         }
 
         public IList<EventSummary> EventSummary { get;set; }
+        public IList<ApplicationUser> TeamMembers { get; set; }
+        public string TeamMemberSearch { get; set; }
+        public string StatusSearch { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string teamMemberSearch,
+            string statusSearch)
         {
             var eventSummary = from p in _context.EventSummary.Include(e => e.Event).Include(e => e.TeamMember)
                                select p;
                 
                  var currentUserId = UserManager.GetUserId(User);
+            var teamList = from t in _context.Users
+                           select t;
 
             var isAuthorized = User.IsInRole(Constants.AdminRole);
 
@@ -42,7 +48,27 @@ namespace prevention_productivity.Pages.Events.Summary
             {
                 eventSummary = eventSummary.Where(e => e.TeamMemberID == currentUserId);
             }
-             EventSummary = await eventSummary.ToListAsync();
+            if (!string.IsNullOrEmpty(teamMemberSearch))
+            {
+                eventSummary = eventSummary.Where(c => c.TeamMemberID == teamMemberSearch);
+            }
+            if (!string.IsNullOrEmpty(statusSearch))
+            {
+                switch (statusSearch)
+                {
+                    case "Approved":
+                        eventSummary = eventSummary.Where(c => c.Status == ApprovalStatus.Approved);
+                        break;
+                    case "Pending":
+                        eventSummary = eventSummary.Where(c => c.Status == ApprovalStatus.Pending);
+                        break;
+                    case "Rejected":
+                        eventSummary = eventSummary.Where(c => c.Status == ApprovalStatus.Rejected);
+                        break;
+                }
+            }
+            EventSummary = await eventSummary.ToListAsync();
+            TeamMembers = await teamList.ToListAsync();
         }
     }
 }
