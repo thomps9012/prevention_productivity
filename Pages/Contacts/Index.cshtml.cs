@@ -28,8 +28,9 @@ namespace prevention_productivity.Pages.Contacts
         }
 
         public IList<Contact> Contact { get;set; }
+        public string TypeSearch { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string typeSearch)
         {
             var contacts = from c in _context.Contact
                            select c;
@@ -41,6 +42,32 @@ namespace prevention_productivity.Pages.Contacts
                 contacts = contacts.Where(c => 
                 c.Type == ContactType.Student 
                 || c.Type == ContactType.Parent);
+            }
+            switch (typeSearch)
+            {
+                case "Student":
+                    contacts = contacts.Where(c => c.Type == ContactType.Student);
+                    break;
+                case "Parent":
+                    contacts = contacts.Where(c => c.Type == ContactType.Parent);
+                    break;
+                case "Teacher":
+                    contacts = contacts.Where(c => c.Type == ContactType.Teacher);
+                    break;
+                case "NonProfit":
+                    contacts = contacts.Where(c => c.Type == ContactType.NonProfit);
+                    break;
+                case "Public":
+                    contacts = contacts.Where(c => c.Type == ContactType.Public);
+                    break;
+                case "Private":
+                    contacts = contacts.Where(c => c.Type == ContactType.Private);
+                    break;
+                case "Other":
+                    contacts = contacts.Where(c => c.Type == ContactType.Other);
+                    break;
+                default:
+                    break;
             }
             Contact = await contacts.ToListAsync();
         }

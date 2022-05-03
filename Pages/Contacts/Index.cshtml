@@ -16,6 +16,27 @@
 <p>
     <a asp-page="Create">Add New Contact</a>
 </p>
+    @if (User.IsInRole("Admin"))
+    {
+<p>
+     <a asp-page="./Index">Back to Full List</a>    
+</p>
+<form class="searchRow">
+       <select class="searchBox" asp-for="TypeSearch">
+           <option value="">Select a Contact Type</option>
+           <option value="Student">Student</option>
+           <option value="Parent">Parent</option>
+           <option value="Teacher">Teacher</option>
+           <option value="NonProfit">NonProfit</option>
+           <option value="Public">Public</option>
+           <option value="Private">Private</option>
+           <option value="Other">Other</option>
+       </select>
+      
+       <button id="searchSubmit" type="submit" class="btn btn-primary">Search</button>
+      
+    </form>
+    }
 <table class="table">
     <thead>
         <tr>
