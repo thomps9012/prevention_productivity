@@ -27,10 +27,41 @@ namespace prevention_productivity.Pages.Grants
         }
 
         public IList<GrantProgram> GrantProgram { get;set; }
-
-        public async Task OnGetAsync()
+        public string StartDateSort { get; set; }
+        public string EndDateSort { get; set; }
+        public async Task OnGetAsync(string endDateSort, string startDateSort)
         {
-            GrantProgram = await _context.GrantProgram.ToListAsync();
+            EndDateSort = endDateSort == "asc" ? "date_desc" : "asc";
+            StartDateSort = startDateSort == "asc" ? "date_desc" : "asc";
+
+            var grants = from g in _context.GrantProgram
+                         select g;
+
+            switch (endDateSort)
+            {
+                case "asc":
+                    grants = grants.OrderBy(c => c.EndDate);
+                    break;
+                case "date_desc":
+                    grants = grants.OrderByDescending(c => c.EndDate);
+                    break;
+                default:
+                    grants = grants.OrderBy(c => c.EndDate);
+                    break;
+            }
+            switch (startDateSort)
+            {
+                case "asc":
+                    grants = grants.OrderBy(c => c.StartDate);
+                    break;
+                case "date_desc":
+                    grants = grants.OrderByDescending(c => c.StartDate);
+                    break;
+                default:
+                    grants = grants.OrderBy(c => c.StartDate);
+                    break;
+            }
+            GrantProgram = await grants.ToListAsync();
         }
     }
 }

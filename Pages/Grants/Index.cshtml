@@ -26,10 +26,28 @@
                 @Html.DisplayNameFor(model => model.GrantProgram[0].Name)
             </th>
             <th>
-                Start Date
+                <a asp-page="./Index" asp-route-startDateSort="@Model.StartDateSort">
+                        @if(Model.StartDateSort == "asc")
+                        {
+                            <text>↑  Start Date</text>
+                        }
+                        else
+                        {
+                            <text>↓  Start Date</text>
+                        }
+                    </a>
             </th>
             <th>
-                End Date
+                <a asp-page="./Index" asp-route-endDateSort="@Model.EndDateSort">
+                        @if(Model.EndDateSort == "asc")
+                        {
+                            <text>↑  End Date</text>
+                        }
+                        else
+                        {
+                            <text>↓  End Date</text>
+                        }
+                    </a>
             </th>
             <th></th>
         </tr>
