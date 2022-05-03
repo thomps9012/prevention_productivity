@@ -17,6 +17,30 @@
     <a asp-page="Create">Create New Productivity Log</a>
 </p>
 <table class="table">
+    <div class="searchRow">
+       <select class="searchBox" id="TeamMemberSearch">
+                <option value="">Select a Team Member</option>
+           @foreach(var item in Model.TeamMember)
+                {
+                    <option value="@item.Id">@item.FullName</option>
+                }
+            </select>
+       <select class="searchBox" id="GrantSearch">
+           <option value="">Filter by Grant</option>"
+           @foreach(var item in Model.Grants)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+                 
+       </select>
+       <select class="searchBox" id="StatusSearch">
+           <option value="">Filter by Status</option>
+           <option value=@ApprovalStatus.Approved>Approved</option>
+           <option value=@ApprovalStatus.Pending>Pending</option>
+           <option value=@ApprovalStatus.Rejected>Rejected</option>
+       </select>
+       <button id='searchSubmit' type="submit" class="btn btn-primary">Search</button>
+    </div>
     <thead>
         <tr>
             <th>

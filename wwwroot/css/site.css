@@ -67,3 +67,22 @@ a:hover {
     font-weight: bolder;
     color: #bda30f;
 }
+
+.searchRow {
+    display: flex;
+    flex-direction: row;
+    width: 35%;
+    height: 35px;
+    margin-bottom: 20px;
+}
+
+#searchSubmit {
+    height: fit-content;
+   
+}
+
+.searchBox {
+    margin: 10px;
+    height: 39px;
+    border-radius: 5%;
+}
