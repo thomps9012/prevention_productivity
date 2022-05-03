@@ -31,9 +31,17 @@ namespace prevention_productivity.Pages.Events
         public IList<ApplicationUser> TeamList { get; set; }
         public IList<GrantProgram> Grants { get; set; }
         public IList<EventSummary> EventSummary { get; set; }
+        public string DateSort { get; set; }
+        public string TeamMemberSearch { get; set; }
+        public string GrantSearch { get; set; }
+        public string StatusSearch { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string sortOrder,
+            string teamMemberSearch,
+            string grantSearch,
+            string statusSearch)
         {
+            DateSort = sortOrder == "asc" ? "date_desc" : "asc";
             var events = from e in _context.Event
                          select e;
 
@@ -52,6 +60,41 @@ namespace prevention_productivity.Pages.Events
             if (!isAuthorized)
             {
                 events = events.Where(e => e.EventLead == currentUserId);
+            }
+            if (!string.IsNullOrEmpty(teamMemberSearch))
+            {
+                events = events.Where(c => c.EventLead == teamMemberSearch);
+            }
+            if (!string.IsNullOrEmpty(grantSearch))
+            {
+                events = events.Where(c => c.GrantProgramId == Int64.Parse(grantSearch));
+            }
+            if (!string.IsNullOrEmpty(statusSearch))
+            {
+                switch (statusSearch)
+                {
+                    case "Approved":
+                        events = events.Where(c => c.Status == ApprovalStatus.Approved);
+                        break;
+                    case "Pending":
+                        events = events.Where(c => c.Status == ApprovalStatus.Pending);
+                        break;
+                    case "Rejected":
+                        events = events.Where(c => c.Status == ApprovalStatus.Rejected);
+                        break;
+                }
+            }
+            switch (sortOrder)
+            {
+                case "asc":
+                    events = events.OrderBy(c => c.EventStart);
+                    break;
+                case "date_desc":
+                    events = events.OrderByDescending(c => c.EventStart);
+                    break;
+                default:
+                    events = events.OrderBy(c => c.EventStart);
+                    break;
             }
             Event = await events.ToListAsync();
             TeamList = await teamList.ToListAsync();

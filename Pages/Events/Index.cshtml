@@ -16,12 +16,37 @@
 <p>
     <a asp-page="Create">Create New Event</a>
 </p>
-<!--
-    
 <p>
-    <a asp-page="./Summary/Create">Create an Event Summary</a>
+     <a asp-page="./Index">Back to Full List</a>    
 </p>
--->
+<form class="searchRow">
+    @if (User.IsInRole("Admin"))
+    {
+       <select class="searchBox" asp-for="TeamMemberSearch">
+                <option value="">Select a Team Member</option>
+           @foreach(var item in Model.TeamMember)
+                {
+                    <option value="@item.Id">@item.FullName</option>
+                }
+            </select>
+    }
+       <select class="searchBox" asp-for="GrantSearch">
+           <option value="">Filter by Grant</option>"
+           @foreach(var item in Model.Grants)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+                 
+       </select>
+       <select class="searchBox" asp-for="StatusSearch">
+           <option value="">Filter by Status</option>
+           <option value=@ApprovalStatus.Approved>Approved</option>
+           <option value=@ApprovalStatus.Pending>Pending</option>
+           <option value=@ApprovalStatus.Rejected>Rejected</option>
+       </select>
+       <button id="searchSubmit" type="submit" class="btn btn-primary">Search</button>
+      
+    </form>
 <table class="table">
     <thead>
         <tr>
@@ -29,7 +54,16 @@
                 @Html.DisplayNameFor(model => model.Event[0].Name)
             </th>
             <th>
-               Date & Time
+               <a asp-page="./Index" asp-route-sortOrder="@Model.DateSort">
+                        @if(Model.DateSort == "asc")
+                        {
+                            <text>↑  Date & Time</text>
+                        }
+                        else
+                        {
+                            <text>↓  Date & Time</text>
+                        }
+                    </a>
             </th>
             <th>
                 Grant
