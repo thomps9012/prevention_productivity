@@ -24,9 +24,17 @@ namespace prevention_productivity.Pages.ProductivityLogs
         public IList<ProductivityLog> ProductivityLog { get;set; }
         public IList<ApplicationUser> TeamMember { get; set; }
         public IList<GrantProgram> Grants { get; set; }
+        public string DateSort { get; set; }
+        public string TeamMemberSearch { get; set; }
+        public string GrantSearch { get; set; }
+        public string StatusSearch { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string sortOrder, 
+            string teamMemberSearch, 
+            string grantSearch,
+            string statusSearch)
         {
+            DateSort = sortOrder == "asc" ? "date_desc" : "asc";
             var grants = from g in _context.GrantProgram
                          select g;
             var productivityLogs = from m in _context.ProductivityLog
@@ -41,6 +49,41 @@ namespace prevention_productivity.Pages.ProductivityLogs
             if (!isAuthorized)
             {
                 productivityLogs = productivityLogs.Where(c => c.TeamMemberID == currentUserId);
+            }
+            if (!string.IsNullOrEmpty(teamMemberSearch))
+            {
+                productivityLogs = productivityLogs.Where(c => c.TeamMemberID == teamMemberSearch);
+            }
+            if (!string.IsNullOrEmpty(grantSearch))
+            {
+                productivityLogs = productivityLogs.Where(c => c.GrantProgramID == Int64.Parse(grantSearch));
+            }
+            if (!string.IsNullOrEmpty(statusSearch))
+            {
+                switch (statusSearch)
+                {
+                    case "Approved":
+                        productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Approved);
+                        break;
+                    case "Pending":
+                        productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Pending);
+                        break;
+                    case "Rejected":
+                        productivityLogs = productivityLogs.Where(c => c.Status == ApprovalStatus.Rejected);
+                        break;
+                }
+            }
+            switch (sortOrder)
+            {
+                case "asc":
+                    productivityLogs = productivityLogs.OrderBy(c => c.Date);
+                    break;
+                case "date_desc":
+                    productivityLogs = productivityLogs.OrderByDescending(c => c.Date);
+                    break;
+                default:
+                    productivityLogs = productivityLogs.OrderBy(c => c.Date);
+                    break;
             }
             
             ProductivityLog = await productivityLogs.ToListAsync();

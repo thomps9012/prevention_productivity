@@ -71,18 +71,15 @@ a:hover {
 .searchRow {
     display: flex;
     flex-direction: row;
-    width: 35%;
     height: 35px;
     margin-bottom: 20px;
-}
-
-#searchSubmit {
-    height: fit-content;
-   
+    margin-left: -10px;
+    flex-wrap: wrap;
 }
 
 .searchBox {
     margin: 10px;
-    height: 39px;
+    height: 30px;
     border-radius: 5%;
+    margin-top: 12px;
 }
