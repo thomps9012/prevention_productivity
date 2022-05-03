@@ -29,9 +29,15 @@ namespace prevention_productivity.Pages.SchoolReports
 
         public IList<SchoolReport> SchoolReport { get;set; }
         public IList<ApplicationUser> TeamMember { get; set; }
+        public string DateSort { get; set; }
+        public string TeamMemberSearch { get; set; }
+        public string StatusSearch { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string sortOrder,
+            string teamMemberSearch,
+            string statusSearch)
         {
+            DateSort = sortOrder == "asc" ? "date_desc" : "asc";
             var reports = from r in _context.SchoolReport
                           select r;
             var teamMembers = from m in _context.Users
@@ -44,6 +50,25 @@ namespace prevention_productivity.Pages.SchoolReports
             if(!isAuthorized)
             {
                 reports = reports.Where(r => r.TeamMemberId == currentUserId);
+            }
+            if (!string.IsNullOrEmpty(teamMemberSearch))
+            {
+                reports = reports.Where(c => c.TeamMemberId == teamMemberSearch);
+            }
+            if (!string.IsNullOrEmpty(statusSearch))
+            {
+                switch (statusSearch)
+                {
+                    case "Approved":
+                        reports = reports.Where(c => c.Status == ApprovalStatus.Approved);
+                        break;
+                    case "Pending":
+                        reports = reports.Where(c => c.Status == ApprovalStatus.Pending);
+                        break;
+                    case "Rejected":
+                        reports = reports.Where(c => c.Status == ApprovalStatus.Rejected);
+                        break;
+                }
             }
             SchoolReport = await reports.ToListAsync();
             TeamMember = await teamMembers.ToListAsync();
