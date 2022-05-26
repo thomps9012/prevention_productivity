@@ -14,10 +14,10 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
- var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
-//var connectionString = configuration.GetConnectionString("TestConnection");
+var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 28));
 services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseMySql(connectionString, serverVersion));
 services.AddDatabaseDeveloperPageExceptionFilter();
 
 services.AddDefaultIdentity<ApplicationUser>(
@@ -32,8 +32,6 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 services.AddAuthentication()
     .AddGoogle(options =>
     {
-       // options.ClientId = configuration.GetConnectionString("GoogleClientId");
-       // options.ClientSecret = configuration.GetConnectionString("GoogleClientSecret");
           options.ClientId = Environment.GetEnvironmentVariable("ClientId");
          options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
     });
@@ -57,16 +55,6 @@ services.AddSingleton<IAuthorizationHandler, IsReportAdmin>();
 services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
 
 var app = builder.Build();
-
-//using (var scope = app.Services.CreateScope())
-//{
- //   var scopeServices = scope.ServiceProvider;
-  // var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
-  // dbContext.Database.Migrate();
-
-   // var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
-   // await SeedData.Initialize(scopeServices, testUserPw);
-//}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
