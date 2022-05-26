@@ -12,7 +12,7 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 
 // Add services to the container.
-var connectionString = configuration.GetConnectionString("DefaultConnection");
+var connectionString = configuration.GetConnectionString("ProductionConnection");
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -28,9 +28,8 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 services.AddAuthentication()
     .AddGoogle(options =>
-    {
-        options.ClientId = configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    {   options.ClientId = configuration.GetSection("Google")["ClientId"];
+        options.ClientSecret = configuration.GetSection("Google")["ClientSecret"];
     });
 
 services.AddAuthorization(options =>
@@ -60,7 +59,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 
-    var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
+    var testUserPw = "Password123!";
     await SeedData.Initialize(scopeServices, testUserPw);
 }
 // Configure the HTTP request pipeline.
