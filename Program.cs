@@ -14,11 +14,7 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
-<<<<<<< HEAD
 var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
-=======
-var connectionString = configuration.GetConnectionString("DefaultConnection");
->>>>>>> parent of fad6da9... rearranging of env variables
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -34,18 +30,12 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 services.AddAuthentication()
     .AddGoogle(options =>
-<<<<<<< HEAD
-    {   options.ClientId = Environment.GetEnvironmentVariable("ClientId");
-        options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
-=======
     {
-        options.ClientId = configuration["Authentication:Google:ClientId"];
-        options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
->>>>>>> parent of fad6da9... rearranging of env variables
+        options.ClientId = Environment.GetEnvironmentVariable("ClientId");
+        options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
     });
-
 services.AddAuthorization(options =>
-{
+{ 
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
