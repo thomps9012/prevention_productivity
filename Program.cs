@@ -10,9 +10,11 @@ using prevention_productivity.Services;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
+// grab environment variables
+
 
 // Add services to the container.
-var connectionString = configuration.GetConnectionString("ProductionConnection");
+var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -28,8 +30,8 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 services.AddAuthentication()
     .AddGoogle(options =>
-    {   options.ClientId = configuration.GetSection("Google")["ClientId"];
-        options.ClientSecret = configuration.GetSection("Google")["ClientSecret"];
+    {   options.ClientId = Environment.GetEnvironmentVariable("ClientId");
+        options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
     });
 
 services.AddAuthorization(options =>
