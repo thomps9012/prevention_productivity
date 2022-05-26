@@ -14,7 +14,11 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
+<<<<<<< HEAD
 var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+=======
+var connectionString = configuration.GetConnectionString("DefaultConnection");
+>>>>>>> parent of fad6da9... rearranging of env variables
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -30,8 +34,14 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 services.AddAuthentication()
     .AddGoogle(options =>
+<<<<<<< HEAD
     {   options.ClientId = Environment.GetEnvironmentVariable("ClientId");
         options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+=======
+    {
+        options.ClientId = configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+>>>>>>> parent of fad6da9... rearranging of env variables
     });
 
 services.AddAuthorization(options =>
@@ -61,7 +71,7 @@ using (var scope = app.Services.CreateScope())
    // var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
    // dbContext.Database.Migrate();
 
-    var testUserPw = "Password123!";
+    var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
     await SeedData.Initialize(scopeServices, testUserPw);
 }
 // Configure the HTTP request pipeline.
