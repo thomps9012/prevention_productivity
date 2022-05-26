@@ -14,8 +14,8 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
-// var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
-var connectionString = configuration.GetConnectionString("TestConnection");
+ var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+//var connectionString = configuration.GetConnectionString("TestConnection");
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -32,10 +32,10 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 services.AddAuthentication()
     .AddGoogle(options =>
     {
-        options.ClientId = configuration.GetConnectionString("GoogleClientId");
-        options.ClientSecret = configuration.GetConnectionString("GoogleClientSecret");
-        //  options.ClientId = Environment.GetEnvironmentVariable("ClientId");
-        // options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+       // options.ClientId = configuration.GetConnectionString("GoogleClientId");
+       // options.ClientSecret = configuration.GetConnectionString("GoogleClientSecret");
+          options.ClientId = Environment.GetEnvironmentVariable("ClientId");
+         options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
     });
 services.AddAuthorization(options =>
 { 
