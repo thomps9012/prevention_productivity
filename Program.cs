@@ -56,8 +56,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var scopeServices = scope.ServiceProvider;
-    var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+   // var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
+   // dbContext.Database.Migrate();
 
     var testUserPw = "Password123!";
     await SeedData.Initialize(scopeServices, testUserPw);
