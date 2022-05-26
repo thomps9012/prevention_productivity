@@ -14,7 +14,8 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
-var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+// var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+var connectionString = configuration.GetConnectionString("TestConnection");
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -31,8 +32,10 @@ services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 services.AddAuthentication()
     .AddGoogle(options =>
     {
-        options.ClientId = Environment.GetEnvironmentVariable("ClientId");
-        options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+        options.ClientId = configuration.GetConnectionString("GoogleClientId");
+        options.ClientSecret = configuration.GetConnectionString("GoogleClientSecret");
+        //  options.ClientId = Environment.GetEnvironmentVariable("ClientId");
+        // options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
     });
 services.AddAuthorization(options =>
 { 
@@ -55,15 +58,15 @@ services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var scopeServices = scope.ServiceProvider;
-   var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
-   dbContext.Database.Migrate();
+//using (var scope = app.Services.CreateScope())
+//{
+ //   var scopeServices = scope.ServiceProvider;
+  // var dbContext = scopeServices.GetRequiredService<ApplicationDbContext>();
+  // dbContext.Database.Migrate();
 
-    var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
-    await SeedData.Initialize(scopeServices, testUserPw);
-}
+   // var testUserPw = builder.Configuration.GetValue<string>("SeedUserPW");
+   // await SeedData.Initialize(scopeServices, testUserPw);
+//}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
