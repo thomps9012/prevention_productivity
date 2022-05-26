@@ -1,18 +1,4 @@
-# FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-# WORKDIR /prevention_productivity
-
-# COPY *.sln .
-# COPY prevention_productivity/*.csproj ./prevention_productivity/
-# RUN dotnet restore
-
-# COPY prevention_productivity/. ./prevention_productivity/
-# WORKDIR /prevention_productivity
-# RUN dotnet public -c release -o /prevention_productivity/bin/Release --no-restore
-
-# FROM mcr.microsoft.com/dotnet/aspnet:6.0
-# WORKDIR /prevention_productivity
-# COPY --from=build /prevention_productivity ./
-# ENTRYPOINT [ "dotnet", "prevention_productivity.dll" ]
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bp00/+G6lOiOTE5ESJsNmLJu6bj1pGn5dT+4324y2Dxm81pWWfPp05KYPYbO46VZU9aNGiHnb9fwwQ6CVeq6fg==",
+  "dgSpecHash": "jj5qdxDqwfIRiWgL9qsFh0gHMGIpt7SWPw4PfR3j15ItcUBzRpc04xpnhgZPSsncvhvAo01bm63loiXfh+bjZg==",
   "success": true,
   "projectFilePath": "C:\\Freelance\\prevention_productivity\\prevention_productivity.csproj",
   "expectedPackageFiles": [
@@ -70,6 +70,7 @@
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\thomp\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.14.0\\microsoft.visualstudio.azure.containers.tools.targets.1.14.0.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.visualstudio.debugger.contracts\\17.2.0\\microsoft.visualstudio.debugger.contracts.17.2.0.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration\\6.0.3\\microsoft.visualstudio.web.codegeneration.6.0.3.nupkg.sha512",
     "C:\\Users\\thomp\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.core\\6.0.3\\microsoft.visualstudio.web.codegeneration.core.6.0.3.nupkg.sha512",
