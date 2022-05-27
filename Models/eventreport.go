@@ -64,3 +64,4 @@ func (u *User) GetSummaries() []EventSummary {
 	}
 	return reports
 }
+
