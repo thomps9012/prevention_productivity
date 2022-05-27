@@ -20,12 +20,12 @@ namespace prevention_productivity.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
-            if(string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SendGridAPIKey")))
+            if(string.IsNullOrEmpty(Options.SendGridKey))
             {
                 throw new Exception("No SendGridKey");
             }
 //            await Execute(Environment.GetEnvironmentVariable("SendGridAPIKey"), subject, message, toEmail);
-            await Execute(Environment.GetEnvironmentVariable("SendGridAPIKey"), subject, message, toEmail);
+            await Execute(Options.SendGridKey, subject, message, toEmail);
 
         }
 

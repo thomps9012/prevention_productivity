@@ -29,11 +29,19 @@ services.AddRazorPages();
 services.AddTransient<IEmailSender, EmailSender>();
 services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
+services.ConfigureApplicationCookie(o => {
+    o.ExpireTimeSpan = TimeSpan.FromDays(5);
+    o.SlidingExpiration = true;
+});
+
+services.Configure<DataProtectionTokenProviderOptions>(o =>
+    o.TokenLifespan = TimeSpan.FromHours(3));
+
 services.AddAuthentication()
-    .AddGoogle(options =>
+    .AddGoogle(googleOptions =>
     {
-          options.ClientId = Environment.GetEnvironmentVariable("ClientId");
-         options.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+          googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+         googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
     });
 services.AddAuthorization(options =>
 { 
