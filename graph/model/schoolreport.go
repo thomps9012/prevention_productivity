@@ -1,22 +1,19 @@
 package model
 
 type SchoolReport struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	Author    *User `bson:"author"`
-	Curriculum string 	  `bson:"curriculum"`
-	LessonPlan string 	  `bson:"lesson_plan"`
-	School string 	  `bson:"school"`
-	StudentRoster []Student `bson:"student_roster"`
-	TopicsCovered []string `bson:"topics_covered"`
-	Challenges []string `bson:"challenges"`
-	Successes []string `bson:"successes"`
-	ApprovalStatus string `bson:"approval_status"`
-	Notes []Note `bson:"notes"`
-}
-
-type Student struct {
-	FirstName string 	  `bson:"first_name"`
-	LastName  string 	  `bson:"last_name"`
+	ID        string `json:"id"`
+	Author    *User `json:"author"`
+	Grant    *Grant `json:"grant"`
+	Curriculum string 	  `json:"curriculum"`
+	LessonPlan string 	  `json:"lesson_plan"`
+	School string 	  `json:"school"`
+	StudentRoster []string `json:"student_roster"`
+	TopicsCovered []string `json:"topics_covered"`
+	Challenges []string `json:"challenges"`
+	Successes []string `json:"successes"`
+	ApprovalStatus string `json:"approval_status"`
+	Notes []Note `json:"notes"`
+	created_at string     `json:"created_at"`
 }
 
 // func (u *User) NewReport(args map[string]interface{}) {

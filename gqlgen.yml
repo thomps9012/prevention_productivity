@@ -73,22 +73,22 @@ models:
   SchoolReport:
     fields:
       notes:
-        resolvers: true
+        resolver: true
   EventSummary:
     fields:
       notes:
-        resolvers: true
+        resolver: true
       prevention_team:
-        resolvers: true
+        resolver: true
       event:
-        resolvers: true
+        resolver: true
   User:
     fields:
       logs:
-        resolvers: true
+        resolver: true
       events:
-        resolvers: true
+        resolver: true
       reports:
-        resolvers: true
+        resolver: true
       summaries:
-        resolvers: true
+        resolver: true

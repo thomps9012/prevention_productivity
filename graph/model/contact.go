@@ -1,25 +1,25 @@
 package model
 
 type Contact struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	FirstName string        `bson:"first_name"`
-	LastName  string        `bson:"last_name"`
-	Email     string        `bson:"email"`
-	Phone	 string        `bson:"phone"`
-	AffiliatedOrganization string `bson:"affiliated_organization"`
-	ContactType string `bson:"contact_type"`
-	CreatedAt time.Time     `bson:"created_at"`
+	ID        string `json:"id"`
+	FirstName string        `json:"first_name"`
+	LastName  string        `json:"last_name"`
+	Email     string        `json:"email"`
+	Phone	 string        `json:"phone"`
+	AffiliatedOrganization string `json:"affiliated_organization"`
+	ContactType string `json:"contact_type"`
+	CreatedAt string     `json:"created_at"`
 }
 
 type ContactType string
 const (
-	Student,
-	Parent,
-	Teacher,
-	NonProfit,
-	Public,
-	Private,
-	Other
+	Student string = "Student"
+	Parent string = "Parent"
+	Teacher string = "Teacher"
+	NonProfit string = "Non-Profit"
+	Public string = "Public"
+	Private string = "Private"
+	Other string = "Other"
 )
 
 // func NewContact(firstName string, lastName string, email string, phone string, affiliatedOrganization string, contactType string) *Contact {

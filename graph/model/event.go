@@ -1,57 +1,56 @@
 package model
 
 type Event struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	GrantID   *Grant `bson:"grant"`
-	Name 	string        `bson:"name"`
-	Description string        `bson:"description"`
-	Location string        `bson:"location"`
-	LocationDetails string        `bson:"location_details"`
-	NewEvent bool `bson:"new_event"`
-	PublicEvent bool        `bson:"public_event"`
-	RSVPsNeeded int `bson:"rsvps_needed"`
-	AnnualEvent bool `bson:"annual_event"`
-	StartDate  time.Time     `bson:"start_date"`
-	SetUpTime time.Time `bson:"set_up_time"`
-	CleanUpTime time.Time `bson:"clean_up_time"`
-	Agenda []AgendaItem `bson:"agenda"`
-	TargetPopulation []string `bson:"target_population"`
-	AgeGroup []string `bson:"age_group"`
-	PartingGifts []string `bson:"parting_gifts"`
-	Raffle []string `bson:"raffle"`
-	Marketing []string `bson:"marketing"`
-	SpecialOrder []SpecialOrderItem `bson:"special_order"`
-	Vendor []VendorItem `bson:"vendor"`
-	FoodBeverage []string `bson:"food_beverage"`
-	Caterer []string `bson:"caterer"`
-	FoodHeadCount int `bson:"food_head_count"`
-	PreventionTeam []*User `bson:"prevention_team"`
-	StaffTimeCommitment double `bson:"staff_time_commitment"`
-	StaffDuties []string `bson:"staff_duties"`
-	Clients []string `bson:"nora_clients"`
-	VolunteersNeeded int `bson:"volunteers_needed"`
-	Volunteers []string `bson:"nora_volunteers"`
-	Budget float64 `bson:"budget"`
-	Affiliates []string `bson:"affiliates"`
-	Notes []Note `bson:"notes"`
-	EventLead *User `bson:"event_lead"`
-	EducationalGoal []string `bson:"educational_goal"`
-	Curriculum []string `bson:"curriculum"`
-	Outreach []string `bson:"outreach"`
-	GrantGoals []string `bson:"grant_goals"`
-	GuestList []GuestListItem `bson:"guest_list"`
-	EventStatus enum `bson:"event_status"`
-	Notes []Note `bson:"notes"`
+	ID        string `json:"id"`
+	Grant   *Grant `json:"grant"`
+	Name 	string        `json:"name"`
+	Description string        `json:"description"`
+	Location string        `json:"location"`
+	LocationDetails string        `json:"location_details"`
+	NewEvent bool `json:"new_event"`
+	PublicEvent bool        `json:"public_event"`
+	RSVPsNeeded int `json:"rsvps_needed"`
+	AnnualEvent bool `json:"annual_event"`
+	StartTime  string     `json:"start_time"`
+	SetUpTime string `json:"set_up_time"`
+	CleanUpTime string `json:"clean_up_time"`
+	Agenda []string `json:"agenda"`
+	TargetPopulation string `json:"target_population"`
+	AgeGroup string `json:"age_group"`
+	PartingGifts []string `json:"parting_gifts"`
+	Raffle []string `json:"raffle_items"`
+	Marketing string `json:"marketing_material"`
+	SpecialOrder string `json:"special_order"`
+	Vendors []string `json:"vendors"`
+	FoodBeverage string `json:"food_beverage"`
+	Caterer string `json:"caterer"`
+	FoodHeadCount int `json:"food_head_count"`
+	PreventionTeam []*User `json:"prevention_team"`
+	StaffTimeCommitment float64 `json:"staff_time_commitment"`
+	StaffDuties []string `json:"staff_duties"`
+	Clients []string `json:"nora_clients"`
+	VolunteersNeeded int `json:"volunteers_needed"`
+	Volunteers []string `json:"volunteer_list"`
+	Budget float64 `json:"budget"`
+	Affiliates []string `json:"affiliates"`
+	EventLead *User `json:"event_lead"`
+	EducationalGoal string `json:"educational_goal"`
+	CurriculumPlan string `json:"curriculum_plan"`
+	Outreach string `json:"outreach"`
+	GrantGoals []string `json:"grant_goals"`
+	GuestList []string `json:"guest_list"`
+	EventStatus ApprovalStatus `json:"event_status"`
+	Notes []Note `json:"notes"`
 }
 
-type EventStatus string
-const (
-	Pending,
-	Approved,
-	Denied,
-	Cancelled,
-	Complete
-)
+// type EventStatus string
+// const (
+// 	Pending string = "Pending"
+// 	Approved string = "Approved"
+// 	Denied string = "Denied"
+// 	Cancelled string = "Cancelled"
+// 	Complete string = "Complete"
+// )
 
 // func (u *User) NewEvent(args [string]interface{}) Event {
 // 	event := Event{}

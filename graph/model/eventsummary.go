@@ -1,16 +1,16 @@
 package model
 
 type EventSummary struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	Event  *Event `bson:"event"`
-	Attendees int 		 `bson:"attendees"`
-	Challenges []string `bson:"challenges"`
-	Outcomes []string `bson:"outcomes"`
-	NextSteps []string `bson:"next_steps"`
-	ApprovalStatus string `bson:"approval_status"`
-	SummaryAuthor *User `bson:"summary_author"`
-	CreatedAt time.Time     `bson:"created_at"`
-	Notes []Note `bson:"notes"`
+	ID        string `json:"id"`
+	Author *User `json:"author"`
+	Event  *Event `json:"event"`
+	Attendees int 		 `json:"attendees"`
+	Challenges []string `json:"challenges"`
+	Outcomes []string `json:"outcomes"`
+	NextSteps []string `json:"next_steps"`
+	ApprovalStatus string `json:"approval_status"`
+	CreatedAt string     `json:"created_at"`
+	Notes []Note `json:"notes"`
 }
 
 // func (u *User) NewSummary(args [string]interface{}) EventSummary {

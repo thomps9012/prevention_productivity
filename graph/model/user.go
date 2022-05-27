@@ -1,19 +1,19 @@
 package model
 
 type User struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	FirstName string `bson:"first_name"`
-	LastName  string `bson:"last_name"`
-	Email     string `bson:"email"`
-	Password  string `bson:"password"`
-	Admin bool `bson:"admin"`
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Admin bool `json:"admin"`
 }
 
 type ApprovalStatus string
 const (
-	Pending string = "Pending",
-	Approved string = "Approved",
-	Denied string = "Denied"
+	PENDING string = "PENDING"
+	APPROVED string = "APPROVED"
+	REJECTED string = "REJECTED"
 )
 
 

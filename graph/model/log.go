@@ -1,17 +1,17 @@
 package model
 
 type ProductivityLog struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	Author    *User `bson:"author"`
-	Date      time.Time     `bson:"date"`
-	Grant   *Grant `bson:"grant"`
-	FocusArea string        `bson:"focus_area"`
-	Actions   []string      `bson:"actions"`
-	Successes []string      `bson:"successes"`
-	Improvements []string    `bson:"improvements"`
-	NextSteps []string      `bson:"next_steps"`
-	Status ApprovalStatus     `bson:"approval_status"`
-	Notes	 []Note        `bson:"notes"`
+	ID        string `json:"id"`
+	Author    *User `json:"author"`
+	Date      string     `json:"date"`
+	Grant   *Grant `json:"grant"`
+	FocusArea string        `json:"focus_area"`
+	Actions   []string      `json:"actions"`
+	Successes []string      `json:"successes"`
+	Improvements []string    `json:"improvements"`
+	NextSteps []string      `json:"next_steps"`
+	Status ApprovalStatus     `json:"approval_status"`
+	Notes	 []Note        `json:"notes"`
 }
 
 // func (u *User) CreateLog(args map[string]interface{}) ProductivityLog {

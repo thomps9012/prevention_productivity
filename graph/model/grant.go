@@ -1,18 +1,18 @@
 package model
 
 type Grant struct {
-	ID        bson.ObjectId `bson:"_id,omitempty"`
-	AwardNumber string        `bson:"award_number"`
-	Title      string        `bson:"title"`
-	Description string        `bson:"description"`
-	StartDate  time.Time     `bson:"start_date"`
-	EndDate    time.Time     `bson:"end_date"`
-	Status     string        `bson:"status"`
-	TeamMembers []User `bson:"team_members"`
+	ID        string `json:"id"`
+	AwardNumber string        `json:"award_number"`
+	Title      string        `json:"title"`
+	Description string        `json:"description"`
+	StartDate  string     `json:"start_date"`
+	EndDate    string     `json:"end_date"`
+	Status     string        `json:"status"`
+	TeamMembers []User `json:"team_members"`
 }
 
 
-// func NewGrant(awardNumber string, title string, description string, startDate time.Time, endDate time.Time) *Grant {
+// func NewGrant(awardNumber string, title string, description string, startDate string, endDate string) *Grant {
 // 	grant := &Grant{
 // 		AwardNumber: awardNumber,
 // 		Title: title,
