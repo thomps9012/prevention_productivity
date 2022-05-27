@@ -24,7 +24,6 @@ namespace prevention_productivity.Services
             {
                 throw new Exception("No SendGridKey");
             }
-//            await Execute(Environment.GetEnvironmentVariable("SendGridAPIKey"), subject, message, toEmail);
             await Execute(Options.SendGridKey, subject, message, toEmail);
 
         }

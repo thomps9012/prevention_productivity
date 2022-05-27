@@ -10,14 +10,14 @@ using prevention_productivity.Services;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
-// grab environment variables
 
+var connectionString = "server=localhost;user=root;password=root;database=prevention_productivity;";
 
-// Add services to the container.
-var connectionString = configuration.GetConnectionString("JAWSDB_URL");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 28));
+
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
+
 services.AddDatabaseDeveloperPageExceptionFilter();
 
 services.AddDefaultIdentity<ApplicationUser>(
@@ -43,6 +43,7 @@ services.AddAuthentication()
           googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
          googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
     });
+
 services.AddAuthorization(options =>
 { 
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -50,7 +51,6 @@ services.AddAuthorization(options =>
     .Build();
 });
 
-//make sure to register the auth policy handler
 services.AddScoped<IAuthorizationHandler, IsTeamMemberHandler>();
 services.AddScoped<IAuthorizationHandler, IsEventLead>();
 services.AddScoped<IAuthorizationHandler, IsSummaryLead>();
@@ -64,9 +64,8 @@ services.AddSingleton<IAuthorizationHandler, IsContactAdmin>();
 
 var app = builder.Build();
 
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+app.UseExceptionHandler("/Error");
+app.UseHsts();
 
 
 app.UseHttpsRedirection();
