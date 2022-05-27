@@ -11,7 +11,6 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-prevention_productivity-802DF7D1-3626-421B-8E19-908C15E787F5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("prevention_productivity")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
