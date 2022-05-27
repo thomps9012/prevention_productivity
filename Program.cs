@@ -14,7 +14,7 @@ var configuration = builder.Configuration;
 
 
 // Add services to the container.
-var connectionString = Environment.GetEnvironmentVariable("JAWSDB_URL");
+var connectionString = configuration.GetConnectionString("JAWSDB_URL");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 28));
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
