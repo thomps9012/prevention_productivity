@@ -70,7 +70,7 @@ type Event {
   vendors: [String!]
   food_beverage: String!
   caterer: String!
-  food_head_count: Number
+  food_head_count: Int
   volunteers_needed: Boolean!
   volunteer_list: [String!]
   approval_status: ApprovalStatus!
@@ -88,7 +88,7 @@ type EventSummary {
   id: ID!
   author: User!
   event: Event!
-  attendees: Number
+  attendees: Int
   challenges: [String!]
   successes: [String!]
   next_steps: [String!]
@@ -170,6 +170,89 @@ input GrantInput {
   team_members: [ID!]!
 }
 
+input ProductivityLogInput {
+  grant: ID!
+  focus_area: String!
+  actions: [String!]
+  successes: [String!]
+  improvements: [String!]
+  next_steps: [String!]
+  notes: [NoteInput]
+}
+
+input NoteInput {
+  text: String!
+  item_id: ID!
+  section: Float!
+}
+
+input EventInput {
+  grant: ID!
+  event_lead: ID!
+  team_members: [ID!]!
+  name: String!
+  description: String!
+  location: String!
+  location_details: String!
+  start_time: String!
+  set_up_time: String!
+  clean_up_time: String!
+  agenda: [String!]
+  target_population: String!
+  age_group: String!
+  parting_gifts: [String!]
+  raffle_items: String!
+  marketing_material: String!
+  special_orders: String!
+  vendors: [String!]
+  food_beverage: String!
+  caterer: String!
+  food_head_count: Int
+  volunteers_needed: Boolean!
+  volunteer_list: [String!]
+  approval_status: ApprovalStatus!
+  budget: Float
+  affiliates: [String!]
+  educational_goal: String!
+  curriculum_plan: String!
+  outreach: String!
+  guest_list: [String!]
+  event_status: ApprovalStatus
+  notes: [NoteInput]
+}
+
+input EventSummaryInput {
+  event: ID!
+  attendees: Int
+  challenges: [String!]
+  successes: [String!]
+  next_steps: [String!]
+  approval_status: ApprovalStatus!
+  notes: [NoteInput]
+}
+
+input SchoolReportInput {
+  grant: ID!
+  curriculum: String!
+  lesson_plan: String!
+  school: String!
+  student_roster: [String!]
+  topics_covered: [String!]
+  challenges: [String!]
+  successes: [String!]
+  approval_status: ApprovalStatus!
+  notes: [NoteInput]
+}
+
+input ContactInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  contact_type: ContactType!
+  affiliated_organization: String!
+} 
+
 
 type Mutation {
   addUser(input: UserInput): User!
@@ -178,4 +261,21 @@ type Mutation {
   addGrant(input: GrantInput): Grant!
   updateGrant(id: ID!, input: GrantInput): Grant!
   deleteGrant(id: ID!): Grant!
+  addProductivityLog(input: ProductivityLogInput): ProductivityLog!
+  updateProductivityLog(id: ID!, input: ProductivityLogInput): ProductivityLog!
+  deleteProductivityLog(id: ID!): ProductivityLog!
+  addEvent(input: EventInput): Event!
+  updateEvent(id: ID!, input: EventInput): Event!
+  deleteEvent(id: ID!): Event!
+  addEventSummary(input: EventSummaryInput): EventSummary!
+  updateEventSummary(id: ID!, input: EventSummaryInput): EventSummary!
+  deleteEventSummary(id: ID!): EventSummary!
+  addSchoolReport(input: SchoolReportInput): SchoolReport!
+  updateSchoolReport(id: ID!, input: SchoolReportInput): SchoolReport!
+  deleteSchoolReport(id: ID!): SchoolReport!
+  addContact(input: ContactInput): Contact!
+  updateContact(id: ID!, input: ContactInput): Contact!
+  deleteContact(id: ID!): Contact!
+  addNote(input: NoteInput): Note!
+  editNote(id: ID!, input: NoteInput): Note!
 }

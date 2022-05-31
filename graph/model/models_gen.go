@@ -2,10 +2,160 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type ContactInput struct {
+	FirstName              string      `json:"first_name"`
+	LastName               string      `json:"last_name"`
+	Email                  string      `json:"email"`
+	Phone                  string      `json:"phone"`
+	ContactType            ContactType `json:"contact_type"`
+	AffiliatedOrganization string      `json:"affiliated_organization"`
+}
+
+type EventInput struct {
+	Grant             string          `json:"grant"`
+	EventLead         string          `json:"event_lead"`
+	TeamMembers       []string        `json:"team_members"`
+	Name              string          `json:"name"`
+	Description       string          `json:"description"`
+	Location          string          `json:"location"`
+	LocationDetails   string          `json:"location_details"`
+	StartTime         string          `json:"start_time"`
+	SetUpTime         string          `json:"set_up_time"`
+	CleanUpTime       string          `json:"clean_up_time"`
+	Agenda            []string        `json:"agenda"`
+	TargetPopulation  string          `json:"target_population"`
+	AgeGroup          string          `json:"age_group"`
+	PartingGifts      []string        `json:"parting_gifts"`
+	RaffleItems       string          `json:"raffle_items"`
+	MarketingMaterial string          `json:"marketing_material"`
+	SpecialOrders     string          `json:"special_orders"`
+	Vendors           []string        `json:"vendors"`
+	FoodBeverage      string          `json:"food_beverage"`
+	Caterer           string          `json:"caterer"`
+	FoodHeadCount     *int            `json:"food_head_count"`
+	VolunteersNeeded  bool            `json:"volunteers_needed"`
+	VolunteerList     []string        `json:"volunteer_list"`
+	ApprovalStatus    ApprovalStatus  `json:"approval_status"`
+	Budget            *float64        `json:"budget"`
+	Affiliates        []string        `json:"affiliates"`
+	EducationalGoal   string          `json:"educational_goal"`
+	CurriculumPlan    string          `json:"curriculum_plan"`
+	Outreach          string          `json:"outreach"`
+	GuestList         []string        `json:"guest_list"`
+	EventStatus       *ApprovalStatus `json:"event_status"`
+	Notes             []*NoteInput    `json:"notes"`
+}
+
+type EventSummaryInput struct {
+	Event          string         `json:"event"`
+	Attendees      *int           `json:"attendees"`
+	Challenges     []string       `json:"challenges"`
+	Successes      []string       `json:"successes"`
+	NextSteps      []string       `json:"next_steps"`
+	ApprovalStatus ApprovalStatus `json:"approval_status"`
+	Notes          []*NoteInput   `json:"notes"`
+}
+
+type GrantInput struct {
+	AwardNumber string   `json:"award_number"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	StartDate   string   `json:"start_date"`
+	EndDate     string   `json:"end_date"`
+	Status      string   `json:"status"`
+	TeamMembers []string `json:"team_members"`
+}
+
+type NoteInput struct {
+	Text    string  `json:"text"`
+	ItemID  string  `json:"item_id"`
+	Section float64 `json:"section"`
+}
+
+type ProductivityLogInput struct {
+	Grant        string       `json:"grant"`
+	FocusArea    string       `json:"focus_area"`
+	Actions      []string     `json:"actions"`
+	Successes    []string     `json:"successes"`
+	Improvements []string     `json:"improvements"`
+	NextSteps    []string     `json:"next_steps"`
+	Notes        []*NoteInput `json:"notes"`
+}
+
+type SchoolReportInput struct {
+	Grant          string         `json:"grant"`
+	Curriculum     string         `json:"curriculum"`
+	LessonPlan     string         `json:"lesson_plan"`
+	School         string         `json:"school"`
+	StudentRoster  []string       `json:"student_roster"`
+	TopicsCovered  []string       `json:"topics_covered"`
+	Challenges     []string       `json:"challenges"`
+	Successes      []string       `json:"successes"`
+	ApprovalStatus ApprovalStatus `json:"approval_status"`
+	Notes          []*NoteInput   `json:"notes"`
+}
+
 type UserInput struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	Admin     bool   `json:"admin"`
+}
+
+type ContactType string
+
+const (
+	ContactTypeStudent   ContactType = "Student"
+	ContactTypeParent    ContactType = "Parent"
+	ContactTypeTeacher   ContactType = "Teacher"
+	ContactTypeNonProfit ContactType = "NonProfit"
+	ContactTypePublic    ContactType = "Public"
+	ContactTypePrivate   ContactType = "Private"
+	ContactTypeOther     ContactType = "Other"
+)
+
+var AllContactType = []ContactType{
+	ContactTypeStudent,
+	ContactTypeParent,
+	ContactTypeTeacher,
+	ContactTypeNonProfit,
+	ContactTypePublic,
+	ContactTypePrivate,
+	ContactTypeOther,
+}
+
+func (e ContactType) IsValid() bool {
+	switch e {
+	case ContactTypeStudent, ContactTypeParent, ContactTypeTeacher, ContactTypeNonProfit, ContactTypePublic, ContactTypePrivate, ContactTypeOther:
+		return true
+	}
+	return false
+}
+
+func (e ContactType) String() string {
+	return string(e)
+}
+
+func (e *ContactType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ContactType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ContactType", str)
+	}
+	return nil
+}
+
+func (e ContactType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

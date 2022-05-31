@@ -11,16 +11,16 @@ type Contact struct {
 	CreatedAt string     `json:"created_at"`
 }
 
-type ContactType string
-const (
-	Student string = "Student"
-	Parent string = "Parent"
-	Teacher string = "Teacher"
-	NonProfit string = "Non-Profit"
-	Public string = "Public"
-	Private string = "Private"
-	Other string = "Other"
-)
+// type ContactType string
+// const (
+// 	Student string = "Student"
+// 	Parent string = "Parent"
+// 	Teacher string = "Teacher"
+// 	NonProfit string = "Non-Profit"
+// 	Public string = "Public"
+// 	Private string = "Private"
+// 	Other string = "Other"
+// )
 
 // func NewContact(firstName string, lastName string, email string, phone string, affiliatedOrganization string, contactType string) *Contact {
 // 	contact := &Contact{

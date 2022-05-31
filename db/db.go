@@ -1,17 +1,16 @@
-package main
+package db
+
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func main() {
+func DatabaseConnection() *mongo.Database {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
@@ -20,6 +19,7 @@ func main() {
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
+		log.Fatal(cancel)
 	}
 	defer client.Disconnect(ctx)
 	err = client.Ping(ctx, readpref.Primary())
@@ -27,12 +27,5 @@ func main() {
 		log.Fatal(err)
 	}
 	database := client.Database("prevention_db")
-	usersCollection := database.Collection("users")
-	notesCollection := database.Collection("notes")
-	logsCollection := database.Collection("productivity_logs")
-	grantsCollection := database.Collection("grant_programs")
-	schoolreportsCollection := database.Collection("school_reports")
-	eventsCollection := database.Collection("events")
-	eventSummariesCollection := database.Collection("event_summaries")
-	contactsCollection := database.Collection("contacts")
+	return database
 }
