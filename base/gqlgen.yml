@@ -35,7 +35,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "prevention_productivity/graph/model"
+#  - "prevention_productivity/base/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -54,41 +54,3 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  Grant:
-    fields:
-      logs:
-        resolver: true
-      team_members:
-        resolver: true
-      events:
-        resolver: true
-  ProductivityLog:
-    fields:
-      notes:
-        resolver: true
-  Event:
-    fields:
-      notes:
-        resolver: true
-  SchoolReport:
-    fields:
-      notes:
-        resolver: true
-  EventSummary:
-    fields:
-      notes:
-        resolver: true
-      prevention_team:
-        resolver: true
-      event:
-        resolver: true
-  User:
-    fields:
-      logs:
-        resolver: true
-      events:
-        resolver: true
-      reports:
-        resolver: true
-      summaries:
-        resolver: true
