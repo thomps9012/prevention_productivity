@@ -6,9 +6,11 @@ package graph
 import (
 	"context"
 	"fmt"
+
 	"prevention_productivity/base/graph/generated"
 	"prevention_productivity/base/graph/model"
 	database "prevention_productivity/base/internal/db"
+	
 	"prevention_productivity/base/internal/jwt"
 	"prevention_productivity/base/internal/users"
 
@@ -56,16 +58,15 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 }
 
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (string, error) {
-	claims, err := jwt.ParseToken(refreshToken.Token)
+	token, err := jwt.ParseToken(refreshToken.Token)
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(claims)
-	//token, err := jwt.GenerateToken(claims.Email, claims.IsAdmin, claims.UserID)
-	//	if err != nil {
-	return "", err
-	//	}
-	//	return token, nil
+	newToken, err := jwt.GenerateToken(token["email"].(string), token["isAdmin"].(bool), token["userID"].(string))
+	if err != nil {
+		return "", err
+	}
+	return newToken, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {

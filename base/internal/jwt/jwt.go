@@ -2,9 +2,9 @@ package jwt
 
 import (
 	"time"
-	"fmt"
 	"log"
 	"github.com/dgrijalva/jwt-go"
+	"fmt"
 )
 
 var (
@@ -33,16 +33,20 @@ func GenerateToken(email string, isAdmin bool, userID string) (string, error) {
 	return tokenString, nil
 }
 
-func ParseToken(tokenStr string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
+func ParseToken(tokenStr string) (map[string]interface{}, error) {
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	claims := token.Claims.(*Claims)
-	return claims, nil
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		var info = map[string]interface{}{
+			"email": claims["email"].(string),
+			"isAdmin": claims["isAdmin"],
+			"userID": claims["userID"].(string),
+		}
+		return info, nil
+	}
+	return nil, fmt.Errorf("Token is invalid")
 }
