@@ -18,6 +18,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	user.LastName = newUser.LastName
 	user.Email = newUser.Email
 	user.Username = newUser.Username
+	user.Password = newUser.Password
 	user.Create()
 	token, err := jwt.GenerateToken(user.Username, user.IsAdmin)
 	if err != nil {
@@ -26,8 +27,19 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	return token, nil
 }
 
-func (r *mutationResolver) Login(ctx context.Context, login model.Login) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (string, error) {
+	var user users.User
+	user.Email = login.Email
+	user.Password = login.Password
+	correct := user.Authenticate()
+	if !correct {
+		return "", &users.WrongEmailOrPassword{}
+	}
+	token, err := jwt.GenerateToken(user.Username, user.IsAdmin)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
 func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (*model.User, error) {

@@ -2,8 +2,10 @@ package users
 
 import (
 	database "prevention_productivity/base/internal/db"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 	"context"
+	"fmt"
 )
 
 type User struct {
@@ -18,11 +20,11 @@ type User struct {
 
 func (u *User) Create()  {
 	collection := database.Db.Collection("users")
-	hashedPassword, err := HashPassword(u.Password)
+	hashed, err := HashPassword(u.Password)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
-	u.Password = hashedPassword
+	u.Password = hashed
 	u.IsAdmin = false
 	_, err = collection.InsertOne(context.TODO(), u)
 	if err != nil {
@@ -30,12 +32,31 @@ func (u *User) Create()  {
 	}
 }
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
+func (u *User) Authenticate() bool {
+	collection := database.Db.Collection("users")
+	var user User
+	filter := bson.D{{"email", u.Email}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return false
+	}
+	match := CheckPasswordHash(user.Password, u.Password)
+	fmt.Println(match)
+	return match
 }
 
-func CheckPasswordHash(password, hash string) bool {
+func HashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		panic(err)
+	}
+	return string(hash), err
+}
+
+func CheckPasswordHash(hash, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+	println(err.Error())
+	}
 	return err == nil
 }

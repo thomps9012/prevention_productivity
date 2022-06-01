@@ -46,7 +46,7 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Mutation struct {
 		CreateUser   func(childComplexity int, newUser model.NewUser) int
-		Login        func(childComplexity int, login model.Login) int
+		Login        func(childComplexity int, login model.LoginInput) int
 		RefreshToken func(childComplexity int, refreshToken model.RefreshTokenInput) int
 	}
 
@@ -68,7 +68,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateUser(ctx context.Context, newUser model.NewUser) (string, error)
-	Login(ctx context.Context, login model.Login) (*model.User, error)
+	Login(ctx context.Context, login model.LoginInput) (string, error)
 	RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (*model.User, error)
 }
 type QueryResolver interface {
@@ -113,7 +113,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Login(childComplexity, args["login"].(model.Login)), true
+		return e.complexity.Mutation.Login(childComplexity, args["login"].(model.LoginInput)), true
 
 	case "Mutation.refreshToken":
 		if e.complexity.Mutation.RefreshToken == nil {
@@ -203,7 +203,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputLogin,
+		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputNewUser,
 		ec.unmarshalInputRefreshTokenInput,
 	)
@@ -289,7 +289,7 @@ input NewUser {
   password: String!
 }
 
-input Login {
+input LoginInput {
   email: String!
   password: String!
 }
@@ -300,7 +300,7 @@ input RefreshTokenInput {
 
 type Mutation {
   createUser(newUser: NewUser!): String!
-  login(login: Login!): User!
+  login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): User!
 }
 `, BuiltIn: false},
@@ -329,10 +329,10 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.Login
+	var arg0 model.LoginInput
 	if tmp, ok := rawArgs["login"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("login"))
-		arg0, err = ec.unmarshalNLogin2prevention_productivityᚋbaseᚋgraphᚋmodelᚐLogin(ctx, tmp)
+		arg0, err = ec.unmarshalNLoginInput2prevention_productivityᚋbaseᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -493,7 +493,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Login(rctx, fc.Args["login"].(model.Login))
+		return ec.resolvers.Mutation().Login(rctx, fc.Args["login"].(model.LoginInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -505,9 +505,9 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNUser2ᚖprevention_productivityᚋbaseᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -517,23 +517,7 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "username":
-				return ec.fieldContext_User_username(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -2962,8 +2946,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interface{}) (model.Login, error) {
-	var it model.Login
+func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
+	var it model.LoginInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -3642,8 +3626,8 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNLogin2prevention_productivityᚋbaseᚋgraphᚋmodelᚐLogin(ctx context.Context, v interface{}) (model.Login, error) {
-	res, err := ec.unmarshalInputLogin(ctx, v)
+func (ec *executionContext) unmarshalNLoginInput2prevention_productivityᚋbaseᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (model.LoginInput, error) {
+	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
