@@ -2,9 +2,20 @@
 
 package model
 
+type Log struct {
+	ID        *string `json:"id"`
+	UserID    *string `json:"user_id"`
+	Action    string  `json:"action"`
+	CreatedAt string  `json:"created_at"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type NewLog struct {
+	Action string `json:"action"`
 }
 
 type NewUser struct {

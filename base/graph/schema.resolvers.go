@@ -6,12 +6,12 @@ package graph
 import (
 	"context"
 	"fmt"
-
 	"prevention_productivity/base/graph/generated"
 	"prevention_productivity/base/graph/model"
+	"prevention_productivity/base/internal/auth"
 	database "prevention_productivity/base/internal/db"
-	
 	"prevention_productivity/base/internal/jwt"
+	"prevention_productivity/base/internal/logs"
 	"prevention_productivity/base/internal/users"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,7 +46,6 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	if err != nil {
 		return "", err
 	}
-	println(userDB.ID)
 	if !correct {
 		return "", &users.WrongEmailOrPassword{}
 	}
@@ -67,6 +66,23 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.
 		return "", err
 	}
 	return newToken, nil
+}
+
+func (r *mutationResolver) CreateLog(ctx context.Context, newLog model.NewLog) (*model.Log, error) {
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var log logs.Log
+	log.UserID = userID
+	log.Action = newLog.Action
+	log.Create()
+	return &model.Log{
+		ID:       &log.ID,
+		UserID:   &log.UserID,
+		Action:   log.Action,
+		CreatedAt: log.CreatedAt,
+	}, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -94,6 +110,10 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Logs(ctx context.Context) ([]*model.Log, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

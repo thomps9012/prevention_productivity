@@ -8,9 +8,17 @@ type User {
   is_admin: Boolean!
 }
 
+type Log {
+  id: ID
+  user_id: ID
+  action: String!
+  created_at: String!
+}
+
 type Query {
   users: [User!]!
   user(id: ID!): User!
+  logs: [Log!]!
 }
 
 input NewUser {
@@ -29,8 +37,13 @@ input RefreshTokenInput {
   token: String!
 }
 
+input NewLog {
+  action: String!
+}
+
 type Mutation {
   createUser(newUser: NewUser!): String!
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
+  createLog(newLog: NewLog!): Log!
 }

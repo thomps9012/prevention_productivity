@@ -44,7 +44,6 @@ func (u *User) Authenticate() bool {
 		return false
 	}
 	match := CheckPasswordHash(user.Password, u.Password)
-	fmt.Println(match)
 	return match
 }
 
