@@ -6,19 +6,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"context"
 	"fmt"
+	"strings"
+	"github.com/google/uuid"
 )
 
 type User struct {
+	ID	   string `json:"id" bson:"_id"`
 	FirstName string `json:"firstName"`
 	LastName string `json:"lastName"`
 	Email string `json:"email"`
-	Username string `json:"username"`
 	Password string `json:"password"`
 	IsAdmin bool `json:"isAdmin"`
 }
 
 
-func (u *User) Create()  {
+func (u *User) Create() {
 	collection := database.Db.Collection("users")
 	hashed, err := HashPassword(u.Password)
 	if err != nil {
@@ -26,6 +28,7 @@ func (u *User) Create()  {
 	}
 	u.Password = hashed
 	u.IsAdmin = false
+	u.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	_, err = collection.InsertOne(context.TODO(), u)
 	if err != nil {
 		panic(err)

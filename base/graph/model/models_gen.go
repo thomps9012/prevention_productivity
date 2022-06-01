@@ -11,7 +11,6 @@ type NewUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
-	Username  string `json:"username"`
 	Password  string `json:"password"`
 }
 
@@ -20,11 +19,11 @@ type RefreshTokenInput struct {
 }
 
 type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	IsAdmin   bool   `json:"is_admin"`
+	ID        *string `json:"id"`
+	FirstName string  `json:"first_name"`
+	LastName  string  `json:"last_name"`
+	Email     string  `json:"email"`
+	Username  string  `json:"username"`
+	Password  string  `json:"password"`
+	IsAdmin   bool    `json:"is_admin"`
 }

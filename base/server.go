@@ -8,10 +8,11 @@ import (
 	"prevention_productivity/base/graph/generated"
 
 	database "prevention_productivity/base/internal/db"
+	"prevention_productivity/base/internal/auth"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	// "github.com/go-chi/chi"
+	"github.com/go-chi/chi"
 )
 
 const defaultPort = "8080"
@@ -22,7 +23,8 @@ func main() {
 		port = defaultPort
 	}
 
-	//router := chi.NewRouter()
+	router := chi.NewRouter()
+	router.Use(auth.Middleware())
 
 	database.InitDB()
 	defer database.CloseDB()

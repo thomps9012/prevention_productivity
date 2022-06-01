@@ -69,7 +69,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateUser(ctx context.Context, newUser model.NewUser) (string, error)
 	Login(ctx context.Context, login model.LoginInput) (string, error)
-	RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (*model.User, error)
+	RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (string, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -267,7 +267,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema.graphqls", Input: `type User {
-  id: ID!
+  id: ID
   first_name: String!
   last_name: String!
   email: String!
@@ -285,7 +285,6 @@ input NewUser {
   first_name: String!
   last_name: String!
   email: String!
-  username: String!
   password: String!
 }
 
@@ -301,7 +300,7 @@ input RefreshTokenInput {
 type Mutation {
   createUser(newUser: NewUser!): String!
   login(login: LoginInput!): String!
-  refreshToken(refreshToken: RefreshTokenInput!): User!
+  refreshToken(refreshToken: RefreshTokenInput!): String!
 }
 `, BuiltIn: false},
 }
@@ -560,9 +559,9 @@ func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNUser2ᚖprevention_productivityᚋbaseᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -572,23 +571,7 @@ func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Conte
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "username":
-				return ec.fieldContext_User_username(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	defer func() {
@@ -886,14 +869,11 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3010,14 +2990,6 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
-		case "username":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
-			it.Username, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "password":
 			var err error
 
@@ -3222,9 +3194,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 
 			out.Values[i] = ec._User_id(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "first_name":
 
 			out.Values[i] = ec._User_first_name(ctx, field, obj)
@@ -3990,6 +3959,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalID(*v)
 	return res
 }
 

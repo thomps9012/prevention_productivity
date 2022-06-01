@@ -8,8 +8,11 @@ import (
 	"fmt"
 	"prevention_productivity/base/graph/generated"
 	"prevention_productivity/base/graph/model"
+	database "prevention_productivity/base/internal/db"
 	"prevention_productivity/base/internal/jwt"
 	"prevention_productivity/base/internal/users"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser) (string, error) {
@@ -17,10 +20,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	user.FirstName = newUser.FirstName
 	user.LastName = newUser.LastName
 	user.Email = newUser.Email
-	user.Username = newUser.Username
 	user.Password = newUser.Password
 	user.Create()
-	token, err := jwt.GenerateToken(user.Username, user.IsAdmin)
+	token, err := jwt.GenerateToken(user.Email, user.IsAdmin, user.ID)
 	if err != nil {
 		return "", err
 	}
@@ -33,29 +35,60 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	user.Password = login.Password
 	correct := user.Authenticate()
 	if !correct {
+		return "", fmt.Errorf("Incorrect email or password")
+	}
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"email", login.Email}}
+	var userDB users.User
+	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
+	if err != nil {
+		return "", err
+	}
+	println(userDB.ID)
+	if !correct {
 		return "", &users.WrongEmailOrPassword{}
 	}
-	token, err := jwt.GenerateToken(user.Username, user.IsAdmin)
+	token, err := jwt.GenerateToken(user.Email, user.IsAdmin, userDB.ID)
 	if err != nil {
 		return "", err
 	}
 	return token, nil
 }
 
-func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (string, error) {
+	claims, err := jwt.ParseToken(refreshToken.Token)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(claims)
+	//token, err := jwt.GenerateToken(claims.Email, claims.IsAdmin, claims.UserID)
+	//	if err != nil {
+	return "", err
+	//	}
+	//	return token, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	var users []*model.User
-	fakeUser := model.User{
-		ID:        "1",
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "jdoe@gmail.com",
-		Password:  "password",
+	collection := database.Db.Collection("users")
+	cursor, err := collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		return nil, err
 	}
-	users = append(users, &fakeUser)
+	for cursor.Next(context.TODO()) {
+		var user *model.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &model.User{
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email,
+			Username:  user.Username,
+			IsAdmin:   user.IsAdmin,
+		})
+	}
 	return users, nil
 }
 

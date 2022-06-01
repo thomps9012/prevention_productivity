@@ -1,5 +1,5 @@
 type User {
-  id: ID!
+  id: ID
   first_name: String!
   last_name: String!
   email: String!
@@ -17,7 +17,6 @@ input NewUser {
   first_name: String!
   last_name: String!
   email: String!
-  username: String!
   password: String!
 }
 
@@ -33,5 +32,5 @@ input RefreshTokenInput {
 type Mutation {
   createUser(newUser: NewUser!): String!
   login(login: LoginInput!): String!
-  refreshToken(refreshToken: RefreshTokenInput!): User!
+  refreshToken(refreshToken: RefreshTokenInput!): String!
 }
