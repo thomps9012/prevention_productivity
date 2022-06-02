@@ -38,7 +38,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	user.Password = login.Password
 	correct := user.Authenticate()
 	if !correct {
-		return "", fmt.Errorf("Incorrect email or password")
+		return "", &users.WrongEmailOrPassword{}
 	}
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"email", login.Email}}
@@ -47,9 +47,6 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	println(userDB.IsAdmin)
 	if err != nil {
 		return "", err
-	}
-	if !correct {
-		return "", &users.WrongEmailOrPassword{}
 	}
 	token, err := jwt.GenerateToken(userDB.Email, userDB.IsAdmin, userDB.ID)
 	if err != nil {
@@ -187,35 +184,153 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	var users []*model.User
-	collection := database.Db.Collection("users")
-	cursor, err := collection.Find(context.TODO(), bson.D{})
-	if err != nil {
-		return nil, err
-	}
-	for cursor.Next(context.TODO()) {
-		var user *model.User
-		err := cursor.Decode(&user)
+	IsAdmin := auth.ForAdmin(ctx)
+	if IsAdmin {
+		var users []*model.User
+		collection := database.Db.Collection("users")
+		cursor, err := collection.Find(context.TODO(), bson.D{})
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, &model.User{
+		for cursor.Next(context.TODO()) {
+			var user *model.User
+			err := cursor.Decode(&user)
+			if err != nil {
+				return nil, err
+			}
+			users = append(users, &model.User{
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+				Email:     user.Email,
+				Username:  user.Username,
+				IsAdmin:   user.IsAdmin,
+			})
+		}
+		return users, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+}
+
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	if IsAdmin || UserID == id {
+		var user *model.User
+		collection := database.Db.Collection("users")
+		filter := bson.D{{"_id", id}}
+		err := collection.FindOne(context.TODO(), filter).Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		return &model.User{
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Email:     user.Email,
 			Username:  user.Username,
 			IsAdmin:   user.IsAdmin,
+		}, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+}
+
+func (r *queryResolver) Log(ctx context.Context, id string) (*model.Log, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	var log *model.Log
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	if err != nil {
+		return nil, err
+	}
+	logUser := *log.UserID
+	if IsAdmin || logUser == UserID {
+		return &model.Log{
+			ID:           log.ID,
+			UserID:       log.UserID,
+			FocusArea:    log.FocusArea,
+			Actions:      log.Actions,
+			Successes:    log.Successes,
+			Improvements: log.Improvements,
+			NextSteps:    log.NextSteps,
+			Status:       log.Status,
+			CreatedAt:    log.CreatedAt,
+		}, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+}
+
+func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.Log, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	var filter bson.D
+	if IsAdmin {
+		filter = bson.D{}
+	} else {
+		filter = bson.D{{"user_id", UserID}}
+	}
+	collection := database.Db.Collection("logs")
+	var logs []*model.Log
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var log *model.Log
+		err := cursor.Decode(&log)
+		if err != nil {
+			return nil, err
+		}
+		logs = append(logs, &model.Log{
+			ID:           log.ID,
+			UserID:       log.UserID,
+			FocusArea:    log.FocusArea,
+			Actions:      log.Actions,
+			Successes:    log.Successes,
+			Improvements: log.Improvements,
+			NextSteps:    log.NextSteps,
+			Status:       log.Status,
+			CreatedAt:    log.CreatedAt,
 		})
 	}
-	return users, nil
+	return logs, nil
 }
 
-func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Logs(ctx context.Context) ([]*model.Log, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.Log, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	if IsAdmin {
+		var logs []*model.Log
+		collection := database.Db.Collection("logs")
+		filter := bson.D{{"userid", userID}}
+		cursor, err := collection.Find(context.TODO(), filter)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var log *model.Log
+			err := cursor.Decode(&log)
+			if err != nil {
+				return nil, err
+			}
+			logs = append(logs, &model.Log{
+				ID:           log.ID,
+				UserID:       log.UserID,
+				FocusArea:    log.FocusArea,
+				Actions:      log.Actions,
+				Successes:    log.Successes,
+				Improvements: log.Improvements,
+				NextSteps:    log.NextSteps,
+				Status:       log.Status,
+				CreatedAt:    log.CreatedAt,
+			})
+		}
+		return logs, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 // Mutation returns generated.MutationResolver implementation.

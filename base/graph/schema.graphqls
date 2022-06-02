@@ -34,7 +34,9 @@ type Note {
 type Query {
   users: [User!]!
   user(id: ID!): User!
-  logs: [Log!]!
+  log(id: ID!): Log!
+  allLogs: [Log!]!
+  userLogs(user_id: ID!): [Log!]!
 }
 
 input NewUser {
