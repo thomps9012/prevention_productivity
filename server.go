@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/thomps9012/prevention_productivity/graph"
-	"github.com/thomps9012/prevention_productivity/graph/generated"
-	auth "github.com/thomps9012/prevention_productivity/internal/auth"
-	database "github.com/thomps9012/prevention_productivity/internal/db"
+	"thomps9012/prevention_productivity/graph"
+	"thomps9012/prevention_productivity/graph/generated"
+	auth "thomps9012/prevention_productivity/internal/auth"
+	database "thomps9012/prevention_productivity/internal/db"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

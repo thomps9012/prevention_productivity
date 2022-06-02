@@ -1,7 +1,7 @@
 package logs
 
 import (
-	database "github.com/thomps9012/prevention_productivity/internal/db"
+	database "thomps9012/prevention_productivity/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"context"
 	"strings"

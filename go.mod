@@ -1,4 +1,4 @@
-module github.com/thomps9012/prevention_productivity
+module thomps9012/prevention_productivity
 
 go 1.18
 
@@ -21,10 +21,15 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/kr/fs v0.1.0 // indirect
+	github.com/kr/pretty v0.1.0 // indirect
+	github.com/kr/text v0.1.0 // indirect
 	github.com/matryer/moq v0.2.7 // indirect
 	github.com/mitchellh/mapstructure v1.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/tools/godep v0.0.0-20180126220526-ce0bfadeb516 // indirect
 	github.com/urfave/cli/v2 v2.8.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect

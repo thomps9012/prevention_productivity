@@ -1,1 +1,1 @@
-web: bin/prevention_productivity
+web: app
