@@ -28,11 +28,27 @@ type NewLog struct {
 	NextSteps    string `json:"next_steps"`
 }
 
+type NewNote struct {
+	ItemID  string `json:"item_id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
 type NewUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+}
+
+type Note struct {
+	ID        *string `json:"id"`
+	ItemID    *string `json:"item_id"`
+	UserID    *string `json:"user_id"`
+	Title     string  `json:"title"`
+	Content   string  `json:"content"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
 }
 
 type RefreshTokenInput struct {
@@ -46,6 +62,11 @@ type UpdateLog struct {
 	Improvements string `json:"improvements"`
 	NextSteps    string `json:"next_steps"`
 	Status       string `json:"status"`
+}
+
+type UpdateNote struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
 type User struct {

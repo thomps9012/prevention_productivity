@@ -12,6 +12,7 @@ import (
 	database "prevention_productivity/base/internal/db"
 	"prevention_productivity/base/internal/jwt"
 	"prevention_productivity/base/internal/logs"
+	"prevention_productivity/base/internal/notes"
 	"prevention_productivity/base/internal/users"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -130,6 +131,58 @@ func (r *mutationResolver) UpdateLog(ctx context.Context, id string, updateLog m
 		Status:       log.Status,
 		CreatedAt:    log.CreatedAt,
 		UpdatedAt:    log.UpdatedAt,
+	}, nil
+}
+
+func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
+	UserID := auth.ForUserID(ctx)
+	if UserID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var note notes.Note
+	note.UserID = UserID
+	note.ItemID = newNote.ItemID
+	note.Title = newNote.Title
+	note.Content = newNote.Content
+	note.Create()
+	return &model.Note{
+		ID:        &note.ID,
+		ItemID:    &note.ItemID,
+		UserID:    &note.UserID,
+		Title:     note.Title,
+		Content:   note.Content,
+		CreatedAt: note.CreatedAt,
+	}, nil
+}
+
+func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote model.UpdateNote) (*model.Note, error) {
+	UserID := auth.ForUserID(ctx)
+	IsAdmin := auth.ForAdmin(ctx)
+	if UserID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"_id", id}}
+	var note notes.Note
+	err := collection.FindOne(context.TODO(), filter).Decode(&note)
+	if err != nil {
+		return nil, err
+	}
+	if IsAdmin || note.UserID == UserID {
+		note.Title = updateNote.Title
+		note.Content = updateNote.Content
+		note.Update(id)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	return &model.Note{
+		ID:        &note.ID,
+		UserID:    &note.UserID,
+		ItemID:    &note.ItemID,
+		Title:     note.Title,
+		Content:   note.Content,
+		CreatedAt: note.CreatedAt,
+		UpdatedAt: note.UpdatedAt,
 	}, nil
 }
 

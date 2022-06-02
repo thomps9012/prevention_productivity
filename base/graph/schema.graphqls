@@ -21,6 +21,16 @@ type Log {
   updated_at: String!
 }
 
+type Note {
+  id: ID
+  item_id: ID
+  user_id: ID
+  title: String!
+  content: String!
+  created_at: String!
+  updated_at: String!
+}
+
 type Query {
   users: [User!]!
   user(id: ID!): User!
@@ -60,10 +70,23 @@ input UpdateLog {
   status: String!
 }
 
+input NewNote {
+  item_id: ID!
+  title: String!
+  content: String!
+}
+
+input UpdateNote {
+  title: String!
+  content: String!
+}
+
 type Mutation {
   createUser(newUser: NewUser!): String!
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
   createLog(newLog: NewLog!): Log!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
+  createNote(newNote: NewNote!): Note!
+  updateNote(id: ID!, updateNote: UpdateNote!): Note!
 }
