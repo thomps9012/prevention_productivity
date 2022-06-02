@@ -1,281 +1,94 @@
 type User {
-  id: ID!
+  id: ID
   first_name: String!
   last_name: String!
   email: String!
+  username: String!
   password: String!
-  admin: Boolean!
+  is_admin: Boolean!
 }
 
-type Grant {
-  id: ID!
-  award_number: String!
-  title: String!
-  description: String!
-  start_date: String!
-  end_date: String!
+type Log {
+  id: ID
+  user_id: ID
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
   status: String!
-  team_members: [User!]!
-}
-
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  REJECTED
+  created_at: String!
+  updated_at: String!
 }
 
 type Note {
-  id: ID!
-  author: User!
-  date: String
-  text: String!
-  item_id: ID!
-  section: Float!
-}
-
-type ProductivityLog {
-  id: ID!
-  author: User!
-  date: String!
-  grant: Grant!
-  focus_area: String!
-  actions: [String!]
-  successes: [String!]
-  improvements: [String!]
-  next_steps: [String!]
-  approval_status: ApprovalStatus!
-  notes: [Note]
-}
-
-type Event {
-  id: ID!
-  date: String!
-  grant: Grant!
-  event_lead: User!
-  team_members: [User!]!
-  name: String!
-  description: String!
-  location: String!
-  location_details: String!
-  start_time: String!
-  set_up_time: String!
-  clean_up_time: String!
-  agenda: [String!]
-  target_population: String!
-  age_group: String!
-  parting_gifts: [String!]
-  raffle_items: String!
-  marketing_material: String!
-  special_orders: String!
-  vendors: [String!]
-  food_beverage: String!
-  caterer: String!
-  food_head_count: Int
-  volunteers_needed: Boolean!
-  volunteer_list: [String!]
-  approval_status: ApprovalStatus!
-  budget: Float
-  affiliates: [String!]
-  educational_goal: String!
-  curriculum_plan: String!
-  outreach: String!
-  guest_list: [String!]
-  event_status: ApprovalStatus
-  notes: [Note]
-}
-
-type EventSummary {
-  id: ID!
-  author: User!
-  event: Event!
-  attendees: Int
-  challenges: [String!]
-  successes: [String!]
-  next_steps: [String!]
-  approval_status: ApprovalStatus!
-  notes: [Note]
+  id: ID
+  item_id: ID
+  user_id: ID
+  title: String!
+  content: String!
   created_at: String!
+  updated_at: String!
 }
-
-type SchoolReport {
-  id: ID!
-  grant: Grant!
-  author: User!
-  curriculum: String!
-  lesson_plan: String!
-  school: String!
-  student_roster: [String!]
-  topics_covered: [String!]
-  challenges: [String!]
-  successes: [String!]
-  approval_status: ApprovalStatus!
-  notes: [Note]
-  created_at: String!
-}
-
-enum ContactType {
-  Student
-  Parent
-  Teacher
-  NonProfit
-  Public
-  Private
-  Other
-}
-
-type Contact {
-  id: ID!
-  first_name: String!
-  last_name: String!
-  email: String!
-  phone: String!
-  contact_type: ContactType!
-  affiliated_organization: String!
-  created_at: String!
-}
-
 
 type Query {
   users: [User!]!
   user(id: ID!): User!
-  grants: [Grant!]!
-  grant(id: ID!): Grant!
-  productivityLogs: [ProductivityLog!]!
-  productivityLog(id: ID!): ProductivityLog!
-  events: [Event!]!
-  event(id: ID!): Event!
-  eventSummaries: [EventSummary!]!
-  eventSummary(id: ID!): EventSummary!
-  schoolReports: [SchoolReport!]!
-  schoolReport(id: ID!): SchoolReport!
-  contacts: [Contact!]!
-  contact(id: ID!): Contact!
+  log(id: ID!): Log!
+  allLogs: [Log!]!
+  userLogs(user_id: ID!): [Log!]!
 }
 
-input UserInput {
+input NewUser {
   first_name: String!
   last_name: String!
   email: String!
   password: String!
-  admin: Boolean!
 }
 
-input GrantInput {
-  award_number: String!
-  title: String!
-  description: String!
-  start_date: String!
-  end_date: String!
-  status: String!
-  team_members: [ID!]!
-}
-
-input ProductivityLogInput {
-  grant: ID!
-  focus_area: String!
-  actions: [String!]
-  successes: [String!]
-  improvements: [String!]
-  next_steps: [String!]
-  notes: [NoteInput]
-}
-
-input NoteInput {
-  text: String!
-  item_id: ID!
-  section: Float!
-}
-
-input EventInput {
-  grant: ID!
-  event_lead: ID!
-  team_members: [ID!]!
-  name: String!
-  description: String!
-  location: String!
-  location_details: String!
-  start_time: String!
-  set_up_time: String!
-  clean_up_time: String!
-  agenda: [String!]
-  target_population: String!
-  age_group: String!
-  parting_gifts: [String!]
-  raffle_items: String!
-  marketing_material: String!
-  special_orders: String!
-  vendors: [String!]
-  food_beverage: String!
-  caterer: String!
-  food_head_count: Int
-  volunteers_needed: Boolean!
-  volunteer_list: [String!]
-  approval_status: ApprovalStatus!
-  budget: Float
-  affiliates: [String!]
-  educational_goal: String!
-  curriculum_plan: String!
-  outreach: String!
-  guest_list: [String!]
-  event_status: ApprovalStatus
-  notes: [NoteInput]
-}
-
-input EventSummaryInput {
-  event: ID!
-  attendees: Int
-  challenges: [String!]
-  successes: [String!]
-  next_steps: [String!]
-  approval_status: ApprovalStatus!
-  notes: [NoteInput]
-}
-
-input SchoolReportInput {
-  grant: ID!
-  curriculum: String!
-  lesson_plan: String!
-  school: String!
-  student_roster: [String!]
-  topics_covered: [String!]
-  challenges: [String!]
-  successes: [String!]
-  approval_status: ApprovalStatus!
-  notes: [NoteInput]
-}
-
-input ContactInput {
-  first_name: String!
-  last_name: String!
+input LoginInput {
   email: String!
-  phone: String!
-  contact_type: ContactType!
-  affiliated_organization: String!
-} 
+  password: String!
+}
 
+input RefreshTokenInput {
+  token: String!
+}
+
+input NewLog {
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+}
+
+input UpdateLog {
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
+}
+
+input NewNote {
+  item_id: ID!
+  title: String!
+  content: String!
+}
+
+input UpdateNote {
+  title: String!
+  content: String!
+}
 
 type Mutation {
-  addUser(input: UserInput): User!
-  updateUser(id: ID!, input: UserInput): User!
-  deleteUser(id: ID!): User!
-  addGrant(input: GrantInput): Grant!
-  updateGrant(id: ID!, input: GrantInput): Grant!
-  deleteGrant(id: ID!): Grant!
-  addProductivityLog(input: ProductivityLogInput): ProductivityLog!
-  updateProductivityLog(id: ID!, input: ProductivityLogInput): ProductivityLog!
-  deleteProductivityLog(id: ID!): ProductivityLog!
-  addEvent(input: EventInput): Event!
-  updateEvent(id: ID!, input: EventInput): Event!
-  deleteEvent(id: ID!): Event!
-  addEventSummary(input: EventSummaryInput): EventSummary!
-  updateEventSummary(id: ID!, input: EventSummaryInput): EventSummary!
-  deleteEventSummary(id: ID!): EventSummary!
-  addSchoolReport(input: SchoolReportInput): SchoolReport!
-  updateSchoolReport(id: ID!, input: SchoolReportInput): SchoolReport!
-  deleteSchoolReport(id: ID!): SchoolReport!
-  addContact(input: ContactInput): Contact!
-  updateContact(id: ID!, input: ContactInput): Contact!
-  deleteContact(id: ID!): Contact!
-  addNote(input: NoteInput): Note!
-  editNote(id: ID!, input: NoteInput): Note!
+  createUser(newUser: NewUser!): String!
+  login(login: LoginInput!): String!
+  refreshToken(refreshToken: RefreshTokenInput!): String!
+  createLog(newLog: NewLog!): Log!
+  updateLog(id: ID!, updateLog: UpdateLog!): Log!
+  createNote(newNote: NewNote!): Note!
+  updateNote(id: ID!, updateNote: UpdateNote!): Note!
 }
