@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,8 +13,12 @@ import (
 var Db *mongo.Database
 
 func InitDB(){
+	ATLAS_URI := os.Getenv("ATLAS_URI")
 	// Set client options
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	if ATLAS_URI == "" {
+		ATLAS_URI = "mongodb://localhost:27017"
+	}
+	clientOptions := options.Client().ApplyURI(ATLAS_URI)
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)

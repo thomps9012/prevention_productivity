@@ -3,12 +3,17 @@ package jwt
 import (
 	"time"
 	"log"
+	"os"
 	"github.com/dgrijalva/jwt-go"
 	"fmt"
 )
 
 var (
-	key = []byte("my_secret_key")
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if(jwtSecret == ""){
+		jwtSecret = "secret"
+	}
+	key = []byte(jwtSecret)
 )
 
 type Claims struct {
