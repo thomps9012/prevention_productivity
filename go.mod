@@ -1,6 +1,6 @@
 module thomps9012/prevention_productivity
 
-go 1.18
+go 1.15
 
 require (
 	github.com/99designs/gqlgen v0.17.9
