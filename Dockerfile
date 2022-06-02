@@ -1,18 +1,21 @@
-# syntax=docker/dockerfile:1
+FROM heroku/heroku:20-build as build
 
-FROM golang:1.16-alpine
+COPY . /app
+WORKDIR /app
 
-WORKDIR /prevention_productivity
+# Setup buildpack
+RUN mkdir -p /tmp/buildpack/heroku/go /tmp/build_cache /tmp/env
+RUN curl https://buildpack-registry.s3.amazonaws.com/buildpacks/heroku/go.tgz | tar xz -C /tmp/buildpack/heroku/go
 
-COPY go.mod ./
-COPY go.sum ./
+#Execute Buildpack
+RUN STACK=heroku-20 /tmp/buildpack/heroku/go/bin/compile /app /tmp/build_cache /tmp/env
 
-RUN go mod download
+# Prepare final, minimal image
+FROM heroku/heroku:20
 
-COPY *.go ./
-
-RUN go build -o ./prevention_productivity
-
-EXPOSE 8080
-
-CMD ["/prevention_productivity"]
+COPY --from=build /app /app
+ENV HOME /app
+WORKDIR /app
+RUN useradd -m heroku
+USER heroku
+CMD /app/bin/prevention_productivity
