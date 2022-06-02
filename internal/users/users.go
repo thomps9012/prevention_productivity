@@ -1,7 +1,7 @@
 package users
 
 import (
-	database "prevention_productivity/base/internal/db"
+	database "prevention_productivity/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 	"context"

@@ -15,6 +15,11 @@ type Log struct {
 	UpdatedAt    string  `json:"updated_at"`
 }
 
+type LogWithNotes struct {
+	Log   *Log    `json:"log"`
+	Notes []*Note `json:"notes"`
+}
+
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`

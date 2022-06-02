@@ -6,14 +6,14 @@ package graph
 import (
 	"context"
 	"fmt"
-	"prevention_productivity/base/graph/generated"
-	"prevention_productivity/base/graph/model"
-	"prevention_productivity/base/internal/auth"
-	database "prevention_productivity/base/internal/db"
-	"prevention_productivity/base/internal/jwt"
-	"prevention_productivity/base/internal/logs"
-	"prevention_productivity/base/internal/notes"
-	"prevention_productivity/base/internal/users"
+	generated1 "prevention_productivity/graph/generated"
+	"prevention_productivity/graph/model"
+	"prevention_productivity/internal/auth"
+	database "prevention_productivity/internal/db"
+	"prevention_productivity/internal/jwt"
+	"prevention_productivity/internal/logs"
+	"prevention_productivity/internal/notes"
+	"prevention_productivity/internal/users"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -235,29 +235,58 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 	}
 }
 
-func (r *queryResolver) Log(ctx context.Context, id string) (*model.Log, error) {
+func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	var log *model.Log
-	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
-	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	var LogWithNotes *model.LogWithNotes
+	log := logs.Log{}
+	logCollection := database.Db.Collection("logs")
+	logFilter := bson.D{{"_id", id}}
+	err := logCollection.FindOne(context.TODO(), logFilter).Decode(&log)
 	if err != nil {
 		return nil, err
 	}
-	logUser := *log.UserID
-	if IsAdmin || logUser == UserID {
-		return &model.Log{
-			ID:           log.ID,
-			UserID:       log.UserID,
-			FocusArea:    log.FocusArea,
-			Actions:      log.Actions,
-			Successes:    log.Successes,
-			Improvements: log.Improvements,
-			NextSteps:    log.NextSteps,
-			Status:       log.Status,
-			CreatedAt:    log.CreatedAt,
-		}, nil
+	logUserID := log.UserID
+	if IsAdmin || logUserID == UserID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"itemid", id}}
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				ItemID:    note.ItemID,
+				UserID:    note.UserID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		LogWithNotes = &model.LogWithNotes{
+			Log: &model.Log{
+				ID:        &log.ID,
+				UserID:    &log.UserID,
+				FocusArea: log.FocusArea,
+				Actions:   log.Actions,
+				Successes: log.Successes,
+				Improvements: log.Improvements,
+				NextSteps: log.NextSteps,
+				Status:    log.Status,
+				CreatedAt: log.CreatedAt,
+				UpdatedAt: log.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return LogWithNotes, nil
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -333,11 +362,11 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 	}
 }
 
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+// Mutation returns generated1.MutationResolver implementation.
+func (r *Resolver) Mutation() generated1.MutationResolver { return &mutationResolver{r} }
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+// Query returns generated1.QueryResolver implementation.
+func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

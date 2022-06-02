@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"prevention_productivity/base/graph"
-	"prevention_productivity/base/graph/generated"
+	"prevention_productivity/graph"
+	"prevention_productivity/graph/generated"
 
-	database "prevention_productivity/base/internal/db"
-	"prevention_productivity/base/internal/auth"
+	database "prevention_productivity/internal/db"
+	"prevention_productivity/internal/auth"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

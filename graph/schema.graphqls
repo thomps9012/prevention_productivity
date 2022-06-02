@@ -31,10 +31,15 @@ type Note {
   updated_at: String!
 }
 
+type LogWithNotes {
+  log: Log!
+  notes: [Note]
+}
+
 type Query {
   users: [User!]!
   user(id: ID!): User!
-  log(id: ID!): Log!
+  log(id: ID!): LogWithNotes!
   allLogs: [Log!]!
   userLogs(user_id: ID!): [Log!]!
 }

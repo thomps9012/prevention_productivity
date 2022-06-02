@@ -6,7 +6,7 @@ import (
 	"strings"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
-	database "prevention_productivity/base/internal/db"
+	database "prevention_productivity/internal/db"
 )
 
 type Note struct {
