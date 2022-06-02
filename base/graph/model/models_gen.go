@@ -3,10 +3,16 @@
 package model
 
 type Log struct {
-	ID        *string `json:"id"`
-	UserID    *string `json:"user_id"`
-	Action    string  `json:"action"`
-	CreatedAt string  `json:"created_at"`
+	ID           *string `json:"id"`
+	UserID       *string `json:"user_id"`
+	FocusArea    string  `json:"focus_area"`
+	Actions      string  `json:"actions"`
+	Successes    string  `json:"successes"`
+	Improvements string  `json:"improvements"`
+	NextSteps    string  `json:"next_steps"`
+	Status       string  `json:"status"`
+	CreatedAt    string  `json:"created_at"`
+	UpdatedAt    string  `json:"updated_at"`
 }
 
 type LoginInput struct {
@@ -15,7 +21,11 @@ type LoginInput struct {
 }
 
 type NewLog struct {
-	Action string `json:"action"`
+	FocusArea    string `json:"focus_area"`
+	Actions      string `json:"actions"`
+	Successes    string `json:"successes"`
+	Improvements string `json:"improvements"`
+	NextSteps    string `json:"next_steps"`
 }
 
 type NewUser struct {
@@ -27,6 +37,15 @@ type NewUser struct {
 
 type RefreshTokenInput struct {
 	Token string `json:"token"`
+}
+
+type UpdateLog struct {
+	FocusArea    string `json:"focus_area"`
+	Actions      string `json:"actions"`
+	Successes    string `json:"successes"`
+	Improvements string `json:"improvements"`
+	NextSteps    string `json:"next_steps"`
+	Status       string `json:"status"`
 }
 
 type User struct {

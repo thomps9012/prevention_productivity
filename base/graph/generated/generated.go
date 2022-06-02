@@ -45,10 +45,16 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Log struct {
-		Action    func(childComplexity int) int
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		UserID    func(childComplexity int) int
+		Actions      func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		FocusArea    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Improvements func(childComplexity int) int
+		NextSteps    func(childComplexity int) int
+		Status       func(childComplexity int) int
+		Successes    func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		UserID       func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -56,6 +62,7 @@ type ComplexityRoot struct {
 		CreateUser   func(childComplexity int, newUser model.NewUser) int
 		Login        func(childComplexity int, login model.LoginInput) int
 		RefreshToken func(childComplexity int, refreshToken model.RefreshTokenInput) int
+		UpdateLog    func(childComplexity int, id string, updateLog model.UpdateLog) int
 	}
 
 	Query struct {
@@ -80,6 +87,7 @@ type MutationResolver interface {
 	Login(ctx context.Context, login model.LoginInput) (string, error)
 	RefreshToken(ctx context.Context, refreshToken model.RefreshTokenInput) (string, error)
 	CreateLog(ctx context.Context, newLog model.NewLog) (*model.Log, error)
+	UpdateLog(ctx context.Context, id string, updateLog model.UpdateLog) (*model.Log, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -102,12 +110,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Log.action":
-		if e.complexity.Log.Action == nil {
+	case "Log.actions":
+		if e.complexity.Log.Actions == nil {
 			break
 		}
 
-		return e.complexity.Log.Action(childComplexity), true
+		return e.complexity.Log.Actions(childComplexity), true
 
 	case "Log.created_at":
 		if e.complexity.Log.CreatedAt == nil {
@@ -116,12 +124,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.CreatedAt(childComplexity), true
 
+	case "Log.focus_area":
+		if e.complexity.Log.FocusArea == nil {
+			break
+		}
+
+		return e.complexity.Log.FocusArea(childComplexity), true
+
 	case "Log.id":
 		if e.complexity.Log.ID == nil {
 			break
 		}
 
 		return e.complexity.Log.ID(childComplexity), true
+
+	case "Log.improvements":
+		if e.complexity.Log.Improvements == nil {
+			break
+		}
+
+		return e.complexity.Log.Improvements(childComplexity), true
+
+	case "Log.next_steps":
+		if e.complexity.Log.NextSteps == nil {
+			break
+		}
+
+		return e.complexity.Log.NextSteps(childComplexity), true
+
+	case "Log.status":
+		if e.complexity.Log.Status == nil {
+			break
+		}
+
+		return e.complexity.Log.Status(childComplexity), true
+
+	case "Log.successes":
+		if e.complexity.Log.Successes == nil {
+			break
+		}
+
+		return e.complexity.Log.Successes(childComplexity), true
+
+	case "Log.updated_at":
+		if e.complexity.Log.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Log.UpdatedAt(childComplexity), true
 
 	case "Log.user_id":
 		if e.complexity.Log.UserID == nil {
@@ -177,6 +227,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RefreshToken(childComplexity, args["refreshToken"].(model.RefreshTokenInput)), true
+
+	case "Mutation.updateLog":
+		if e.complexity.Mutation.UpdateLog == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateLog_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateLog(childComplexity, args["id"].(string), args["updateLog"].(model.UpdateLog)), true
 
 	case "Query.logs":
 		if e.complexity.Query.Logs == nil {
@@ -265,6 +327,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewLog,
 		ec.unmarshalInputNewUser,
 		ec.unmarshalInputRefreshTokenInput,
+		ec.unmarshalInputUpdateLog,
 	)
 	first := true
 
@@ -338,8 +401,14 @@ var sources = []*ast.Source{
 type Log {
   id: ID
   user_id: ID
-  action: String!
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
   created_at: String!
+  updated_at: String!
 }
 
 type Query {
@@ -365,7 +434,20 @@ input RefreshTokenInput {
 }
 
 input NewLog {
-  action: String!
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+}
+
+input UpdateLog {
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
 }
 
 type Mutation {
@@ -373,6 +455,7 @@ type Mutation {
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
   createLog(newLog: NewLog!): Log!
+  updateLog(id: ID!, updateLog: UpdateLog!): Log!
 }
 `, BuiltIn: false},
 }
@@ -439,6 +522,30 @@ func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context
 		}
 	}
 	args["refreshToken"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 model.UpdateLog
+	if tmp, ok := rawArgs["updateLog"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateLog"))
+		arg1, err = ec.unmarshalNUpdateLog2prevention_productivityᚋbaseᚋgraphᚋmodelᚐUpdateLog(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["updateLog"] = arg1
 	return args, nil
 }
 
@@ -592,8 +699,8 @@ func (ec *executionContext) fieldContext_Log_user_id(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Log_action(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Log_action(ctx, field)
+func (ec *executionContext) _Log_focus_area(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_focus_area(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -606,7 +713,7 @@ func (ec *executionContext) _Log_action(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Action, nil
+		return obj.FocusArea, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -623,7 +730,227 @@ func (ec *executionContext) _Log_action(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Log_action(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Log_focus_area(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_actions(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_actions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Actions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_actions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_successes(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_successes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Successes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_successes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_improvements(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_improvements(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Improvements, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_improvements(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_next_steps(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_next_steps(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NextSteps, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_next_steps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_status(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
@@ -668,6 +995,50 @@ func (ec *executionContext) _Log_created_at(ctx context.Context, field graphql.C
 }
 
 func (ec *executionContext) fieldContext_Log_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
@@ -888,10 +1259,22 @@ func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context,
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "action":
-				return ec.fieldContext_Log_action(ctx, field)
+			case "focus_area":
+				return ec.fieldContext_Log_focus_area(ctx, field)
+			case "actions":
+				return ec.fieldContext_Log_actions(ctx, field)
+			case "successes":
+				return ec.fieldContext_Log_successes(ctx, field)
+			case "improvements":
+				return ec.fieldContext_Log_improvements(ctx, field)
+			case "next_steps":
+				return ec.fieldContext_Log_next_steps(ctx, field)
+			case "status":
+				return ec.fieldContext_Log_status(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Log_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Log_updated_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
 		},
@@ -904,6 +1287,83 @@ func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createLog_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateLog(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateLog(rctx, fc.Args["id"].(string), fc.Args["updateLog"].(model.UpdateLog))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Log)
+	fc.Result = res
+	return ec.marshalNLog2ᚖprevention_productivityᚋbaseᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Log_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Log_user_id(ctx, field)
+			case "focus_area":
+				return ec.fieldContext_Log_focus_area(ctx, field)
+			case "actions":
+				return ec.fieldContext_Log_actions(ctx, field)
+			case "successes":
+				return ec.fieldContext_Log_successes(ctx, field)
+			case "improvements":
+				return ec.fieldContext_Log_improvements(ctx, field)
+			case "next_steps":
+				return ec.fieldContext_Log_next_steps(ctx, field)
+			case "status":
+				return ec.fieldContext_Log_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Log_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Log_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateLog_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -1084,10 +1544,22 @@ func (ec *executionContext) fieldContext_Query_logs(ctx context.Context, field g
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "action":
-				return ec.fieldContext_Log_action(ctx, field)
+			case "focus_area":
+				return ec.fieldContext_Log_focus_area(ctx, field)
+			case "actions":
+				return ec.fieldContext_Log_actions(ctx, field)
+			case "successes":
+				return ec.fieldContext_Log_successes(ctx, field)
+			case "improvements":
+				return ec.fieldContext_Log_improvements(ctx, field)
+			case "next_steps":
+				return ec.fieldContext_Log_next_steps(ctx, field)
+			case "status":
+				return ec.fieldContext_Log_status(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Log_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Log_updated_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
 		},
@@ -3342,11 +3814,43 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 
 	for k, v := range asMap {
 		switch k {
-		case "action":
+		case "focus_area":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("action"))
-			it.Action, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focus_area"))
+			it.FocusArea, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "actions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actions"))
+			it.Actions, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "successes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
+			it.Successes, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "improvements":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
+			it.Improvements, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "next_steps":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("next_steps"))
+			it.NextSteps, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3426,6 +3930,69 @@ func (ec *executionContext) unmarshalInputRefreshTokenInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateLog(ctx context.Context, obj interface{}) (model.UpdateLog, error) {
+	var it model.UpdateLog
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "focus_area":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focus_area"))
+			it.FocusArea, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "actions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actions"))
+			it.Actions, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "successes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
+			it.Successes, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "improvements":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
+			it.Improvements, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "next_steps":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("next_steps"))
+			it.NextSteps, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3452,9 +4019,44 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = ec._Log_user_id(ctx, field, obj)
 
-		case "action":
+		case "focus_area":
 
-			out.Values[i] = ec._Log_action(ctx, field, obj)
+			out.Values[i] = ec._Log_focus_area(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "actions":
+
+			out.Values[i] = ec._Log_actions(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "successes":
+
+			out.Values[i] = ec._Log_successes(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "improvements":
+
+			out.Values[i] = ec._Log_improvements(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "next_steps":
+
+			out.Values[i] = ec._Log_next_steps(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+
+			out.Values[i] = ec._Log_status(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -3462,6 +4064,13 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		case "created_at":
 
 			out.Values[i] = ec._Log_created_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updated_at":
+
+			out.Values[i] = ec._Log_updated_at(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -3527,6 +4136,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createLog(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateLog":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateLog(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -4160,6 +4778,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateLog2prevention_productivityᚋbaseᚋgraphᚋmodelᚐUpdateLog(ctx context.Context, v interface{}) (model.UpdateLog, error) {
+	res, err := ec.unmarshalInputUpdateLog(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUser2prevention_productivityᚋbaseᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {

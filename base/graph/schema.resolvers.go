@@ -43,13 +43,14 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	filter := bson.D{{"email", login.Email}}
 	var userDB users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
+	println(userDB.IsAdmin)
 	if err != nil {
 		return "", err
 	}
 	if !correct {
 		return "", &users.WrongEmailOrPassword{}
 	}
-	token, err := jwt.GenerateToken(user.Email, user.IsAdmin, userDB.ID)
+	token, err := jwt.GenerateToken(userDB.Email, userDB.IsAdmin, userDB.ID)
 	if err != nil {
 		return "", err
 	}
@@ -75,13 +76,60 @@ func (r *mutationResolver) CreateLog(ctx context.Context, newLog model.NewLog) (
 	}
 	var log logs.Log
 	log.UserID = userID
-	log.Action = newLog.Action
+	log.FocusArea = newLog.FocusArea
+	log.Actions = newLog.Actions
+	log.Successes = newLog.Successes
+	log.Improvements = newLog.Improvements
+	log.NextSteps = newLog.NextSteps
 	log.Create()
 	return &model.Log{
-		ID:       &log.ID,
-		UserID:   &log.UserID,
-		Action:   log.Action,
-		CreatedAt: log.CreatedAt,
+		ID:           &log.ID,
+		UserID:       &log.UserID,
+		FocusArea:    log.FocusArea,
+		Actions:      log.Actions,
+		Successes:    log.Successes,
+		Improvements: log.Improvements,
+		NextSteps:    log.NextSteps,
+		Status:       log.Status,
+		CreatedAt:    log.CreatedAt,
+	}, nil
+}
+
+func (r *mutationResolver) UpdateLog(ctx context.Context, id string, updateLog model.UpdateLog) (*model.Log, error) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	userIsAdmin := auth.ForAdmin(ctx)
+	var log logs.Log
+	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	if err != nil {
+		return nil, err
+	}
+	if userIsAdmin || log.UserID == userID {
+		log.FocusArea = updateLog.FocusArea
+		log.Status = updateLog.Status
+		log.Actions = updateLog.Actions
+		log.Successes = updateLog.Successes
+		log.Improvements = updateLog.Improvements
+		log.NextSteps = updateLog.NextSteps
+		log.Update(id)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	return &model.Log{
+		ID:           &log.ID,
+		UserID:       &log.UserID,
+		FocusArea:    log.FocusArea,
+		Actions:      log.Actions,
+		Successes:    log.Successes,
+		Improvements: log.Improvements,
+		NextSteps:    log.NextSteps,
+		Status:       log.Status,
+		CreatedAt:    log.CreatedAt,
+		UpdatedAt:    log.UpdatedAt,
 	}, nil
 }
 

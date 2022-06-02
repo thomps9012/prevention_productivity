@@ -11,8 +11,14 @@ type User {
 type Log {
   id: ID
   user_id: ID
-  action: String!
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
   created_at: String!
+  updated_at: String!
 }
 
 type Query {
@@ -38,7 +44,20 @@ input RefreshTokenInput {
 }
 
 input NewLog {
-  action: String!
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+}
+
+input UpdateLog {
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
 }
 
 type Mutation {
@@ -46,4 +65,5 @@ type Mutation {
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
   createLog(newLog: NewLog!): Log!
+  updateLog(id: ID!, updateLog: UpdateLog!): Log!
 }
