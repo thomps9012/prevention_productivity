@@ -1,4 +1,4 @@
-module prevention_productivity
+module github.com/thomps9012/prevention_productivity
 
 go 1.18
 

@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 	"net/http"
-	"prevention_productivity/internal/jwt"
+	"github.com/thomps9012/prevention_productivity/internal/jwt"
 )
 
 var userCtxKey = &contextKey{"user"}

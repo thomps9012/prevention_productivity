@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"prevention_productivity/graph/model"
+	"github.com/thomps9012/prevention_productivity/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"

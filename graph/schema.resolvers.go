@@ -6,14 +6,14 @@ package graph
 import (
 	"context"
 	"fmt"
-	generated1 "prevention_productivity/graph/generated"
-	"prevention_productivity/graph/model"
-	"prevention_productivity/internal/auth"
-	database "prevention_productivity/internal/db"
-	"prevention_productivity/internal/jwt"
-	"prevention_productivity/internal/logs"
-	"prevention_productivity/internal/notes"
-	"prevention_productivity/internal/users"
+	generated1 "github.com/thomps9012/prevention_productivity/graph/generated"
+	"github.com/thomps9012/prevention_productivity/graph/model"
+	"github.com/thomps9012/prevention_productivity/internal/auth"
+	database "github.com/thomps9012/prevention_productivity/internal/db"
+	"github.com/thomps9012/prevention_productivity/internal/jwt"
+	"github.com/thomps9012/prevention_productivity/internal/logs"
+	"github.com/thomps9012/prevention_productivity/internal/notes"
+	"github.com/thomps9012/prevention_productivity/internal/users"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
