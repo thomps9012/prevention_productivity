@@ -8,13 +8,7 @@ import (
 	"fmt"
 )
 
-var (
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if(jwtSecret == ""){
-		jwtSecret = "secret"
-	}
-	key = []byte(jwtSecret)
-)
+var key = []byte(os.Getenv("JWT_KEY"))
 
 type Claims struct {
 	userID string
