@@ -199,9 +199,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(user)
-			// users = append(users, user)
-
+			users = append(users, user)
 		}
 		return users, nil
 	}
@@ -258,7 +256,6 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 			if err != nil {
 				return nil, err
 			}
-			println(note.ID)
 			notes = append(notes, &model.Note{
 				ID:        note.ID,
 				UserID:    note.UserID,
