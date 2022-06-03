@@ -7,10 +7,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"thomps9012/prevention_productivity/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"thomps9012/prevention_productivity/graph/model"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -558,7 +558,7 @@ type Note {
 }
 
 type LogWithNotes {
-  log: Log
+  log: Log!
   notes: [Note]
 }
 
@@ -637,7 +637,7 @@ func (ec *executionContext) field_Mutation_createLog_args(ctx context.Context, r
 	var arg0 model.NewLog
 	if tmp, ok := rawArgs["newLog"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newLog"))
-		arg0, err = ec.unmarshalNNewLog2prevention_productivityᚋgraphᚋmodelᚐNewLog(ctx, tmp)
+		arg0, err = ec.unmarshalNNewLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewLog(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -652,7 +652,7 @@ func (ec *executionContext) field_Mutation_createNote_args(ctx context.Context, 
 	var arg0 model.NewNote
 	if tmp, ok := rawArgs["newNote"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newNote"))
-		arg0, err = ec.unmarshalNNewNote2prevention_productivityᚋgraphᚋmodelᚐNewNote(ctx, tmp)
+		arg0, err = ec.unmarshalNNewNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewNote(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -667,7 +667,7 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	var arg0 model.NewUser
 	if tmp, ok := rawArgs["newUser"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newUser"))
-		arg0, err = ec.unmarshalNNewUser2prevention_productivityᚋgraphᚋmodelᚐNewUser(ctx, tmp)
+		arg0, err = ec.unmarshalNNewUser2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewUser(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -682,7 +682,7 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	var arg0 model.LoginInput
 	if tmp, ok := rawArgs["login"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("login"))
-		arg0, err = ec.unmarshalNLoginInput2prevention_productivityᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
+		arg0, err = ec.unmarshalNLoginInput2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -697,7 +697,7 @@ func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context
 	var arg0 model.RefreshTokenInput
 	if tmp, ok := rawArgs["refreshToken"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
-		arg0, err = ec.unmarshalNRefreshTokenInput2prevention_productivityᚋgraphᚋmodelᚐRefreshTokenInput(ctx, tmp)
+		arg0, err = ec.unmarshalNRefreshTokenInput2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐRefreshTokenInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -721,7 +721,7 @@ func (ec *executionContext) field_Mutation_updateLog_args(ctx context.Context, r
 	var arg1 model.UpdateLog
 	if tmp, ok := rawArgs["updateLog"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateLog"))
-		arg1, err = ec.unmarshalNUpdateLog2prevention_productivityᚋgraphᚋmodelᚐUpdateLog(ctx, tmp)
+		arg1, err = ec.unmarshalNUpdateLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateLog(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -745,7 +745,7 @@ func (ec *executionContext) field_Mutation_updateNote_args(ctx context.Context, 
 	var arg1 model.UpdateNote
 	if tmp, ok := rawArgs["updateNote"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateNote"))
-		arg1, err = ec.unmarshalNUpdateNote2prevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx, tmp)
+		arg1, err = ec.unmarshalNUpdateNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1307,11 +1307,14 @@ func (ec *executionContext) _LogWithNotes_log(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Log)
 	fc.Result = res
-	return ec.marshalOLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+	return ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LogWithNotes_log(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1374,7 +1377,7 @@ func (ec *executionContext) _LogWithNotes_notes(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.Note)
 	fc.Result = res
-	return ec.marshalONote2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LogWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1599,7 +1602,7 @@ func (ec *executionContext) _Mutation_createLog(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Log)
 	fc.Result = res
-	return ec.marshalNLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+	return ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1676,7 +1679,7 @@ func (ec *executionContext) _Mutation_updateLog(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Log)
 	fc.Result = res
-	return ec.marshalNLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+	return ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1753,7 +1756,7 @@ func (ec *executionContext) _Mutation_createNote(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Note)
 	fc.Result = res
-	return ec.marshalNNote2ᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1824,7 +1827,7 @@ func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Note)
 	fc.Result = res
-	return ec.marshalNNote2ᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2194,7 +2197,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2254,7 +2257,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2325,7 +2328,7 @@ func (ec *executionContext) _Query_log(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(*model.LogWithNotes)
 	fc.Result = res
-	return ec.marshalNLogWithNotes2ᚖprevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx, field.Selections, res)
+	return ec.marshalNLogWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_log(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2386,7 +2389,7 @@ func (ec *executionContext) _Query_allLogs(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.([]*model.Log)
 	fc.Result = res
-	return ec.marshalNLog2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx, field.Selections, res)
+	return ec.marshalNLog2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_allLogs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2452,7 +2455,7 @@ func (ec *executionContext) _Query_userLogs(ctx context.Context, field graphql.C
 	}
 	res := resTmp.([]*model.Log)
 	fc.Result = res
-	return ec.marshalNLog2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx, field.Selections, res)
+	return ec.marshalNLog2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_userLogs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5104,6 +5107,9 @@ func (ec *executionContext) _LogWithNotes(ctx context.Context, sel ast.Selection
 
 			out.Values[i] = ec._LogWithNotes_log(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "notes":
 
 			out.Values[i] = ec._LogWithNotes_notes(ctx, field, obj)
@@ -5845,11 +5851,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNLog2prevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v model.Log) graphql.Marshaler {
+func (ec *executionContext) marshalNLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v model.Log) graphql.Marshaler {
 	return ec._Log(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLog2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Log) graphql.Marshaler {
+func (ec *executionContext) marshalNLog2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Log) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5873,7 +5879,7 @@ func (ec *executionContext) marshalNLog2ᚕᚖprevention_productivityᚋgraphᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx, sel, v[i])
+			ret[i] = ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5893,7 +5899,7 @@ func (ec *executionContext) marshalNLog2ᚕᚖprevention_productivityᚋgraphᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v *model.Log) graphql.Marshaler {
+func (ec *executionContext) marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v *model.Log) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5903,11 +5909,11 @@ func (ec *executionContext) marshalNLog2ᚖprevention_productivityᚋgraphᚋmod
 	return ec._Log(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLogWithNotes2prevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx context.Context, sel ast.SelectionSet, v model.LogWithNotes) graphql.Marshaler {
+func (ec *executionContext) marshalNLogWithNotes2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx context.Context, sel ast.SelectionSet, v model.LogWithNotes) graphql.Marshaler {
 	return ec._LogWithNotes(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLogWithNotes2ᚖprevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx context.Context, sel ast.SelectionSet, v *model.LogWithNotes) graphql.Marshaler {
+func (ec *executionContext) marshalNLogWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogWithNotes(ctx context.Context, sel ast.SelectionSet, v *model.LogWithNotes) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5917,31 +5923,31 @@ func (ec *executionContext) marshalNLogWithNotes2ᚖprevention_productivityᚋgr
 	return ec._LogWithNotes(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNLoginInput2prevention_productivityᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (model.LoginInput, error) {
+func (ec *executionContext) unmarshalNLoginInput2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLoginInput(ctx context.Context, v interface{}) (model.LoginInput, error) {
 	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewLog2prevention_productivityᚋgraphᚋmodelᚐNewLog(ctx context.Context, v interface{}) (model.NewLog, error) {
+func (ec *executionContext) unmarshalNNewLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewLog(ctx context.Context, v interface{}) (model.NewLog, error) {
 	res, err := ec.unmarshalInputNewLog(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewNote2prevention_productivityᚋgraphᚋmodelᚐNewNote(ctx context.Context, v interface{}) (model.NewNote, error) {
+func (ec *executionContext) unmarshalNNewNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewNote(ctx context.Context, v interface{}) (model.NewNote, error) {
 	res, err := ec.unmarshalInputNewNote(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewUser2prevention_productivityᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
+func (ec *executionContext) unmarshalNNewUser2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
 	res, err := ec.unmarshalInputNewUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNNote2prevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v model.Note) graphql.Marshaler {
+func (ec *executionContext) marshalNNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v model.Note) graphql.Marshaler {
 	return ec._Note(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNNote2ᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v *model.Note) graphql.Marshaler {
+func (ec *executionContext) marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v *model.Note) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5951,7 +5957,7 @@ func (ec *executionContext) marshalNNote2ᚖprevention_productivityᚋgraphᚋmo
 	return ec._Note(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNRefreshTokenInput2prevention_productivityᚋgraphᚋmodelᚐRefreshTokenInput(ctx context.Context, v interface{}) (model.RefreshTokenInput, error) {
+func (ec *executionContext) unmarshalNRefreshTokenInput2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐRefreshTokenInput(ctx context.Context, v interface{}) (model.RefreshTokenInput, error) {
 	res, err := ec.unmarshalInputRefreshTokenInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -5971,21 +5977,21 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateLog2prevention_productivityᚋgraphᚋmodelᚐUpdateLog(ctx context.Context, v interface{}) (model.UpdateLog, error) {
+func (ec *executionContext) unmarshalNUpdateLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateLog(ctx context.Context, v interface{}) (model.UpdateLog, error) {
 	res, err := ec.unmarshalInputUpdateLog(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateNote2prevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx context.Context, v interface{}) (model.UpdateNote, error) {
+func (ec *executionContext) unmarshalNUpdateNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx context.Context, v interface{}) (model.UpdateNote, error) {
 	res, err := ec.unmarshalInputUpdateNote(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUser2prevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -6009,7 +6015,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖprevention_productivityᚋgraph�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUser2ᚖprevention_productivityᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -6029,7 +6035,7 @@ func (ec *executionContext) marshalNUser2ᚕᚖprevention_productivityᚋgraph�
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2ᚖprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6334,14 +6340,7 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalOLog2ᚖprevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v *model.Log) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Log(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalONote2ᚕᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v []*model.Note) graphql.Marshaler {
+func (ec *executionContext) marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v []*model.Note) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -6368,7 +6367,7 @@ func (ec *executionContext) marshalONote2ᚕᚖprevention_productivityᚋgraph�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalONote2ᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx, sel, v[i])
+			ret[i] = ec.marshalONote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -6382,7 +6381,7 @@ func (ec *executionContext) marshalONote2ᚕᚖprevention_productivityᚋgraph�
 	return ret
 }
 
-func (ec *executionContext) marshalONote2ᚖprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v *model.Note) graphql.Marshaler {
+func (ec *executionContext) marshalONote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v *model.Note) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -45,6 +45,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	var userDB users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
 	println(userDB.IsAdmin)
+	println(userDB.ID)
 	if err != nil {
 		return "", err
 	}
@@ -198,18 +199,13 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 			if err != nil {
 				return nil, err
 			}
-			users = append(users, &model.User{
-				FirstName: user.FirstName,
-				LastName:  user.LastName,
-				Email:     user.Email,
-				Username:  user.Username,
-				IsAdmin:   user.IsAdmin,
-			})
+			fmt.Println(user)
+			// users = append(users, user)
+
 		}
 		return users, nil
-	} else {
-		return nil, fmt.Errorf("Unauthorized")
 	}
+	return nil, fmt.Errorf("Unauthorized")
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
@@ -224,6 +220,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 			return nil, err
 		}
 		return &model.User{
+			ID:        user.ID,
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Email:     user.Email,
@@ -261,10 +258,11 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 			if err != nil {
 				return nil, err
 			}
+			println(note.ID)
 			notes = append(notes, &model.Note{
 				ID:        note.ID,
-				ItemID:    note.ItemID,
 				UserID:    note.UserID,
+				ItemID:    note.ItemID,
 				Title:     note.Title,
 				Content:   note.Content,
 				CreatedAt: note.CreatedAt,
@@ -273,16 +271,16 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 		}
 		LogWithNotes = &model.LogWithNotes{
 			Log: &model.Log{
-				ID:        &log.ID,
-				UserID:    &log.UserID,
-				FocusArea: log.FocusArea,
-				Actions:   log.Actions,
-				Successes: log.Successes,
+				ID:           &log.ID,
+				UserID:       &log.UserID,
+				FocusArea:    log.FocusArea,
+				Actions:      log.Actions,
+				Successes:    log.Successes,
 				Improvements: log.Improvements,
-				NextSteps: log.NextSteps,
-				Status:    log.Status,
-				CreatedAt: log.CreatedAt,
-				UpdatedAt: log.UpdatedAt,
+				NextSteps:    log.NextSteps,
+				Status:       log.Status,
+				CreatedAt:    log.CreatedAt,
+				UpdatedAt:    log.UpdatedAt,
 			},
 			Notes: notes,
 		}
@@ -313,6 +311,7 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.Log, error) {
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(log)
 		logs = append(logs, &model.Log{
 			ID:           log.ID,
 			UserID:       log.UserID,
