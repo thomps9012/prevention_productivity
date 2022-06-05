@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
+	"github.com/gorilla/handlers"
 )
 
 const defaultPort = "8080"
@@ -48,5 +49,9 @@ gqlPlayground := playground.Handler("GraphQL playground", "/graphql")
 router.Get("/", gqlPlayground)
 log.Printf("Listening on localhost:%s\n", port)
 log.Printf("Visit `http://localhost:%s/graphql` in your browswer", port)
-panic(http.ListenAndServe(":"+port, router))
+// switch below on production
+originsOk := handlers.AllowedOrigins([]string{"*"})
+headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
+log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }

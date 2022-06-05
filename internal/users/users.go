@@ -21,6 +21,7 @@ type User struct {
 
 
 func (u *User) Create() {
+	// add in email validation
 	collection := database.Db.Collection("users")
 	hashed, err := HashPassword(u.Password)
 	if err != nil {

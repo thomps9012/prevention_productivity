@@ -206,6 +206,23 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return nil, fmt.Errorf("Unauthorized")
 }
 
+func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	if IsAdmin || UserID != "" {
+		var user *model.User
+		collection := database.Db.Collection("users")
+		filter := bson.D{{"_id", UserID}}
+		err := collection.FindOne(context.TODO(), filter).Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		return user, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+}
+
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)

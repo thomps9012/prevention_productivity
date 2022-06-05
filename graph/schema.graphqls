@@ -38,6 +38,7 @@ type LogWithNotes {
 
 type Query {
   users: [User!]!
+  me: User!
   user(id: ID!): User!
   log(id: ID!): LogWithNotes!
   allLogs: [Log!]!

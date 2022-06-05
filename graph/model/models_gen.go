@@ -2,9 +2,8 @@
 
 package model
 
-
 type Log struct {
-	ID           *string `json:"id" bson:"_id"`
+	ID           *string `json:"id"`
 	UserID       *string `json:"user_id"`
 	FocusArea    string  `json:"focus_area"`
 	Actions      string  `json:"actions"`
@@ -48,7 +47,7 @@ type NewUser struct {
 }
 
 type Note struct {
-	ID        *string `json:"id" bson:"_id"`
+	ID        *string `json:"id"`
 	ItemID    *string `json:"item_id"`
 	UserID    *string `json:"user_id"`
 	Title     string  `json:"title"`
@@ -76,7 +75,7 @@ type UpdateNote struct {
 }
 
 type User struct {
-	ID        *string `json:"id" bson:"_id"`
+	ID        *string `json:"id"`
 	FirstName string  `json:"first_name"`
 	LastName  string  `json:"last_name"`
 	Email     string  `json:"email"`
