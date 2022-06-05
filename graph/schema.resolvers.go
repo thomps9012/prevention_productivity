@@ -304,18 +304,14 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	}
 }
 
-func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.Log, error) {
-	IsAdmin := auth.ForAdmin(ctx)
-	UserID := auth.ForUserID(ctx)
-	var filter bson.D
-	if IsAdmin {
-		filter = bson.D{}
-	} else {
-		filter = bson.D{{"user_id", UserID}}
-	}
-	collection := database.Db.Collection("logs")
-	var logs []*model.Log
-	cursor, err := collection.Find(context.TODO(), filter)
+func getLogs(filter bson.D) ([]*model.AllLogs, error) {
+	// this function breaks if logs don't meet the model requirements
+	logsCollection := database.Db.Collection("logs")
+	notesCollection := database.Db.Collection("notes")
+	userCollection := database.Db.Collection("users")
+	var allLogs []*model.AllLogs
+	
+	cursor, err := logsCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -325,20 +321,51 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.Log, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(log)
-		logs = append(logs, &model.Log{
-			ID:           log.ID,
-			UserID:       log.UserID,
-			FocusArea:    log.FocusArea,
-			Actions:      log.Actions,
-			Successes:    log.Successes,
-			Improvements: log.Improvements,
-			NextSteps:    log.NextSteps,
-			Status:       log.Status,
-			CreatedAt:    log.CreatedAt,
-		})
+		noteFilter := bson.D{{"itemid", log.ID}}
+		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
+		if noteErr != nil {
+			return nil, err
+		}
+		intNoteCount := int(noteCount)
+		var user *model.User
+		userFilter := bson.D{{"_id", log.UserID}}
+		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		singleLog := &model.AllLogs{
+			Log: &model.Log{
+				ID:           log.ID,
+				FocusArea:    log.FocusArea,
+				Status:       log.Status,
+				CreatedAt:    log.CreatedAt,
+				UpdatedAt:    log.UpdatedAt,
+			},
+			User: &model.User{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			},
+			NoteCount: &intNoteCount,
+		}
+		allLogs = append(allLogs, singleLog)
 	}
-	return logs, nil
+	return allLogs, nil
+}
+
+func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	if IsAdmin {
+		filter := bson.D{}
+		return getLogs(filter)
+	} else if UserID != "" {
+		filter := bson.D{{"userid", UserID}}
+		return getLogs(filter)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+
 }
 
 func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.Log, error) {

@@ -44,6 +44,12 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AllLogs struct {
+		Log       func(childComplexity int) int
+		NoteCount func(childComplexity int) int
+		User      func(childComplexity int) int
+	}
+
 	Log struct {
 		Actions      func(childComplexity int) int
 		CreatedAt    func(childComplexity int) int
@@ -116,7 +122,7 @@ type QueryResolver interface {
 	Me(ctx context.Context) (*model.User, error)
 	User(ctx context.Context, id string) (*model.User, error)
 	Log(ctx context.Context, id string) (*model.LogWithNotes, error)
-	AllLogs(ctx context.Context) ([]*model.Log, error)
+	AllLogs(ctx context.Context) ([]*model.AllLogs, error)
 	UserLogs(ctx context.Context, userID string) ([]*model.Log, error)
 }
 
@@ -134,6 +140,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AllLogs.log":
+		if e.complexity.AllLogs.Log == nil {
+			break
+		}
+
+		return e.complexity.AllLogs.Log(childComplexity), true
+
+	case "AllLogs.noteCount":
+		if e.complexity.AllLogs.NoteCount == nil {
+			break
+		}
+
+		return e.complexity.AllLogs.NoteCount(childComplexity), true
+
+	case "AllLogs.user":
+		if e.complexity.AllLogs.User == nil {
+			break
+		}
+
+		return e.complexity.AllLogs.User(childComplexity), true
 
 	case "Log.actions":
 		if e.complexity.Log.Actions == nil {
@@ -571,12 +598,18 @@ type LogWithNotes {
   notes: [Note]
 }
 
+type AllLogs {
+  log: Log!
+  user: User
+  noteCount: Int
+}
+
 type Query {
   users: [User!]!
   me: User!
   user(id: ID!): User!
   log(id: ID!): LogWithNotes!
-  allLogs: [Log!]!
+  allLogs: [AllLogs!]!
   userLogs(user_id: ID!): [Log!]!
 }
 
@@ -861,6 +894,170 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AllLogs_log(ctx context.Context, field graphql.CollectedField, obj *model.AllLogs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllLogs_log(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Log, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Log)
+	fc.Result = res
+	return ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllLogs_log(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllLogs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Log_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Log_user_id(ctx, field)
+			case "focus_area":
+				return ec.fieldContext_Log_focus_area(ctx, field)
+			case "actions":
+				return ec.fieldContext_Log_actions(ctx, field)
+			case "successes":
+				return ec.fieldContext_Log_successes(ctx, field)
+			case "improvements":
+				return ec.fieldContext_Log_improvements(ctx, field)
+			case "next_steps":
+				return ec.fieldContext_Log_next_steps(ctx, field)
+			case "status":
+				return ec.fieldContext_Log_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Log_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Log_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllLogs_user(ctx context.Context, field graphql.CollectedField, obj *model.AllLogs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllLogs_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllLogs_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllLogs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "is_admin":
+				return ec.fieldContext_User_is_admin(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllLogs_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllLogs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllLogs_noteCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoteCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllLogs_noteCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllLogs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Log_id(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Log_id(ctx, field)
@@ -2457,9 +2654,9 @@ func (ec *executionContext) _Query_allLogs(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Log)
+	res := resTmp.([]*model.AllLogs)
 	fc.Result = res
-	return ec.marshalNLog2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLogᚄ(ctx, field.Selections, res)
+	return ec.marshalNAllLogs2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllLogsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_allLogs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2470,28 +2667,14 @@ func (ec *executionContext) fieldContext_Query_allLogs(ctx context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Log_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_Log_improvements(ctx, field)
-			case "next_steps":
-				return ec.fieldContext_Log_next_steps(ctx, field)
-			case "status":
-				return ec.fieldContext_Log_status(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Log_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Log_updated_at(ctx, field)
+			case "log":
+				return ec.fieldContext_AllLogs_log(ctx, field)
+			case "user":
+				return ec.fieldContext_AllLogs_user(ctx, field)
+			case "noteCount":
+				return ec.fieldContext_AllLogs_noteCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AllLogs", field.Name)
 		},
 	}
 	return fc, nil
@@ -5078,6 +5261,42 @@ func (ec *executionContext) unmarshalInputUpdateNote(ctx context.Context, obj in
 
 // region    **************************** object.gotpl ****************************
 
+var allLogsImplementors = []string{"AllLogs"}
+
+func (ec *executionContext) _AllLogs(ctx context.Context, sel ast.SelectionSet, obj *model.AllLogs) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, allLogsImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AllLogs")
+		case "log":
+
+			out.Values[i] = ec._AllLogs_log(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+
+			out.Values[i] = ec._AllLogs_user(ctx, field, obj)
+
+		case "noteCount":
+
+			out.Values[i] = ec._AllLogs_noteCount(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var logImplementors = []string{"Log"}
 
 func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj *model.Log) graphql.Marshaler {
@@ -5914,6 +6133,60 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAllLogs2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllLogsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AllLogs) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAllLogs2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllLogs(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNAllLogs2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllLogs(ctx context.Context, sel ast.SelectionSet, v *model.AllLogs) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AllLogs(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6433,6 +6706,22 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
+	return res
+}
+
 func (ec *executionContext) marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx context.Context, sel ast.SelectionSet, v []*model.Note) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -6495,6 +6784,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

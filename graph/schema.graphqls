@@ -36,12 +36,18 @@ type LogWithNotes {
   notes: [Note]
 }
 
+type AllLogs {
+  log: Log!
+  user: User
+  noteCount: Int
+}
+
 type Query {
   users: [User!]!
   me: User!
   user(id: ID!): User!
   log(id: ID!): LogWithNotes!
-  allLogs: [Log!]!
+  allLogs: [AllLogs!]!
   userLogs(user_id: ID!): [Log!]!
 }
 
