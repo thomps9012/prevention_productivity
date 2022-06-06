@@ -102,6 +102,9 @@ type Mutation {
   createLog(newLog: NewLog!): Log!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
   removeLog(id: ID!): Boolean!
+  approveLog(id: ID!): Boolean!
+  rejectLog(id: ID!): Boolean!
   createNote(newNote: NewNote!): Note!
   updateNote(id: ID!, updateNote: UpdateNote!): Note!
+  removeNote(id: ID!): Boolean!
 }

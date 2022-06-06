@@ -69,14 +69,16 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		ApproveLog   func(childComplexity int, id string) int
 		CreateLog    func(childComplexity int, newLog model.NewLog) int
 		CreateNote   func(childComplexity int, newNote model.NewNote) int
 		CreateUser   func(childComplexity int, newUser model.NewUser) int
+		DeleteNote   func(childComplexity int, id string) int
 		Login        func(childComplexity int, login model.LoginInput) int
 		RefreshToken func(childComplexity int, refreshToken model.RefreshTokenInput) int
+		RejectLog    func(childComplexity int, id string) int
 		RemoveLog    func(childComplexity int, id string) int
 		UpdateLog    func(childComplexity int, id string, updateLog model.UpdateLog) int
-		UpdateNote   func(childComplexity int, id string, updateNote model.UpdateNote) int
 	}
 
 	Note struct {
@@ -116,8 +118,10 @@ type MutationResolver interface {
 	CreateLog(ctx context.Context, newLog model.NewLog) (*model.Log, error)
 	UpdateLog(ctx context.Context, id string, updateLog model.UpdateLog) (*model.Log, error)
 	RemoveLog(ctx context.Context, id string) (bool, error)
+	ApproveLog(ctx context.Context, id string) (bool, error)
+	RejectLog(ctx context.Context, id string) (bool, error)
 	CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error)
-	UpdateNote(ctx context.Context, id string, updateNote model.UpdateNote) (*model.Note, error)
+	DeleteNote(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -248,6 +252,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LogWithNotes.Notes(childComplexity), true
 
+	case "Mutation.approveLog":
+		if e.complexity.Mutation.ApproveLog == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_approveLog_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApproveLog(childComplexity, args["id"].(string)), true
+
 	case "Mutation.createLog":
 		if e.complexity.Mutation.CreateLog == nil {
 			break
@@ -284,6 +300,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["newUser"].(model.NewUser)), true
 
+	case "Mutation.deleteNote":
+		if e.complexity.Mutation.DeleteNote == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteNote_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteNote(childComplexity, args["id"].(string)), true
+
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
 			break
@@ -308,6 +336,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RefreshToken(childComplexity, args["refreshToken"].(model.RefreshTokenInput)), true
 
+	case "Mutation.rejectLog":
+		if e.complexity.Mutation.RejectLog == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_rejectLog_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RejectLog(childComplexity, args["id"].(string)), true
+
 	case "Mutation.removeLog":
 		if e.complexity.Mutation.RemoveLog == nil {
 			break
@@ -331,18 +371,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateLog(childComplexity, args["id"].(string), args["updateLog"].(model.UpdateLog)), true
-
-	case "Mutation.updateNote":
-		if e.complexity.Mutation.UpdateNote == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateNote_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateNote(childComplexity, args["id"].(string), args["updateNote"].(model.UpdateNote)), true
 
 	case "Note.content":
 		if e.complexity.Note.Content == nil {
@@ -678,8 +706,10 @@ type Mutation {
   createLog(newLog: NewLog!): Log!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
   removeLog(id: ID!): Boolean!
+  approveLog(id: ID!): Boolean!
+  rejectLog(id: ID!): Boolean!
   createNote(newNote: NewNote!): Note!
-  updateNote(id: ID!, updateNote: UpdateNote!): Note!
+  deleteNote(id: ID!): Boolean!
 }
 `, BuiltIn: false},
 }
@@ -688,6 +718,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_approveLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -734,6 +779,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -761,6 +821,21 @@ func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context
 		}
 	}
 	args["refreshToken"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_rejectLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -800,30 +875,6 @@ func (ec *executionContext) field_Mutation_updateLog_args(ctx context.Context, r
 		}
 	}
 	args["updateLog"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 model.UpdateNote
-	if tmp, ok := rawArgs["updateNote"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateNote"))
-		arg1, err = ec.unmarshalNUpdateNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["updateNote"] = arg1
 	return args, nil
 }
 
@@ -2020,6 +2071,116 @@ func (ec *executionContext) fieldContext_Mutation_removeLog(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_approveLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_approveLog(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ApproveLog(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_approveLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_approveLog_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_rejectLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_rejectLog(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RejectLog(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_rejectLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_rejectLog_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createNote(ctx, field)
 	if err != nil {
@@ -2091,8 +2252,8 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateNote(ctx, field)
+func (ec *executionContext) _Mutation_deleteNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteNote(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2105,7 +2266,7 @@ func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateNote(rctx, fc.Args["id"].(string), fc.Args["updateNote"].(model.UpdateNote))
+		return ec.resolvers.Mutation().DeleteNote(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2117,35 +2278,19 @@ func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Note)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
-			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -2155,7 +2300,7 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -5572,6 +5717,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "approveLog":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_approveLog(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "rejectLog":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_rejectLog(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createNote":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -5581,10 +5744,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "updateNote":
+		case "deleteNote":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateNote(ctx, field)
+				return ec._Mutation_deleteNote(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -6439,11 +6602,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) unmarshalNUpdateLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateLog(ctx context.Context, v interface{}) (model.UpdateLog, error) {
 	res, err := ec.unmarshalInputUpdateLog(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpdateNote2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateNote(ctx context.Context, v interface{}) (model.UpdateNote, error) {
-	res, err := ec.unmarshalInputUpdateNote(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

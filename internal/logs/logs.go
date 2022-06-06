@@ -27,6 +27,7 @@ func (l *Log) Create() {
 	collection := database.Db.Collection("logs")
 	l.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	l.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	l.UpdatedAt = l.CreatedAt
 	l.Status = "pending"
 	_, err := collection.InsertOne(context.TODO(), l)
 	if err != nil {
@@ -56,6 +57,42 @@ func (l *Log) Update(id string) {
 		panic(err)
 	}
 	println(result)
+	if result.ModifiedCount == 0 {
+		panic("Log not found")
+	}
+}
+
+func (l *Log) Approve(id string) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"status", "approved"},
+			{"updated_at", time.Now().Format("2006-01-02 15:04:05")},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		panic(err)
+	}
+	if result.ModifiedCount == 0 {
+		panic("Log not found")
+	}
+}
+
+func (l *Log) Reject(id string) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"status", "rejected"},
+			{"updated_at", time.Now().Format("2006-01-02 15:04:05")},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		panic(err)
+	}
 	if result.ModifiedCount == 0 {
 		panic("Log not found")
 	}

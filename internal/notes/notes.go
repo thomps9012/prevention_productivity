@@ -23,26 +23,35 @@ func (n *Note) Create() {
 	collection := database.Db.Collection("notes")
 	n.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	n.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	n.UpdatedAt = n.CreatedAt
 	_, err := collection.InsertOne(context.TODO(), n)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (n *Note) Update(id string) {
+func (n *Note) Update() {
 	collection := database.Db.Collection("notes")
 	n.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
-	update := bson.D{{"$set", bson.D{
-		{"title", n.Title},
-		{"content", n.Content},
-		{"updated_at", n.UpdatedAt},
-	}}}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	filter := bson.D{{"_id", n.ID}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"title", n.Title},
+			{"content", n.Content},
+			{"updated_at", n.UpdatedAt},
+		}},
+	}
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		panic(err)
 	}
-	if result.ModifiedCount == 0 {
-		panic("Note not found")
+}
+
+func (n *Note) Delete(id string) {
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"_id", id}}
+	_, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		panic(err)
 	}
 }

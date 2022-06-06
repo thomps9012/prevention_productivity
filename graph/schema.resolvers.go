@@ -14,6 +14,7 @@ import (
 	"thomps9012/prevention_productivity/internal/logs"
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
+	"thomps9012/prevention_productivity/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -149,6 +150,38 @@ func (r *mutationResolver) RemoveLog(ctx context.Context, id string) (bool, erro
 	return true, nil
 }
 
+func (r *mutationResolver) ApproveLog(ctx context.Context, id string) (bool, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	var log logs.Log
+	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	if err != nil {
+		return false, err
+	}
+	log.Approve(id)
+	return true, nil
+}
+
+func (r *mutationResolver) RejectLog(ctx context.Context, id string) (bool, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	var log logs.Log
+	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	if err != nil {
+		return false, err
+	}
+	log.Reject(id)
+	return true, nil
+}
+
 func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
 	UserID := auth.ForUserID(ctx)
 	if UserID == "" {
@@ -186,7 +219,7 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote
 	if IsAdmin || note.UserID == UserID {
 		note.Title = updateNote.Title
 		note.Content = updateNote.Content
-		note.Update(id)
+		note.Update()
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -200,6 +233,25 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote
 		UpdatedAt: note.UpdatedAt,
 	}, nil
 }
+
+func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (bool, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"_id", id}}
+	var note notes.Note
+	err := collection.FindOne(context.TODO(), filter).Decode(&note)
+	if err != nil {
+		return false, err
+	}
+	if note.UserID == UserID || isAdmin {
+		note.Delete(id)
+	} else {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	return true, nil
+}
+
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
@@ -281,7 +333,7 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	if IsAdmin || logUserID == UserID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"itemid", id}}
+		noteFilter := bson.D{{"item_id", id}}
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter)
 		if err != nil {
 			return nil, err
@@ -328,10 +380,10 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	UserID := auth.ForUserID(ctx)
 	if IsAdmin {
 		filter := bson.D{}
-		return getLogs(filter)
+		return utils.GetLogs(filter)
 	} else if UserID != "" {
-		filter := bson.D{{"userid", UserID}}
-		return getLogs(filter)
+		filter := bson.D{{"user_id", UserID}}
+		return utils.GetLogs(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -342,7 +394,7 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 	if IsAdmin {
 		var logs []*model.Log
 		collection := database.Db.Collection("logs")
-		filter := bson.D{{"userid", userID}}
+		filter := bson.D{{"user_id", userID}}
 		cursor, err := collection.Find(context.TODO(), filter)
 		if err != nil {
 			return nil, err
@@ -379,58 +431,3 @@ func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func getLogs(filter bson.D) ([]*model.AllLogs, error) {
-	// this function breaks if logs don't meet the model requirements
-	logsCollection := database.Db.Collection("logs")
-	notesCollection := database.Db.Collection("notes")
-	userCollection := database.Db.Collection("users")
-	var allLogs []*model.AllLogs
-
-	cursor, err := logsCollection.Find(context.TODO(), filter)
-	if err != nil {
-		return nil, err
-	}
-	for cursor.Next(context.TODO()) {
-		var log *model.Log
-		err := cursor.Decode(&log)
-		if err != nil {
-			return nil, err
-		}
-		noteFilter := bson.D{{"itemid", log.ID}}
-		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
-		if noteErr != nil {
-			return nil, err
-		}
-		intNoteCount := int(noteCount)
-		var user *model.User
-		userFilter := bson.D{{"_id", log.UserID}}
-		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
-		if err != nil {
-			return nil, err
-		}
-		singleLog := &model.AllLogs{
-			Log: &model.Log{
-				ID:        log.ID,
-				FocusArea: log.FocusArea,
-				Status:    log.Status,
-				CreatedAt: log.CreatedAt,
-				UpdatedAt: log.UpdatedAt,
-			},
-			User: &model.User{
-				ID:        user.ID,
-				FirstName: user.FirstName,
-				LastName:  user.LastName,
-			},
-			NoteCount: &intNoteCount,
-		}
-		allLogs = append(allLogs, singleLog)
-	}
-	return allLogs, nil
-}
