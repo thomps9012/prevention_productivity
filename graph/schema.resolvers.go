@@ -132,6 +132,23 @@ func (r *mutationResolver) UpdateLog(ctx context.Context, id string, updateLog m
 	}, nil
 }
 
+func (r *mutationResolver) RemoveLog(ctx context.Context, id string) (bool, error) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{"_id", id}}
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	result, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return false, err
+	}
+	if result.DeletedCount == 0 {
+		return false, fmt.Errorf("Log not found")
+	}
+	return true, nil
+}
+
 func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
 	UserID := auth.ForUserID(ctx)
 	if UserID == "" {
@@ -306,55 +323,6 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	}
 }
 
-func getLogs(filter bson.D) ([]*model.AllLogs, error) {
-	// this function breaks if logs don't meet the model requirements
-	logsCollection := database.Db.Collection("logs")
-	notesCollection := database.Db.Collection("notes")
-	userCollection := database.Db.Collection("users")
-	var allLogs []*model.AllLogs
-	
-	cursor, err := logsCollection.Find(context.TODO(), filter)
-	if err != nil {
-		return nil, err
-	}
-	for cursor.Next(context.TODO()) {
-		var log *model.Log
-		err := cursor.Decode(&log)
-		if err != nil {
-			return nil, err
-		}
-		noteFilter := bson.D{{"itemid", log.ID}}
-		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
-		if noteErr != nil {
-			return nil, err
-		}
-		intNoteCount := int(noteCount)
-		var user *model.User
-		userFilter := bson.D{{"_id", log.UserID}}
-		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
-		if err != nil {
-			return nil, err
-		}
-		singleLog := &model.AllLogs{
-			Log: &model.Log{
-				ID:           log.ID,
-				FocusArea:    log.FocusArea,
-				Status:       log.Status,
-				CreatedAt:    log.CreatedAt,
-				UpdatedAt:    log.UpdatedAt,
-			},
-			User: &model.User{
-				ID:        user.ID,
-				FirstName: user.FirstName,
-				LastName:  user.LastName,
-			},
-			NoteCount: &intNoteCount,
-		}
-		allLogs = append(allLogs, singleLog)
-	}
-	return allLogs, nil
-}
-
 func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
@@ -367,7 +335,6 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-
 }
 
 func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.Log, error) {
@@ -412,3 +379,58 @@ func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func getLogs(filter bson.D) ([]*model.AllLogs, error) {
+	// this function breaks if logs don't meet the model requirements
+	logsCollection := database.Db.Collection("logs")
+	notesCollection := database.Db.Collection("notes")
+	userCollection := database.Db.Collection("users")
+	var allLogs []*model.AllLogs
+
+	cursor, err := logsCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var log *model.Log
+		err := cursor.Decode(&log)
+		if err != nil {
+			return nil, err
+		}
+		noteFilter := bson.D{{"itemid", log.ID}}
+		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
+		if noteErr != nil {
+			return nil, err
+		}
+		intNoteCount := int(noteCount)
+		var user *model.User
+		userFilter := bson.D{{"_id", log.UserID}}
+		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		singleLog := &model.AllLogs{
+			Log: &model.Log{
+				ID:        log.ID,
+				FocusArea: log.FocusArea,
+				Status:    log.Status,
+				CreatedAt: log.CreatedAt,
+				UpdatedAt: log.UpdatedAt,
+			},
+			User: &model.User{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			},
+			NoteCount: &intNoteCount,
+		}
+		allLogs = append(allLogs, singleLog)
+	}
+	return allLogs, nil
+}

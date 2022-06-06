@@ -101,6 +101,7 @@ type Mutation {
   refreshToken(refreshToken: RefreshTokenInput!): String!
   createLog(newLog: NewLog!): Log!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
+  removeLog(id: ID!): Boolean!
   createNote(newNote: NewNote!): Note!
   updateNote(id: ID!, updateNote: UpdateNote!): Note!
 }

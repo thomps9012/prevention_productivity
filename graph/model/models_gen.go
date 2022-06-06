@@ -68,11 +68,11 @@ type RefreshTokenInput struct {
 
 type UpdateLog struct {
 	FocusArea    string `json:"focus_area" bson:"focus_area"`
-	Actions      string `json:"actions" bson:"actions"`
-	Successes    string `json:"successes" bson:"successes"`
-	Improvements string `json:"improvements" bson:"improvements"`
+	Actions      string `json:"actions"`
+	Successes    string `json:"successes"`
+	Improvements string `json:"improvements"`
 	NextSteps    string `json:"next_steps" bson:"next_steps"`
-	Status       string `json:"status" bson:"status"`
+	Status       string `json:"status"`
 }
 
 type UpdateNote struct {
@@ -84,8 +84,8 @@ type User struct {
 	ID        *string `json:"id" bson:"_id"`
 	FirstName string  `json:"first_name" bson:"first_name"`
 	LastName  string  `json:"last_name" bson:"last_name"`
-	Email     string  `json:"email" bson:"email"`
-	Username  string  `json:"username" bson:"username"`
-	Password  string  `json:"password" bson:"password"`
-	IsAdmin   bool    `json:"isAdmin"`
+	Email     string  `json:"email"`
+	Username  string  `json:"username"`
+	Password  string  `json:"password"`
+	IsAdmin   bool    `json:"is_admin"`
 }
