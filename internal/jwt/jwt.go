@@ -20,6 +20,7 @@ type Claims struct {
 func GenerateToken(email string, isAdmin bool, userID string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
+	println(isAdmin)
 	claims["email"] = email
 	claims["isAdmin"] = isAdmin
 	claims["userID"] = userID
