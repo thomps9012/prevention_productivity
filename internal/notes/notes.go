@@ -11,12 +11,12 @@ import (
 
 type Note struct {
 	ID	   string `json:"id" bson:"_id"`
-	ItemID string `json:"item_id"`
-	UserID string `json:"user_id"`
-	Title string `json:"title"`
-	Content string `json:"content"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ItemID string `json:"item_id" bson:"item_id"`
+	UserID string `json:"user_id" bson:"user_id"`
+	Title string `json:"title" bson:"title"`
+	Content string `json:"content" bson:"content"`
+	CreatedAt string `json:"created_at" bson:"created_at"`
+	UpdatedAt string `json:"updated_at" bson:"updated_at"`
 }
 
 func (n *Note) Create() {

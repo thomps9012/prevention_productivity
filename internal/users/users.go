@@ -12,11 +12,11 @@ import (
 
 type User struct {
 	ID	   string `json:"id" bson:"_id"`
-	FirstName string `json:"firstName"`
-	LastName string `json:"lastName"`
-	Email string `json:"email"`
-	Password string `json:"password"`
-	IsAdmin bool `json:"isAdmin"`
+	FirstName string `json:"firstName" bson:"firstName"`
+	LastName string `json:"lastName" bson:"lastName"`
+	Email string `json:"email" bson:"email"`
+	Password string `json:"password" bson:"password"`
+	IsAdmin bool `json:"isAdmin" bson:"isAdmin"`
 }
 
 

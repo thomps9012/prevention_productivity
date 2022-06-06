@@ -259,6 +259,8 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 		return nil, err
 	}
 	logUserID := log.UserID
+	println(log.FocusArea)
+	println(log.UpdatedAt)
 	if IsAdmin || logUserID == UserID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
