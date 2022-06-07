@@ -5,6 +5,7 @@ import (
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
+	"fmt"
 )
 
 func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
@@ -21,6 +22,8 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 	for cursor.Next(context.TODO()) {
 		var log *model.Log
 		err := cursor.Decode(&log)
+		println(log.FocusArea)
+		println(log.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -30,7 +33,9 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 			return nil, err
 		}
 		intNoteCount := int(noteCount)
+		println(noteCount)
 		var user *model.User
+		fmt.Println("%v", log.UserID)
 		userFilter := bson.D{{"_id", log.UserID}}
 		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
 		if err != nil {
@@ -51,6 +56,7 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 			},
 			NoteCount: &intNoteCount,
 		}
+		println(singleLog)
 		allLogs = append(allLogs, singleLog)
 	}
 	return allLogs, nil

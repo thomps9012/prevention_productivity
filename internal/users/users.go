@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 	"github.com/google/uuid"
+	"time"
 )
 
 type User struct {
@@ -17,6 +18,10 @@ type User struct {
 	Email string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`
 	IsAdmin bool `json:"isAdmin"`
+	IsActive bool `json:"isActive"`
+	CreatedAt string `json:"created_at" bson:"created_at"`
+	UpdatedAt string `json:"updated_at" bson:"updated_at"`
+	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
 }
 
 
@@ -29,6 +34,9 @@ func (u *User) Create() {
 	}
 	u.Password = hashed
 	u.IsAdmin = false
+	u.IsActive = true
+	u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	u.UpdatedAt = u.CreatedAt
 	u.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	_, err = collection.InsertOne(context.TODO(), u)
 	if err != nil {
@@ -62,4 +70,31 @@ func CheckPasswordHash(hash, password string) bool {
 	println(err.Error())
 	}
 	return err == nil
+}
+
+func (u *User) Update(id string) {
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"_id", id}}
+	println("update function")
+	println(u.Password)
+	u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	hashed, hashErr := HashPassword(u.Password)
+	if hashErr != nil {
+		fmt.Println(hashErr)
+	}
+	u.Password = hashed
+	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (u *User) Delete() {
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"email", u.Email}}
+	u.IsActive = false
+	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
+	if err != nil {
+		panic(err)
+	}
 }

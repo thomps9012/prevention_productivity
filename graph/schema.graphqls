@@ -6,6 +6,10 @@ type User {
   username: String!
   password: String!
   is_admin: Boolean!
+  created_at: String!
+  updated_at: String!
+  deleted_at: String
+  is_active: Boolean!
 }
 
 type Log {
@@ -58,6 +62,15 @@ input NewUser {
   password: String!
 }
 
+input UpdateUser {
+  first_name: String!
+  last_name: String!
+  email: String!
+  password: String!
+  is_admin: Boolean!
+  is_active: Boolean!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -97,6 +110,8 @@ input UpdateNote {
 
 type Mutation {
   createUser(newUser: NewUser!): String!
+  updateUser(updateUser: UpdateUser!, id: ID!): User!
+  deleteUser(id: ID!): Boolean!
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
   createLog(newLog: NewLog!): Log!

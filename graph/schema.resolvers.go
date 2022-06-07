@@ -17,6 +17,7 @@ import (
 	"thomps9012/prevention_productivity/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser) (string, error) {
@@ -33,6 +34,57 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	return token, nil
 }
 
+func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.User, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"_id", id}}
+	var user users.User
+	println("userid", id)
+	println("first_name", updateUser.FirstName)
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	user.FirstName = updateUser.FirstName
+	user.LastName = updateUser.LastName
+	user.Email = updateUser.Email
+	user.Password = updateUser.Password
+	user.IsActive = updateUser.IsActive
+	user.IsAdmin = updateUser.IsAdmin
+	user.Update(id)
+	return &model.User{
+		ID:        &user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Password:  user.Password,
+		IsAdmin:   user.IsAdmin,
+		IsActive:  user.IsActive,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
+	}, nil
+}
+
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"_id", id}}
+	var user users.User
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return false, err
+	}
+	user.Delete()
+	return true, nil
+}
+
 func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (string, error) {
 	var user users.User
 	user.Email = login.Email
@@ -47,6 +99,9 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
 	println(userDB.IsAdmin)
 	println(userDB.ID)
+	if !userDB.IsActive {
+		return "", &users.UserNotActive{}
+	}
 	if err != nil {
 		return "", err
 	}
@@ -234,24 +289,9 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote
 	}, nil
 }
 
-func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (bool, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	UserID := auth.ForUserID(ctx)
-	collection := database.Db.Collection("notes")
-	filter := bson.D{{"_id", id}}
-	var note notes.Note
-	err := collection.FindOne(context.TODO(), filter).Decode(&note)
-	if err != nil {
-		return false, err
-	}
-	if note.UserID == UserID || isAdmin {
-		note.Delete(id)
-	} else {
-		return false, fmt.Errorf("Unauthorized")
-	}
-	return true, nil
+func (r *mutationResolver) RemoveNote(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented"))
 }
-
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
@@ -334,7 +374,8 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
-		cursor, err := noteCollection.Find(context.TODO(), noteFilter)
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
 		}
@@ -378,6 +419,7 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
+	println("hit")
 	if IsAdmin {
 		filter := bson.D{}
 		return utils.GetLogs(filter)
