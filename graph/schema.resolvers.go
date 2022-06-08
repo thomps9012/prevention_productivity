@@ -14,6 +14,11 @@ import (
 	"thomps9012/prevention_productivity/internal/logs"
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
+	// "thomps9012/prevention_productivity/internal/contacts"
+	// "thomps9012/prevention_productivity/internal/grants"
+	// "thomps9012/prevention_productivity/internal/events"
+	// "thomps9012/prevention_productivity/internal/eventSummaries"
+	// "thomps9012/prevention_productivity/internal/schoolReports"
 	"thomps9012/prevention_productivity/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -125,7 +130,12 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.
 }
 
 func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGrant) (*model.Grant, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	return nil, nil
+	// ++++++++++++++++++++++++++++++++ begin of build out ++++++++++++++++++++++++++++++++++++++++
 }
 
 func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGrant model.UpdateGrant) (*model.Grant, error) {
