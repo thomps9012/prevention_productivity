@@ -15,7 +15,7 @@ import (
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
 	// "thomps9012/prevention_productivity/internal/contacts"
-	// "thomps9012/prevention_productivity/internal/grants"
+	"thomps9012/prevention_productivity/internal/grants"
 	// "thomps9012/prevention_productivity/internal/events"
 	// "thomps9012/prevention_productivity/internal/eventSummaries"
 	// "thomps9012/prevention_productivity/internal/schoolReports"
@@ -131,19 +131,77 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.
 
 func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGrant) (*model.Grant, error) {
 	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
 	if !isAdmin {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-	return nil, nil
-	// ++++++++++++++++++++++++++++++++ begin of build out ++++++++++++++++++++++++++++++++++++++++
+	var grant grants.Grant
+	grant.Name = *newGrant.Name
+	grant.CreatedBy = userID
+	grant.Description = *newGrant.Description
+	grant.StartDate = *newGrant.StartDate
+	grant.EndDate = *newGrant.EndDate
+	grant.Budget = *newGrant.Budget
+	grant.AwardNumber = *newGrant.AwardNumber
+	grant.AwardDate = *newGrant.AwardDate
+	grant.Create()
+	return &model.Grant{
+		ID:          &grant.ID,
+		CreatedBy: 	grant.CreatedBy,
+		Name:        grant.Name,
+		Description: grant.Description,
+		StartDate:   grant.StartDate,
+		EndDate:     grant.EndDate,
+		Budget:      &grant.Budget,
+		AwardNumber: grant.AwardNumber,
+		AwardDate:   &grant.AwardDate,
+		CreatedAt:   grant.CreatedAt,
+		UpdatedAt:   grant.UpdatedAt,
+		IsActive:    grant.IsActive,
+	}, nil
+	
 }
 
 func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGrant model.UpdateGrant) (*model.Grant, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var grant grants.Grant
+	grant.ID = id
+	grant.Name = *updateGrant.Name
+	grant.Description = *updateGrant.Description
+	grant.StartDate = *updateGrant.StartDate
+	grant.EndDate = *updateGrant.EndDate
+	grant.Budget = *updateGrant.Budget
+	grant.AwardNumber = *updateGrant.AwardNumber
+	grant.AwardDate = *updateGrant.AwardDate
+	grant.Update(id)
+	return &model.Grant{
+		ID:          &grant.ID,
+		Name:        grant.Name,
+		Description: grant.Description,
+		StartDate:   grant.StartDate,
+		EndDate:     grant.EndDate,
+		Budget:      &grant.Budget,
+		AwardNumber: grant.AwardNumber,
+		AwardDate:   &grant.AwardDate,
+		UpdatedAt:   grant.UpdatedAt,
+		IsActive:    grant.IsActive,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveGrant(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	removed := false
+	if !isAdmin {
+		return &removed, fmt.Errorf("Unauthorized")
+	}
+	var grant grants.Grant
+	grant.ID = id
+	grant.Delete(id)
+	removed = true
+	return &removed, nil
 }
 
 func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.NewContact) (*model.Contact, error) {
@@ -635,7 +693,38 @@ func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.SchoolRepor
 }
 
 func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var grants []*model.Grant
+	collection := database.Db.Collection("grants")
+	cursor, err := collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var grant *model.Grant
+		err := cursor.Decode(&grant)
+		if err != nil {
+			return nil, err
+		}
+		grants = append(grants, &model.Grant{
+			ID:        grant.ID,
+			Name: 	grant.Name,
+			Description: grant.Description,
+			StartDate: grant.StartDate,
+			AwardDate: grant.AwardDate,
+			EndDate: grant.EndDate,
+			AwardNumber: grant.AwardNumber,
+			Budget: grant.Budget,
+			CreatedAt: grant.CreatedAt,
+			CreatedBy: grant.CreatedBy,
+			UpdatedAt: grant.UpdatedAt,
+			IsActive: grant.IsActive,
+		})
+	}
+	return grants, nil
 }
 
 func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) {

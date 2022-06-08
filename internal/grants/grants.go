@@ -1,4 +1,4 @@
-package Grants
+package grants
 
 import (
 	database "thomps9012/prevention_productivity/internal/db"
@@ -27,7 +27,7 @@ type Grant struct {
 func (g *Grant) Create() {
 	collection := database.Db.Collection("grants")
 	g.ID = strings.Replace(uuid.New().String(), "-", "", -1)
-	if (g.EndDate > time.Now().Format("2006-01-02 15:04:05")) {
+	if (g.EndDate > time.Now().Format("01-02-2006 15:04:05")) {
 		g.IsActive = true
 	} else {
 		g.IsActive = false
