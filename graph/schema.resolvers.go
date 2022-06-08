@@ -9,17 +9,16 @@ import (
 	generated1 "thomps9012/prevention_productivity/graph/generated"
 	"thomps9012/prevention_productivity/graph/model"
 	"thomps9012/prevention_productivity/internal/auth"
+	"thomps9012/prevention_productivity/internal/contacts"
 	database "thomps9012/prevention_productivity/internal/db"
+	"thomps9012/prevention_productivity/internal/events"
+	"thomps9012/prevention_productivity/internal/grants"
 	"thomps9012/prevention_productivity/internal/jwt"
 	"thomps9012/prevention_productivity/internal/logs"
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
-	"thomps9012/prevention_productivity/internal/contacts"
-	"thomps9012/prevention_productivity/internal/grants"
-	// "thomps9012/prevention_productivity/internal/events"
-	// "thomps9012/prevention_productivity/internal/eventSummaries"
-	// "thomps9012/prevention_productivity/internal/schoolReports"
 	"thomps9012/prevention_productivity/internal/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -146,7 +145,7 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 	grant.Create()
 	return &model.Grant{
 		ID:          &grant.ID,
-		CreatedBy: 	grant.CreatedBy,
+		CreatedBy:   grant.CreatedBy,
 		Name:        grant.Name,
 		Description: grant.Description,
 		StartDate:   grant.StartDate,
@@ -158,7 +157,6 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 		UpdatedAt:   grant.UpdatedAt,
 		IsActive:    grant.IsActive,
 	}, nil
-	
 }
 
 func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGrant model.UpdateGrant) (*model.Grant, error) {
@@ -216,15 +214,15 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 	contact.CreatedBy = userID
 	contact.Create()
 	return &model.Contact{
-		ID:          &contact.ID,
-		Name:        &contact.Name,
-		Email:       &contact.Email,
-		Phone:       &contact.Phone,
-		Notes:       &contact.Notes,
-		CreatedBy:   contact.CreatedBy,
-		CreatedAt:   contact.CreatedAt,
-		UpdatedAt:   contact.UpdatedAt,
-		IsActive:    contact.IsActive,
+		ID:        &contact.ID,
+		Name:      &contact.Name,
+		Email:     &contact.Email,
+		Phone:     &contact.Phone,
+		Notes:     &contact.Notes,
+		CreatedBy: contact.CreatedBy,
+		CreatedAt: contact.CreatedAt,
+		UpdatedAt: contact.UpdatedAt,
+		IsActive:  contact.IsActive,
 	}, nil
 }
 
@@ -241,12 +239,12 @@ func (r *mutationResolver) UpdateContact(ctx context.Context, id string, updateC
 	contact.Notes = *updateContact.Notes
 	contact.Update(id)
 	return &model.Contact{
-		ID:          &contact.ID,
-		Name:        &contact.Name,
-		Email:       &contact.Email,
-		Phone:       &contact.Phone,
-		Notes:       &contact.Notes,
-		UpdatedAt:   contact.UpdatedAt,
+		ID:        &contact.ID,
+		Name:      &contact.Name,
+		Email:     &contact.Email,
+		Phone:     &contact.Phone,
+		Notes:     &contact.Notes,
+		UpdatedAt: contact.UpdatedAt,
 	}, nil
 }
 
@@ -720,26 +718,91 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 }
 
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var eventWithNotes *model.EventWithNotes
+	event := events.Event{}
+	eventCollection := database.Db.Collection("events")
+	eventFilter := bson.D{{"_id", id}}
+	err := eventCollection.FindOne(context.TODO(), eventFilter).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+	eventLead := event.EventLead
+	if isAdmin || eventLead == userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		eventWithNotes = &model.EventWithNotes{
+			Event: &model.Event{
+				ID:          &event.ID,
+				EventLead:   &event.EventLead,
+				Title:       event.Title,
+				Description: event.Description,
+				StartDate:   event.StartDate,
+				EndDate:     event.EndDate,
+				CreatedAt:   event.CreatedAt,
+				UpdatedAt:   event.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return eventWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error) {
+	// isAdmin := auth.ForAdmin(ctx)
+	// userID := auth.ForUserID(ctx)
 	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error) {
+	// isAdmin := auth.ForAdmin(ctx)
+	// userID := auth.ForUserID(ctx)
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Events(ctx context.Context) ([]*model.Event, error) {
+func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) {
+	// add in Note Count
+	// isAdmin := auth.ForAdmin(ctx)
+	// userID := auth.ForUserID(ctx)
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.EventSummary, error) {
+func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error) {
+	// add in Note Count
+	// isAdmin := auth.ForAdmin(ctx)
+	// userID := auth.ForUserID(ctx)
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.SchoolReport, error) {
+func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error) {
+	// add in Note Count
+	// isAdmin := auth.ForAdmin(ctx)
+	// userID := auth.ForUserID(ctx)
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -761,18 +824,18 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 			return nil, err
 		}
 		grants = append(grants, &model.Grant{
-			ID:        grant.ID,
-			Name: 	grant.Name,
+			ID:          grant.ID,
+			Name:        grant.Name,
 			Description: grant.Description,
-			StartDate: grant.StartDate,
-			AwardDate: grant.AwardDate,
-			EndDate: grant.EndDate,
+			StartDate:   grant.StartDate,
+			AwardDate:   grant.AwardDate,
+			EndDate:     grant.EndDate,
 			AwardNumber: grant.AwardNumber,
-			Budget: grant.Budget,
-			CreatedAt: grant.CreatedAt,
-			CreatedBy: grant.CreatedBy,
-			UpdatedAt: grant.UpdatedAt,
-			IsActive: grant.IsActive,
+			Budget:      grant.Budget,
+			CreatedAt:   grant.CreatedAt,
+			CreatedBy:   grant.CreatedBy,
+			UpdatedAt:   grant.UpdatedAt,
+			IsActive:    grant.IsActive,
 		})
 	}
 	return grants, nil
@@ -799,42 +862,42 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 				return nil, err
 			}
 			contacts = append(contacts, &model.Contact{
-				ID:           contact.ID,
-				Name:         contact.Name,
-				Email:        contact.Email,
-				Phone:        contact.Phone,
-				Notes: 	  contact.Notes,
-				CreatedAt:    contact.CreatedAt,
-				CreatedBy:    contact.CreatedBy,
-				UpdatedAt:    contact.UpdatedAt,
-				IsActive:     contact.IsActive,
+				ID:        contact.ID,
+				Name:      contact.Name,
+				Email:     contact.Email,
+				Phone:     contact.Phone,
+				Notes:     contact.Notes,
+				CreatedAt: contact.CreatedAt,
+				CreatedBy: contact.CreatedBy,
+				UpdatedAt: contact.UpdatedAt,
+				IsActive:  contact.IsActive,
 			})
 		}
 	} else {
-			cursor, err := collection.Find(context.TODO(), bson.D{})
+		cursor, err := collection.Find(context.TODO(), bson.D{})
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var contact *model.Contact
+			err := cursor.Decode(&contact)
 			if err != nil {
 				return nil, err
 			}
-			for cursor.Next(context.TODO()) {
-				var contact *model.Contact
-				err := cursor.Decode(&contact)
-				if err != nil {
-					return nil, err
-				}
-				contacts = append(contacts, &model.Contact{
-					ID:           contact.ID,
-					Name:         contact.Name,
-					Email:        contact.Email,
-					Phone:        contact.Phone,
-					Notes: 	  contact.Notes,
-					CreatedAt:    contact.CreatedAt,
-					CreatedBy:    contact.CreatedBy,
-					UpdatedAt:    contact.UpdatedAt,
-					IsActive:     contact.IsActive,
-					DeletedAt:	contact.DeletedAt,
-				})
-			}
+			contacts = append(contacts, &model.Contact{
+				ID:        contact.ID,
+				Name:      contact.Name,
+				Email:     contact.Email,
+				Phone:     contact.Phone,
+				Notes:     contact.Notes,
+				CreatedAt: contact.CreatedAt,
+				CreatedBy: contact.CreatedBy,
+				UpdatedAt: contact.UpdatedAt,
+				IsActive:  contact.IsActive,
+				DeletedAt: contact.DeletedAt,
+			})
 		}
+	}
 	return contacts, nil
 }
 

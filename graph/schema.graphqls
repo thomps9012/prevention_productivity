@@ -77,7 +77,7 @@ type EventItem {
 
 type Event {
   id: ID
-  event_lead: User!
+  event_lead: ID
   title: String!
   description: String!
   start_date: String!
@@ -169,6 +169,24 @@ type AllLogs {
   noteCount: Int
 }
 
+type AllEvents {
+  event: Event!
+  user: User
+  noteCount: Int
+}
+
+type AllEventSummaries {
+  event_summary: EventSummary!
+  user: User
+  noteCount: Int
+}
+
+type AllSchoolReports {
+  school_report: SchoolReport!
+  user: User
+  noteCount: Int
+}
+
 type Query {
   users: [User!]!
   me: User!
@@ -180,9 +198,9 @@ type Query {
   event(id: ID!): EventWithNotes!
   eventSummary(id: ID!): EventSummaryWithNotes!
   schoolReport(id: ID!): SchoolReportWithNotes!
-  events: [Event!]
-  eventSummaries: [EventSummary!]
-  schoolReports: [SchoolReport!]
+  events: [AllEvents!]
+  eventSummaries: [AllEventSummaries!]
+  schoolReports: [AllSchoolReports!]
   grants: [Grant!]
   contacts: [Contact!]
   userEvents(user_id: ID!): [Event!]

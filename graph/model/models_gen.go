@@ -14,10 +14,28 @@ type AgendaItemInput struct {
 	TimeFrame   *string `json:"time_frame" bson:"time_frame"`
 }
 
+type AllEventSummaries struct {
+	EventSummary *EventSummary `json:"event_summary"`
+	User         *User         `json:"user"`
+	NoteCount    *int          `json:"noteCount"`
+}
+
+type AllEvents struct {
+	Event     *Event `json:"event"`
+	User      *User  `json:"user"`
+	NoteCount *int   `json:"noteCount"`
+}
+
 type AllLogs struct {
 	Log       *Log  `json:"log"`
 	User      *User `json:"user"`
 	NoteCount *int  `json:"noteCount"`
+}
+
+type AllSchoolReports struct {
+	SchoolReport *SchoolReport `json:"school_report"`
+	User         *User         `json:"user"`
+	NoteCount    *int          `json:"noteCount"`
 }
 
 type Contact struct {
@@ -33,9 +51,10 @@ type Contact struct {
 	DeletedAt string  `json:"deleted_at" bson:"deleted_at"`
 }
 
+
 type Event struct {
 	ID                     *string       `json:"id" bson:"_id"`
-	EventLead              *User         `json:"event_lead" bson:"event_lead"`
+	EventLead              *string       `json:"event_lead" bson:"event_lead"`
 	Title                  string        `json:"title"`
 	Description            string        `json:"description"`
 	StartDate              string        `json:"start_date" bson:"start_date"`
@@ -52,7 +71,7 @@ type Event struct {
 	TargetAudience         string        `json:"target_audience" bson:"target_audience"`
 	PartingGifts           []*EventItem  `json:"parting_gifts" bson:"parting_gifts"`
 	MarketingMaterial      []*EventItem  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*EventItem  `json:"supplies"`
+	Supplies               []*EventItem  `json:"supplies" bson:"supplies"`
 	SpecialOrders          []*EventItem  `json:"special_orders" bson:"special_orders"`
 	Performance            string        `json:"performance"`
 	Vendors                string        `json:"vendors"`
@@ -96,8 +115,9 @@ type EventSummary struct {
 	UpdatedAt     string `json:"updated_at" bson:"updated_at"`
 }
 
+
 type EventSummaryWithNotes struct {
-	EventSummary *EventSummary `json:"event_summary" bson:"event_summary"`
+	EventSummary *EventSummary `json:"event_summary"`
 	Notes        []*Note       `json:"notes"`
 }
 
@@ -133,6 +153,7 @@ type Log struct {
 	CreatedAt    string  `json:"created_at" bson:"created_at"`
 	UpdatedAt    string  `json:"updated_at" bson:"updated_at"`
 }
+
 
 type LogWithNotes struct {
 	Log   *Log    `json:"log"`
@@ -214,6 +235,7 @@ type NewNote struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
+
 
 type NewSchoolReport struct {
 	Curriculum   *string  `json:"curriculum"`
