@@ -9,24 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type AgendaItem struct {
-	Title string `json:"title" bson:"title"`
-	Description string `json:"description" bson:"description"`
-	TimeFrame string `json:"time_frame" bson:"time_frame"`
-}
-
-type EventItem struct {
-	Title string `json:"title" bson:"title"`
-	Description string `json:"description" bson:"description"`
-	Cost float64 `json:"cost" bson:"cost"`
-}
-
-type Contact struct {
-	Name string `json:"name" bson:"name"`
-	Email string `json:"email" bson:"email"`
-	Phone string `json:"phone" bson:"phone"`
-	Notes string `json:"notes" bson:"notes"`
-}
 
 type Event struct {
 	ID	   string `json:"id" bson:"_id"`
@@ -43,19 +25,19 @@ type Event struct {
 	AnnualEvent            bool          `json:"annual_event" bson:"annual_event"`
 	NewEvent               bool          `json:"new_event" bson:"new_event"`
 	Volunteers             bool          `json:"volunteers"`
-	Agenda                 []*AgendaItem `json:"agenda"`
+	Agenda                 []string `json:"agenda"`
 	TargetAudience         string        `json:"target_audience" bson:"target_audience"`
-	PartingGifts           []*EventItem  `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial      []*EventItem  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*EventItem  `json:"supplies"`
-	SpecialOrders          []*EventItem  `json:"special_orders" bson:"special_orders"`
+	PartingGifts           []string  `json:"parting_gifts" bson:"parting_gifts"`
+	MarketingMaterial      []string  `json:"marketing_material" bson:"marketing_material"`
+	Supplies               []string  `json:"supplies"`
+	SpecialOrders          []*string  `json:"special_orders" bson:"special_orders"`
 	Performance            string        `json:"performance"`
 	Vendors                string        `json:"vendors"`
-	FoodAndBeverage        []*EventItem  `json:"food_and_beverage" bson:"food_and_beverage"`
+	FoodAndBeverage        []string  `json:"food_and_beverage" bson:"food_and_beverage"`
 	Caterer                string        `json:"caterer"`
 	FoodHeadCount          int           `json:"food_head_count" bson:"food_head_count"`
 	EventTeam              []*string     `json:"event_team" bson:"event_team"`
-	VolunteerList          []*Contact    `json:"volunteer_list" bson:"volunteer_list"`
+	VolunteerList          []*string    `json:"volunteer_list" bson:"volunteer_list"`
 	Budget                 float64       `json:"budget"`
 	AffiliatedOrganization *string       `json:"affiliated_organization" bson:"affiliated_organization"`
 	EducationalGoals       []string      `json:"educational_goals" bson:"educational_goals"`
@@ -81,7 +63,8 @@ func (e *Event) Create() {
 func (e *Event) Update() {
 	collection := database.Db.Collection("events")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	_, err := collection.UpdateOne(context.TODO(), bson.M{"_id": e.ID}, e)
+	filter := bson.M{"_id": e.ID}
+	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", e}})
 	if err != nil {
 		panic(err)
 	}

@@ -2,20 +2,8 @@
 
 package model
 
-type AgendaItem struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	TimeFrame   string `json:"time_frame" bson:"time_frame"`
-}
-
-type AgendaItemInput struct {
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	TimeFrame   *string `json:"time_frame" bson:"time_frame"`
-}
-
 type AllEventSummaries struct {
-	EventSummary *EventSummary `json:"event_summary"`
+	EventSummary *EventSummary `json:"event_summary" bson:"event_summary"`
 	User         *User         `json:"user"`
 	NoteCount    *int          `json:"noteCount"`
 }
@@ -33,7 +21,7 @@ type AllLogs struct {
 }
 
 type AllSchoolReports struct {
-	SchoolReport *SchoolReport `json:"school_report"`
+	SchoolReport *SchoolReport `json:"school_report" bson:"school_report"`
 	User         *User         `json:"user"`
 	NoteCount    *int          `json:"noteCount"`
 }
@@ -51,55 +39,42 @@ type Contact struct {
 	DeletedAt string  `json:"deleted_at" bson:"deleted_at"`
 }
 
-
 type Event struct {
-	ID                     *string       `json:"id" bson:"_id"`
-	EventLead              *string       `json:"event_lead" bson:"event_lead"`
-	Title                  string        `json:"title"`
-	Description            string        `json:"description"`
-	StartDate              string        `json:"start_date" bson:"start_date"`
-	SetUp                  string        `json:"set_up" bson:"set_up"`
-	CleanUp                string        `json:"clean_up" bson:"clean_up"`
-	EndDate                string        `json:"end_date" bson:"end_date"`
-	GrantID                string        `json:"grant_id" bson:"grant_id"`
-	Public                 bool          `json:"public"`
-	Rsvp                   bool          `json:"rsvp"`
-	AnnualEvent            bool          `json:"annual_event" bson:"annual_event"`
-	NewEvent               bool          `json:"new_event" bson:"new_event"`
-	Volunteers             bool          `json:"volunteers"`
-	Agenda                 []*AgendaItem `json:"agenda"`
-	TargetAudience         string        `json:"target_audience" bson:"target_audience"`
-	PartingGifts           []*EventItem  `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial      []*EventItem  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*EventItem  `json:"supplies" bson:"supplies"`
-	SpecialOrders          []*EventItem  `json:"special_orders" bson:"special_orders"`
-	Performance            string        `json:"performance"`
-	Vendors                string        `json:"vendors"`
-	FoodAndBeverage        []*EventItem  `json:"food_and_beverage" bson:"food_and_beverage"`
-	Caterer                string        `json:"caterer"`
-	FoodHeadCount          int           `json:"food_head_count" bson:"food_head_count"`
-	EventTeam              []*string     `json:"event_team" bson:"event_team"`
-	VolunteerList          []*Contact    `json:"volunteer_list" bson:"volunteer_list"`
-	Budget                 float64       `json:"budget"`
-	AffiliatedOrganization *string       `json:"affiliated_organization" bson:"affiliated_organization"`
-	EducationalGoals       []string      `json:"educational_goals" bson:"educational_goals"`
-	EducationalOutcomes    []string      `json:"educational_outcomes" bson:"educational_outcomes"`
-	GrantGoals             []string      `json:"grant_goals" bson:"grant_goals"`
-	CreatedAt              string        `json:"created_at" bson:"created_at"`
-	UpdatedAt              string        `json:"updated_at" bson:"updated_at"`
-	Status                 string        `json:"status"`
-}
-
-type EventItem struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Cost        string `json:"cost"`
-}
-
-type EventItemInput struct {
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Cost        *string `json:"cost"`
+	ID                     *string   `json:"id" bson:"_id"`
+	EventLead              *string   `json:"event_lead" bson:"event_lead"`
+	Title                  string    `json:"title"`
+	Description            string    `json:"description"`
+	StartDate              string    `json:"start_date" bson:"start_date"`
+	SetUp                  string    `json:"set_up" bson:"set_up"`
+	CleanUp                string    `json:"clean_up" bson:"clean_up"`
+	EndDate                string    `json:"end_date" bson:"end_date"`
+	GrantID                string    `json:"grant_id" bson:"grant_id"`
+	Public                 bool      `json:"public" bson:"public"`
+	Rsvp                   bool      `json:"rsvp"`
+	AnnualEvent            bool      `json:"annual_event" bson:"annual_event"`
+	NewEvent               bool      `json:"new_event" bson:"new_event"`
+	Volunteers             bool      `json:"volunteers" bson:"volunteers"`
+	Agenda                 []string  `json:"agenda"`
+	TargetAudience         string    `json:"target_audience" 	bson:"target_audience"`
+	PartingGifts           []string  `json:"parting_gifts" bson:"parting_gifts"`
+	MarketingMaterial      []string  `json:"marketing_material" bson:"marketing_material"`
+	Supplies               []string  `json:"supplies"`
+	SpecialOrders          []*string `json:"special_orders" bson:"special_orders"`
+	Performance            string    `json:"performance"`
+	Vendors                string    `json:"vendors"`
+	FoodAndBeverage        []string  `json:"food_and_beverage" bson:"food_and_beverage"`
+	Caterer                string    `json:"caterer"`
+	FoodHeadCount          int       `json:"food_head_count" bson:"food_head_count"`
+	EventTeam              []*string `json:"event_team" bson:"event_team"`
+	VolunteerList          []string  `json:"volunteer_list" bson:"volunteer_list"`
+	Budget                 float64   `json:"budget"`
+	AffiliatedOrganization *string   `json:"affiliated_organization" bson:"affiliated_organization"`
+	EducationalGoals       []string  `json:"educational_goals" bson:"educational_goals"`
+	EducationalOutcomes    []string  `json:"educational_outcomes" bson:"educational_outcomes"`
+	GrantGoals             []string  `json:"grant_goals" bson:"grant_goals"`
+	CreatedAt              string    `json:"created_at" bson:"created_at"`
+	UpdatedAt              string    `json:"updated_at" bson:"updated_at"`
+	Status                 string    `json:"status"`
 }
 
 type EventSummary struct {
@@ -115,9 +90,8 @@ type EventSummary struct {
 	UpdatedAt     string `json:"updated_at" bson:"updated_at"`
 }
 
-
 type EventSummaryWithNotes struct {
-	EventSummary *EventSummary `json:"event_summary"`
+	EventSummary *EventSummary `json:"event_summary" bson:"event_summary"`
 	Notes        []*Note       `json:"notes"`
 }
 
@@ -135,9 +109,9 @@ type Grant struct {
 	EndDate     string   `json:"end_date" bson:"end_date"`
 	AwardNumber string   `json:"award_number" bson:"award_number"`
 	Budget      *float64 `json:"budget"`
-	IsActive    bool     `json:"is_active"`
+	IsActive    bool     `json:"is_active" bson:"is_active"`
 	CreatedBy   string   `json:"created_by" bson:"created_by"`
-	CreatedAt   string   `json:"created_at" bson:"created_at"`
+	CreatedAt   string   `json:"created_at" 	bson:"created_at"`
 	UpdatedAt   string   `json:"updated_at" bson:"updated_at"`
 }
 
@@ -153,7 +127,6 @@ type Log struct {
 	CreatedAt    string  `json:"created_at" bson:"created_at"`
 	UpdatedAt    string  `json:"updated_at" bson:"updated_at"`
 }
-
 
 type LogWithNotes struct {
 	Log   *Log    `json:"log"`
@@ -173,35 +146,35 @@ type NewContact struct {
 }
 
 type NewEvent struct {
-	Title                  *string            `json:"title"`
-	Description            *string            `json:"description"`
-	StartDate              *string            `json:"start_date" bson:"start_date"`
-	SetUp                  *string            `json:"set_up" bson:"set_up"`
-	CleanUp                *string            `json:"clean_up" bson:"clean_up"`
-	EndDate                *string            `json:"end_date" bson:"end_date"`
-	GrantID                *string            `json:"grant_id" bson:"grant_id"`
-	Public                 *bool              `json:"public"`
-	Rsvp                   *bool              `json:"rsvp"`
-	AnnualEvent            *bool              `json:"annual_event" bson:"annual_event"`
-	NewEvent               *bool              `json:"new_event" bson:"new_event"`
-	Volunteers             *bool              `json:"volunteers"`
-	Agenda                 []*AgendaItemInput `json:"agenda"`
-	TargetAudience         *string            `json:"target_audience" bson:"target_audience"`
-	PartingGifts           []*EventItemInput  `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial      []*EventItemInput  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*EventItemInput  `json:"supplies"`
-	SpecialOrders          []*EventItemInput  `json:"special_orders" bson:"special_orders"`
-	Performance            *string            `json:"performance"`
-	Vendors                *string            `json:"vendors"`
-	FoodAndBeverage        []*EventItemInput  `json:"food_and_beverage" bson:"food_and_beverage"`
-	Caterer                *string            `json:"caterer"`
-	FoodHeadCount          *int               `json:"food_head_count" bson:"food_head_count"`
-	EventTeam              []*string          `json:"event_team" bson:"event_team"`
-	Budget                 *float64           `json:"budget"`
-	AffiliatedOrganization *string            `json:"affiliated_organization" bson:"affiliated_organization"`
-	EducationalGoals       []string           `json:"educational_goals" bson:"educational_goals"`
-	EducationalOutcomes    []string           `json:"educational_outcomes" bson:"educational_outcomes"`
-	GrantGoals             []string           `json:"grant_goals" bson:"grant_goals"`
+	Title                  *string   `json:"title"`
+	Description            *string   `json:"description"`
+	StartDate              *string   `json:"start_date" bson:"start_date"`
+	SetUp                  *string   `json:"set_up" bson:"set_up"`
+	CleanUp                *string   `json:"clean_up" bson:"clean_up"`
+	EndDate                *string   `json:"end_date" bson:"end_date"`
+	GrantID                *string   `json:"grant_id" bson:"grant_id"`
+	Public                 *bool     `json:"public"`
+	Rsvp                   *bool     `json:"rsvp"`
+	AnnualEvent            *bool     `json:"annual_event" bson:"annual_event"`
+	NewEvent               *bool     `json:"new_event" bson:"new_event"`
+	Volunteers             *bool     `json:"volunteers"`
+	Agenda                 []string  `json:"agenda"`
+	TargetAudience         string    `json:"target_audience" bson:"target_audience"`
+	PartingGifts           []string  `json:"parting_gifts" bson:"parting_gifts"`
+	MarketingMaterial      []string  `json:"marketing_material" bson:"marketing_material"`
+	Supplies               []string  `json:"supplies" bson:"supplies"`
+	SpecialOrders          []*string  `json:"special_orders" 	bson:"special_orders"`
+	Performance            *string   `json:"performance"`
+	Vendors                *string   `json:"vendors"`
+	FoodAndBeverage        []string  `json:"food_and_beverage" bson:"food_and_beverage"`
+	Caterer                *string   `json:"caterer"`
+	FoodHeadCount          *int      `json:"food_head_count" bson:"food_head_count"`
+	EventTeam              []*string `json:"event_team" bson:"event_team"`
+	Budget                 *float64  `json:"budget"`
+	AffiliatedOrganization *string   `json:"affiliated_organization" bson:"affiliated_organization"`
+	EducationalGoals       []string  `json:"educational_goals" bson:"educational_goals"`
+	EducationalOutcomes    []string  `json:"educational_outcomes" bson:"educational_outcomes"`
+	GrantGoals             []string  `json:"grant_goals" bson:"grant_goals"`
 }
 
 type NewEventSummary struct {
@@ -236,7 +209,6 @@ type NewNote struct {
 	Content string `json:"content"`
 }
 
-
 type NewSchoolReport struct {
 	Curriculum   *string  `json:"curriculum"`
 	LessonPlan   *string  `json:"lesson_plan" bson:"lesson_plan"`
@@ -244,7 +216,7 @@ type NewSchoolReport struct {
 	Topics       *string  `json:"topics"`
 	StudentCount *int     `json:"student_count" bson:"student_count"`
 	StudentList  []string `json:"student_list" bson:"student_list"`
-	Challenges   *string  `json:"challenges"`
+	Challenges   *string  `json:"challenges" bson:"challenges"`
 	Successes    *string  `json:"successes"`
 	Improvements *string  `json:"improvements"`
 }
@@ -257,10 +229,10 @@ type NewUser struct {
 }
 
 type Note struct {
-	ID        *string `json:"id" bson:"id"`
+	ID        *string `json:"id" bson:"_id"`
 	ItemID    *string `json:"item_id" bson:"item_id"`
 	UserID    *string `json:"user_id" bson:"user_id"`
-	Title     string  `json:"title"`
+	Title     string  `json:"title" bson:"title"`
 	Content   string  `json:"content"`
 	CreatedAt string  `json:"created_at" bson:"created_at"`
 	UpdatedAt string  `json:"updated_at" bson:"updated_at"`
@@ -271,7 +243,7 @@ type RefreshTokenInput struct {
 }
 
 type SchoolReport struct {
-	ID           *string  `json:"id" bson:"id"`
+	ID           *string  `json:"id" bson:"_id"`
 	UserID       *string  `json:"user_id" bson:"user_id"`
 	Curriculum   string   `json:"curriculum"`
 	LessonPlan   string   `json:"lesson_plan" bson:"lesson_plan"`
@@ -279,7 +251,7 @@ type SchoolReport struct {
 	Topics       string   `json:"topics"`
 	StudentCount int      `json:"student_count" bson:"student_count"`
 	StudentList  []string `json:"student_list" bson:"student_list"`
-	Challenges   string   `json:"challenges"`
+	Challenges   string   `json:"challenges" bson:"challenges"`
 	Successes    string   `json:"successes"`
 	Improvements string   `json:"improvements"`
 	Status       string   `json:"status"`
@@ -300,36 +272,36 @@ type UpdateContact struct {
 }
 
 type UpdateEvent struct {
-	Title                  *string            `json:"title"`
-	Description            *string            `json:"description"`
-	StartDate              *string            `json:"start_date" bson:"start_date"`
-	SetUp                  *string            `json:"set_up" bson:"set_up"`
-	CleanUp                *string            `json:"clean_up" bson:"clean_up"`
-	EndDate                *string            `json:"end_date" bson:"end_date"`
-	GrantID                *string            `json:"grant_id" bson:"grant_id"`
-	Public                 *bool              `json:"public"`
-	Rsvp                   *bool              `json:"rsvp"`
-	AnnualEvent            *bool              `json:"annual_event" bson:"annual_event"`
-	NewEvent               *bool              `json:"new_event" bson:"new_event"`
-	Volunteers             *bool              `json:"volunteers"`
-	Agenda                 []*AgendaItemInput `json:"agenda"`
-	TargetAudience         *string            `json:"target_audience" bson:"target_audience"`
-	PartingGifts           []*EventItemInput  `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial      []*EventItemInput  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*EventItemInput  `json:"supplies"`
-	SpecialOrders          []*EventItemInput  `json:"special_orders" bson:"special_orders"`
-	Performance            *string            `json:"performance"`
-	Vendors                *string            `json:"vendors"`
-	FoodAndBeverage        []*EventItemInput  `json:"food_and_beverage" bson:"food_and_beverage"`
-	Caterer                *string            `json:"caterer"`
-	FoodHeadCount          *int               `json:"food_head_count" bson:"food_head_count"`
-	EventTeam              []*string          `json:"event_team" bson:"event_team"`
-	Budget                 *float64           `json:"budget"`
-	AffiliatedOrganization *string            `json:"affiliated_organization" bson:"affiliated_organization"`
-	EducationalGoals       []string           `json:"educational_goals" bson:"educational_goals"`
-	EducationalOutcomes    []string           `json:"educational_outcomes" bson:"educational_outcomes"`
-	GrantGoals             []string           `json:"grant_goals" bson:"grant_goals"`
-	Status                 *string            `json:"status"`
+	Title                  *string   `json:"title"`
+	Description            *string   `json:"description"`
+	StartDate              *string   `json:"start_date" bson:"start_date"`
+	SetUp                  *string   `json:"set_up" bson:"set_up"`
+	CleanUp                *string   `json:"clean_up" bson:"clean_up"`
+	EndDate                *string   `json:"end_date" bson:"end_date"`
+	GrantID                *string   `json:"grant_id" bson:"grant_id"`
+	Public                 *bool     `json:"public"`
+	Rsvp                   *bool     `json:"rsvp"`
+	AnnualEvent            *bool     `json:"annual_event" bson:"annual_event"`
+	NewEvent               *bool     `json:"new_event" bson:"new_event"`
+	Volunteers             *bool     `json:"volunteers" bson:"volunteers"`
+	Agenda                 []string  `json:"agenda"`
+	TargetAudience         *string   `json:"target_audience" bson:"target_audience"`
+	PartingGifts           []string  `json:"parting_gifts" bson:"parting_gifts"`
+	MarketingMaterial      []string  `json:"marketing_material" bson:"marketing_material"`
+	Supplies               []string  `json:"supplies"`
+	SpecialOrders          []*string `json:"special_orders" bson:"special_orders"`
+	Performance            *string   `json:"performance"`
+	Vendors                *string   `json:"vendors"`
+	FoodAndBeverage        []string  `json:"food_and_beverage" bson:"food_and_beverage"`
+	Caterer                *string   `json:"caterer"`
+	FoodHeadCount          *int      `json:"food_head_count" bson:"food_head_count"`
+	EventTeam              []*string `json:"event_team" bson:"event_team"`
+	Budget                 *float64  `json:"budget"`
+	AffiliatedOrganization *string   `json:"affiliated_organization" bson:"affiliated_organization"`
+	EducationalGoals       []string  `json:"educational_goals" bson:"educational_goals"`
+	EducationalOutcomes    []string  `json:"educational_outcomes" bson:"educational_outcomes"`
+	GrantGoals             []string  `json:"grant_goals" bson:"grant_goals"`
+	Status                 *string   `json:"status"`
 }
 
 type UpdateEventSummary struct {
@@ -345,10 +317,10 @@ type UpdateGrant struct {
 	Description *string  `json:"description"`
 	StartDate   *string  `json:"start_date" bson:"start_date"`
 	EndDate     *string  `json:"end_date" bson:"end_date"`
-	Budget      *float64 `json:"budget"`
+	Budget      *float64 `json:"budget" bson:"budget"`
 	AwardNumber *string  `json:"award_number" bson:"award_number"`
 	AwardDate   *string  `json:"award_date" bson:"award_date"`
-	IsActive    *bool    `json:"is_active" bson:"is_active"`
+	IsActive    *bool    `json:"is_active"`
 }
 
 type UpdateLog struct {
@@ -381,14 +353,14 @@ type UpdateSchoolReport struct {
 type UpdateUser struct {
 	FirstName string `json:"first_name" bson:"first_name"`
 	LastName  string `json:"last_name" bson:"last_name"`
-	Email     string `json:"email"`
+	Email     string `json:"email" bson:"email"`
 	Password  string `json:"password"`
-	IsAdmin   bool   `json:"is_admin" bson:"is_admin"`
-	IsActive  bool   `json:"is_active" bson:"is_active"`
+	IsAdmin   bool   `json:"is_admin"`
+	IsActive  bool   `json:"is_active"`
 }
 
 type User struct {
-	ID        *string `json:"id" bson:"id"`
+	ID        *string `json:"id" bson:"_id"`
 	FirstName string  `json:"first_name" bson:"first_name"`
 	LastName  string  `json:"last_name" bson:"last_name"`
 	Email     string  `json:"email"`

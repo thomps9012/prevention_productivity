@@ -63,18 +63,6 @@ type Log {
   updated_at: String!
 }
 
-type AgendaItem {
-  title: String!
-  description: String!
-  time_frame: String!
-}
-
-type EventItem {
-  title: String!
-  description: String!
-  cost: String!
-}
-
 type Event {
   id: ID
   event_lead: ID
@@ -90,19 +78,19 @@ type Event {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers: Boolean!
-  agenda: [AgendaItem!]!
+  agenda: [String!]!
   target_audience: String!
-  parting_gifts: [EventItem!]!
-  marketing_material: [EventItem!]!
-  supplies: [EventItem!]!
-  special_orders: [EventItem]
+  parting_gifts: [String!]!
+  marketing_material: [String!]!
+  supplies: [String!]!
+  special_orders: [String]
   performance: String!
   vendors: String!
-  food_and_beverage: [EventItem!]!
+  food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
   event_team: [ID]!
-  volunteer_list: [Contact]
+  volunteer_list: [String!]
   budget: Float!
   affiliated_organization: String
   educational_goals: [String!]!
@@ -261,18 +249,6 @@ input UpdateLog {
   status: String!
 }
 
-input AgendaItemInput {
-  title: String
-  description: String
-  time_frame: String
-}
-
-input EventItemInput {
-  title: String
-  description: String
-  cost: String
-}
-
 input NewEvent {
   title: String
   description: String
@@ -286,15 +262,15 @@ input NewEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [AgendaItemInput!]
-  target_audience: String
-  parting_gifts: [EventItemInput!]
-  marketing_material: [EventItemInput!]
-  supplies: [EventItemInput!]
-  special_orders: [EventItemInput]
+  agenda: [String!]
+  target_audience: String!
+  parting_gifts: [String!]
+  marketing_material: [String!]
+  supplies: [String!]
+  special_orders: [String!]
   performance: String
   vendors: String
-  food_and_beverage: [EventItemInput!]
+  food_and_beverage: [String!]
   caterer: String
   food_head_count: Int
   event_team: [ID]
@@ -318,15 +294,15 @@ input UpdateEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [AgendaItemInput!]
+  agenda: [String!]
   target_audience: String
-  parting_gifts: [EventItemInput!]
-  marketing_material: [EventItemInput!]
-  supplies: [EventItemInput!]
-  special_orders: [EventItemInput]
+  parting_gifts: [String!]
+  marketing_material: [String!]
+  supplies: [String!]
+  special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [EventItemInput!]
+  food_and_beverage: [String!]
   caterer: String
   food_head_count: Int
   event_team: [ID]

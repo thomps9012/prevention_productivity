@@ -18,7 +18,6 @@ import (
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
 	"thomps9012/prevention_productivity/internal/utils"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -452,15 +451,130 @@ func (r *mutationResolver) RejectLog(ctx context.Context, id string) (bool, erro
 }
 
 func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEvent) (*model.Event, error) {
-	panic(fmt.Errorf("not implemented"))
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var event events.Event
+	event.EventLead = userID
+	event.Title = *newEvent.Title
+	event.Description = *newEvent.Description
+	event.StartDate = *newEvent.StartDate
+	event.SetUp = *newEvent.SetUp
+	event.CleanUp = *newEvent.CleanUp
+	event.EndDate = *newEvent.EndDate
+	event.GrantID = *newEvent.GrantID
+	event.Public = *newEvent.Public
+	event.Rsvp = *newEvent.Rsvp
+	event.AnnualEvent = *newEvent.AnnualEvent
+	event.NewEvent = *newEvent.NewEvent
+	event.Volunteers = *newEvent.Volunteers
+	event.TargetAudience = newEvent.TargetAudience
+	event.Vendors = *newEvent.Vendors
+	event.Caterer = *newEvent.Caterer
+	event.FoodHeadCount = *newEvent.FoodHeadCount
+	event.EventTeam = newEvent.EventTeam
+	event.Budget = *newEvent.Budget
+	event.AffiliatedOrganization = newEvent.AffiliatedOrganization
+	event.EducationalGoals = newEvent.EducationalGoals
+	event.EducationalOutcomes = newEvent.EducationalOutcomes
+	event.GrantGoals = newEvent.GrantGoals
+	event.Agenda = newEvent.Agenda
+	event.PartingGifts = newEvent.PartingGifts
+	event.MarketingMaterial = newEvent.MarketingMaterial
+	event.Supplies = newEvent.Supplies
+	event.SpecialOrders = newEvent.SpecialOrders
+	event.PartingGifts = newEvent.PartingGifts
+	event.FoodAndBeverage = newEvent.FoodAndBeverage
+	event.Create()
+	return &model.Event{
+		ID:          &event.ID,
+		EventLead:   &event.EventLead,
+		GrantID:    event.GrantID,
+		Title:       event.Title,
+		Description: event.Description,
+		StartDate:   event.StartDate,
+		EndDate:     event.EndDate,
+		CreatedAt:   event.CreatedAt,
+	}, nil
 }
 
 func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEvent model.UpdateEvent) (*model.Event, error) {
-	panic(fmt.Errorf("not implemented"))
+	userID := auth.ForUserID(ctx)
+	isAdmin := auth.ForAdmin(ctx)
+	if userID == "" && !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("events")
+	filter := bson.D{{"_id", id}}
+	var event events.Event
+	err := collection.FindOne(context.TODO(), filter).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+	if isAdmin || event.EventLead == userID {
+		event.Title = *updateEvent.Title
+		event.Description = *updateEvent.Description
+		event.StartDate = *updateEvent.StartDate
+		event.EndDate = *updateEvent.EndDate
+		event.SetUp = *updateEvent.SetUp
+		event.CleanUp = *updateEvent.CleanUp
+		event.GrantID = *updateEvent.GrantID
+		event.Public = *updateEvent.Public
+		event.Rsvp = *updateEvent.Rsvp
+		event.AnnualEvent = *updateEvent.AnnualEvent
+		event.NewEvent = *updateEvent.NewEvent
+		event.Volunteers = *updateEvent.Volunteers
+		event.TargetAudience = *updateEvent.TargetAudience
+		event.Vendors = *updateEvent.Vendors
+		event.Caterer = *updateEvent.Caterer
+		event.FoodHeadCount = *updateEvent.FoodHeadCount
+		event.EventTeam = updateEvent.EventTeam
+		event.Budget = *updateEvent.Budget
+		event.AffiliatedOrganization = updateEvent.AffiliatedOrganization
+		event.EducationalGoals = updateEvent.EducationalGoals
+		event.EducationalOutcomes = updateEvent.EducationalOutcomes
+		event.GrantGoals = updateEvent.GrantGoals
+		event.Agenda = updateEvent.Agenda
+		event.PartingGifts = updateEvent.PartingGifts
+		event.MarketingMaterial = updateEvent.MarketingMaterial
+		event.Supplies = updateEvent.Supplies
+		event.SpecialOrders = updateEvent.SpecialOrders
+		event.PartingGifts = updateEvent.PartingGifts
+		event.FoodAndBeverage = updateEvent.FoodAndBeverage
+		event.Update()
+	}
+	return &model.Event{
+		ID:          &event.ID,
+		EventLead:   &event.EventLead,
+		Title:       event.Title,
+		Description: event.Description,
+		StartDate:   event.StartDate,
+		EndDate:     event.EndDate,
+		Status:      event.Status,
+		CreatedAt:   event.CreatedAt,
+		UpdatedAt:   event.UpdatedAt,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveEvent(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("events")
+	filter := bson.D{{"_id", id}}
+	var event events.Event
+	err := collection.FindOne(context.TODO(), filter).Decode(&event)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	event.Delete()
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) ApproveEvent(ctx context.Context, id string) (*bool, error) {
@@ -721,7 +835,7 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
 	var eventWithNotes *model.EventWithNotes
-	event := events.Event{}
+	var event *model.Event
 	eventCollection := database.Db.Collection("events")
 	eventFilter := bson.D{{"_id", id}}
 	err := eventCollection.FindOne(context.TODO(), eventFilter).Decode(&event)
@@ -729,7 +843,7 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 		return nil, err
 	}
 	eventLead := event.EventLead
-	if isAdmin || eventLead == userID {
+	if isAdmin || eventLead == &userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
@@ -756,14 +870,41 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 		}
 		eventWithNotes = &model.EventWithNotes{
 			Event: &model.Event{
-				ID:          &event.ID,
-				EventLead:   &event.EventLead,
-				Title:       event.Title,
-				Description: event.Description,
-				StartDate:   event.StartDate,
-				EndDate:     event.EndDate,
-				CreatedAt:   event.CreatedAt,
-				UpdatedAt:   event.UpdatedAt,
+				ID:                     event.ID,
+				EventLead:              event.EventLead,
+				Title:                  event.Title,
+				Description:            event.Description,
+				StartDate:              event.StartDate,
+				SetUp:                  event.SetUp,
+				CleanUp:                event.CleanUp,
+				EndDate:                event.EndDate,
+				GrantID:                event.GrantID,
+				Public:                 event.Public,
+				Rsvp:                   event.Rsvp,
+				AnnualEvent:            event.AnnualEvent,
+				NewEvent:               event.NewEvent,
+				Volunteers:             event.Volunteers,
+				Agenda:                 event.Agenda,
+				TargetAudience:         event.TargetAudience,
+				PartingGifts:           event.PartingGifts,
+				MarketingMaterial:      event.MarketingMaterial,
+				Supplies:               event.Supplies,
+				SpecialOrders:          event.SpecialOrders,
+				Performance:            event.Performance,
+				Vendors:                event.Vendors,
+				FoodAndBeverage:        event.FoodAndBeverage,
+				Caterer:                event.Caterer,
+				FoodHeadCount:          event.FoodHeadCount,
+				EventTeam:              event.EventTeam,
+				VolunteerList:          event.VolunteerList,
+				Budget:                 event.Budget,
+				AffiliatedOrganization: event.AffiliatedOrganization,
+				EducationalGoals:       event.EducationalGoals,
+				EducationalOutcomes:    event.EducationalOutcomes,
+				GrantGoals:             event.GrantGoals,
+				CreatedAt:              event.CreatedAt,
+				UpdatedAt:              event.UpdatedAt,
+				Status:                 event.Status,
 			},
 			Notes: notes,
 		}

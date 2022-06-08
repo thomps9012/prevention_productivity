@@ -44,12 +44,6 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	AgendaItem struct {
-		Description func(childComplexity int) int
-		TimeFrame   func(childComplexity int) int
-		Title       func(childComplexity int) int
-	}
-
 	AllEventSummaries struct {
 		EventSummary func(childComplexity int) int
 		NoteCount    func(childComplexity int) int
@@ -123,12 +117,6 @@ type ComplexityRoot struct {
 		Vendors                func(childComplexity int) int
 		VolunteerList          func(childComplexity int) int
 		Volunteers             func(childComplexity int) int
-	}
-
-	EventItem struct {
-		Cost        func(childComplexity int) int
-		Description func(childComplexity int) int
-		Title       func(childComplexity int) int
 	}
 
 	EventSummary struct {
@@ -363,27 +351,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "AgendaItem.description":
-		if e.complexity.AgendaItem.Description == nil {
-			break
-		}
-
-		return e.complexity.AgendaItem.Description(childComplexity), true
-
-	case "AgendaItem.time_frame":
-		if e.complexity.AgendaItem.TimeFrame == nil {
-			break
-		}
-
-		return e.complexity.AgendaItem.TimeFrame(childComplexity), true
-
-	case "AgendaItem.title":
-		if e.complexity.AgendaItem.Title == nil {
-			break
-		}
-
-		return e.complexity.AgendaItem.Title(childComplexity), true
 
 	case "AllEventSummaries.event_summary":
 		if e.complexity.AllEventSummaries.EventSummary == nil {
@@ -783,27 +750,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Event.Volunteers(childComplexity), true
-
-	case "EventItem.cost":
-		if e.complexity.EventItem.Cost == nil {
-			break
-		}
-
-		return e.complexity.EventItem.Cost(childComplexity), true
-
-	case "EventItem.description":
-		if e.complexity.EventItem.Description == nil {
-			break
-		}
-
-		return e.complexity.EventItem.Description(childComplexity), true
-
-	case "EventItem.title":
-		if e.complexity.EventItem.Title == nil {
-			break
-		}
-
-		return e.complexity.EventItem.Title(childComplexity), true
 
 	case "EventSummary.attendee_count":
 		if e.complexity.EventSummary.AttendeeCount == nil {
@@ -1901,8 +1847,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputAgendaItemInput,
-		ec.unmarshalInputEventItemInput,
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputNewContact,
 		ec.unmarshalInputNewEvent,
@@ -2046,18 +1990,6 @@ type Log {
   updated_at: String!
 }
 
-type AgendaItem {
-  title: String!
-  description: String!
-  time_frame: String!
-}
-
-type EventItem {
-  title: String!
-  description: String!
-  cost: String!
-}
-
 type Event {
   id: ID
   event_lead: ID
@@ -2073,19 +2005,19 @@ type Event {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers: Boolean!
-  agenda: [AgendaItem!]!
+  agenda: [String!]!
   target_audience: String!
-  parting_gifts: [EventItem!]!
-  marketing_material: [EventItem!]!
-  supplies: [EventItem!]!
-  special_orders: [EventItem]
+  parting_gifts: [String!]!
+  marketing_material: [String!]!
+  supplies: [String!]!
+  special_orders: [String]
   performance: String!
   vendors: String!
-  food_and_beverage: [EventItem!]!
+  food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
   event_team: [ID]!
-  volunteer_list: [Contact]
+  volunteer_list: [String!]
   budget: Float!
   affiliated_organization: String
   educational_goals: [String!]!
@@ -2244,18 +2176,6 @@ input UpdateLog {
   status: String!
 }
 
-input AgendaItemInput {
-  title: String
-  description: String
-  time_frame: String
-}
-
-input EventItemInput {
-  title: String
-  description: String
-  cost: String
-}
-
 input NewEvent {
   title: String
   description: String
@@ -2269,15 +2189,15 @@ input NewEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [AgendaItemInput!]
-  target_audience: String
-  parting_gifts: [EventItemInput!]
-  marketing_material: [EventItemInput!]
-  supplies: [EventItemInput!]
-  special_orders: [EventItemInput]
+  agenda: [String!]
+  target_audience: String!
+  parting_gifts: [String!]
+  marketing_material: [String!]
+  supplies: [String!]
+  special_orders: [String!]
   performance: String
   vendors: String
-  food_and_beverage: [EventItemInput!]
+  food_and_beverage: [String!]
   caterer: String
   food_head_count: Int
   event_team: [ID]
@@ -2301,15 +2221,15 @@ input UpdateEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [AgendaItemInput!]
+  agenda: [String!]
   target_audience: String
-  parting_gifts: [EventItemInput!]
-  marketing_material: [EventItemInput!]
-  supplies: [EventItemInput!]
-  special_orders: [EventItemInput]
+  parting_gifts: [String!]
+  marketing_material: [String!]
+  supplies: [String!]
+  special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [EventItemInput!]
+  food_and_beverage: [String!]
   caterer: String
   food_head_count: Int
   event_team: [ID]
@@ -3226,138 +3146,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _AgendaItem_title(ctx context.Context, field graphql.CollectedField, obj *model.AgendaItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AgendaItem_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AgendaItem_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AgendaItem",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AgendaItem_description(ctx context.Context, field graphql.CollectedField, obj *model.AgendaItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AgendaItem_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AgendaItem_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AgendaItem",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AgendaItem_time_frame(ctx context.Context, field graphql.CollectedField, obj *model.AgendaItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AgendaItem_time_frame(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TimeFrame, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AgendaItem_time_frame(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AgendaItem",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
 
 func (ec *executionContext) _AllEventSummaries_event_summary(ctx context.Context, field graphql.CollectedField, obj *model.AllEventSummaries) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AllEventSummaries_event_summary(ctx, field)
@@ -5166,9 +4954,9 @@ func (ec *executionContext) _Event_agenda(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.AgendaItem)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNAgendaItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_agenda(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5178,15 +4966,7 @@ func (ec *executionContext) fieldContext_Event_agenda(ctx context.Context, field
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_AgendaItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_AgendaItem_description(ctx, field)
-			case "time_frame":
-				return ec.fieldContext_AgendaItem_time_frame(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AgendaItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5262,9 +5042,9 @@ func (ec *executionContext) _Event_parting_gifts(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventItem)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_parting_gifts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5274,15 +5054,7 @@ func (ec *executionContext) fieldContext_Event_parting_gifts(ctx context.Context
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_EventItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_EventItem_description(ctx, field)
-			case "cost":
-				return ec.fieldContext_EventItem_cost(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5314,9 +5086,9 @@ func (ec *executionContext) _Event_marketing_material(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventItem)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_marketing_material(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5326,15 +5098,7 @@ func (ec *executionContext) fieldContext_Event_marketing_material(ctx context.Co
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_EventItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_EventItem_description(ctx, field)
-			case "cost":
-				return ec.fieldContext_EventItem_cost(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5366,9 +5130,9 @@ func (ec *executionContext) _Event_supplies(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventItem)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_supplies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5378,15 +5142,7 @@ func (ec *executionContext) fieldContext_Event_supplies(ctx context.Context, fie
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_EventItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_EventItem_description(ctx, field)
-			case "cost":
-				return ec.fieldContext_EventItem_cost(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5415,9 +5171,9 @@ func (ec *executionContext) _Event_special_orders(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventItem)
+	res := resTmp.([]*string)
 	fc.Result = res
-	return ec.marshalOEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_special_orders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5427,15 +5183,7 @@ func (ec *executionContext) fieldContext_Event_special_orders(ctx context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_EventItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_EventItem_description(ctx, field)
-			case "cost":
-				return ec.fieldContext_EventItem_cost(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5555,9 +5303,9 @@ func (ec *executionContext) _Event_food_and_beverage(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventItem)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_food_and_beverage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5567,15 +5315,7 @@ func (ec *executionContext) fieldContext_Event_food_and_beverage(ctx context.Con
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "title":
-				return ec.fieldContext_EventItem_title(ctx, field)
-			case "description":
-				return ec.fieldContext_EventItem_description(ctx, field)
-			case "cost":
-				return ec.fieldContext_EventItem_cost(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventItem", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5736,9 +5476,9 @@ func (ec *executionContext) _Event_volunteer_list(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Contact)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOContact2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_volunteer_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5748,29 +5488,7 @@ func (ec *executionContext) fieldContext_Event_volunteer_list(ctx context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Contact_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Contact_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Contact_email(ctx, field)
-			case "phone":
-				return ec.fieldContext_Contact_phone(ctx, field)
-			case "notes":
-				return ec.fieldContext_Contact_notes(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Contact_is_active(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Contact_created_by(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Contact_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Contact_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Contact_deleted_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Contact", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6115,138 +5833,6 @@ func (ec *executionContext) _Event_status(ctx context.Context, field graphql.Col
 func (ec *executionContext) fieldContext_Event_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _EventItem_title(ctx context.Context, field graphql.CollectedField, obj *model.EventItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventItem_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_EventItem_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "EventItem",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _EventItem_description(ctx context.Context, field graphql.CollectedField, obj *model.EventItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventItem_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_EventItem_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "EventItem",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _EventItem_cost(ctx context.Context, field graphql.CollectedField, obj *model.EventItem) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventItem_cost(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cost, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_EventItem_cost(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "EventItem",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -14959,84 +14545,6 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputAgendaItemInput(ctx context.Context, obj interface{}) (model.AgendaItemInput, error) {
-	var it model.AgendaItemInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "title":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "time_frame":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("time_frame"))
-			it.TimeFrame, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputEventItemInput(ctx context.Context, obj interface{}) (model.EventItemInput, error) {
-	var it model.EventItemInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "title":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "cost":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cost"))
-			it.Cost, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj interface{}) (model.LoginInput, error) {
 	var it model.LoginInput
 	asMap := map[string]interface{}{}
@@ -15224,7 +14732,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalOAgendaItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemInputᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15232,7 +14740,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target_audience"))
-			it.TargetAudience, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.TargetAudience, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15240,7 +14748,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15248,7 +14756,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_material"))
-			it.MarketingMaterial, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.MarketingMaterial, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15256,7 +14764,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15264,7 +14772,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("special_orders"))
-			it.SpecialOrders, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx, v)
+			it.SpecialOrders, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15288,7 +14796,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15895,7 +15403,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalOAgendaItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemInputᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15911,7 +15419,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15919,7 +15427,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_material"))
-			it.MarketingMaterial, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.MarketingMaterial, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15927,7 +15435,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15935,7 +15443,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("special_orders"))
-			it.SpecialOrders, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx, v)
+			it.SpecialOrders, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15959,7 +15467,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16435,48 +15943,6 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 
 // region    **************************** object.gotpl ****************************
 
-var agendaItemImplementors = []string{"AgendaItem"}
-
-func (ec *executionContext) _AgendaItem(ctx context.Context, sel ast.SelectionSet, obj *model.AgendaItem) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, agendaItemImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AgendaItem")
-		case "title":
-
-			out.Values[i] = ec._AgendaItem_title(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "description":
-
-			out.Values[i] = ec._AgendaItem_description(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "time_frame":
-
-			out.Values[i] = ec._AgendaItem_time_frame(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var allEventSummariesImplementors = []string{"AllEventSummaries"}
 
 func (ec *executionContext) _AllEventSummaries(ctx context.Context, sel ast.SelectionSet, obj *model.AllEventSummaries) graphql.Marshaler {
@@ -16933,48 +16399,6 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 		case "status":
 
 			out.Values[i] = ec._Event_status(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var eventItemImplementors = []string{"EventItem"}
-
-func (ec *executionContext) _EventItem(ctx context.Context, sel ast.SelectionSet, obj *model.EventItem) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, eventItemImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("EventItem")
-		case "title":
-
-			out.Values[i] = ec._EventItem_title(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "description":
-
-			out.Values[i] = ec._EventItem_description(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "cost":
-
-			out.Values[i] = ec._EventItem_cost(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18682,65 +18106,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAgendaItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AgendaItem) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNAgendaItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItem(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNAgendaItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItem(ctx context.Context, sel ast.SelectionSet, v *model.AgendaItem) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._AgendaItem(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNAgendaItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemInput(ctx context.Context, v interface{}) (*model.AgendaItemInput, error) {
-	res, err := ec.unmarshalInputAgendaItemInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNAllEventSummaries2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllEventSummaries(ctx context.Context, sel ast.SelectionSet, v *model.AllEventSummaries) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -18862,65 +18227,6 @@ func (ec *executionContext) marshalNEvent2ᚖthomps9012ᚋprevention_productivit
 		return graphql.Null
 	}
 	return ec._Event(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.EventItem) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNEventItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNEventItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx context.Context, sel ast.SelectionSet, v *model.EventItem) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._EventItem(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNEventItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx context.Context, v interface{}) (*model.EventItemInput, error) {
-	res, err := ec.unmarshalInputEventItemInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNEventSummary2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventSummary(ctx context.Context, sel ast.SelectionSet, v *model.EventSummary) graphql.Marshaler {
@@ -19600,26 +18906,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAgendaItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemInputᚄ(ctx context.Context, v interface{}) ([]*model.AgendaItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.AgendaItemInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNAgendaItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAgendaItemInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) marshalOAllEventSummaries2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllEventSummariesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AllEventSummaries) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -19787,47 +19073,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOContact2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v []*model.Contact) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
 func (ec *executionContext) marshalOContact2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Contact) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -19927,102 +19172,6 @@ func (ec *executionContext) marshalOEvent2ᚕᚖthomps9012ᚋprevention_producti
 	}
 
 	return ret
-}
-
-func (ec *executionContext) marshalOEventItem2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx context.Context, sel ast.SelectionSet, v []*model.EventItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOEventItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOEventItem2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItem(ctx context.Context, sel ast.SelectionSet, v *model.EventItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._EventItem(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx context.Context, v interface{}) ([]*model.EventItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.EventItemInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOEventItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOEventItemInput2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInputᚄ(ctx context.Context, v interface{}) ([]*model.EventItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.EventItemInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEventItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOEventItemInput2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventItemInput(ctx context.Context, v interface{}) (*model.EventItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputEventItemInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOEventSummary2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventSummaryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.EventSummary) graphql.Marshaler {
@@ -20395,6 +19544,38 @@ func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel
 		if e == graphql.Null {
 			return graphql.Null
 		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
 	}
 
 	return ret
