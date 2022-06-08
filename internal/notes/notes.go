@@ -47,7 +47,7 @@ func (n *Note) Update() {
 	}
 }
 
-func (n *Note) Delete(id string) {
+func (n *Note) Remove(id string) {
 	collection := database.Db.Collection("notes")
 	filter := bson.D{{"_id", id}}
 	_, err := collection.DeleteOne(context.TODO(), filter)

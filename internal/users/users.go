@@ -13,8 +13,8 @@ import (
 
 type User struct {
 	ID	   string `json:"id" bson:"_id"`
-	FirstName string `json:"firstName" bson:"firstName"`
-	LastName string `json:"lastName" bson:"lastName"`
+	FirstName string `json:"firstName" bson:"first_name"`
+	LastName string `json:"lastName" bson:"last_name"`
 	Email string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`
 	IsAdmin bool `json:"isAdmin"`
@@ -83,6 +83,9 @@ func (u *User) Update(id string) {
 		fmt.Println(hashErr)
 	}
 	u.Password = hashed
+	println(u.Password)
+	println(u.UpdatedAt)
+	println(u.IsActive)
 	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
 	if err != nil {
 		panic(err)

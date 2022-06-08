@@ -12,15 +12,30 @@ type User {
   is_active: Boolean!
 }
 
-type Log {
+type Contact {
   id: ID
-  user_id: ID
-  focus_area: String!
-  actions: String!
-  successes: String!
-  improvements: String!
-  next_steps: String!
-  status: String!
+  name: String
+  email: String
+  phone: String
+  notes: String
+  is_active: Boolean!
+  created_by: ID!
+  created_at: String!
+  updated_at: String!
+  deleted_at: String!
+}
+
+type Grant {
+  id: ID
+  name: String!
+  description: String!
+  start_date: String!
+  award_date: String
+  end_date: String!
+  award_number: String!
+  budget: Float
+  is_active: Boolean!
+  created_by: ID!
   created_at: String!
   updated_at: String!
 }
@@ -35,8 +50,116 @@ type Note {
   updated_at: String!
 }
 
+type Log {
+  id: ID
+  user_id: ID
+  focus_area: String!
+  actions: String!
+  successes: String!
+  improvements: String!
+  next_steps: String!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
+type AgendaItem {
+  title: String!
+  description: String!
+  time_frame: String!
+}
+
+type EventItem {
+  title: String!
+  description: String!
+  cost: String!
+}
+
+type Event {
+  id: ID
+  event_lead: User!
+  title: String!
+  description: String!
+  start_date: String!
+  set_up: String!
+  clean_up: String!
+  end_date: String!
+  grant_id: ID!
+  public: Boolean!
+  rsvp: Boolean!
+  annual_event: Boolean!
+  new_event: Boolean!
+  volunteers: Boolean!
+  agenda: [AgendaItem!]!
+  target_audience: String!
+  parting_gifts: [EventItem!]!
+  marketing_material: [EventItem!]!
+  supplies: [EventItem!]!
+  special_orders: [EventItem]
+  performance: String!
+  vendors: String!
+  food_and_beverage: [EventItem!]!
+  caterer: String!
+  food_head_count: Int! 
+  event_team: [ID]!
+  volunteer_list: [Contact]
+  budget: Float!
+  affiliated_organization: String
+  educational_goals: [String!]!
+  educational_outcomes: [String!]!
+  grant_goals: [String!]!
+  created_at: String!
+  updated_at: String!
+  status: String!
+}
+
+type EventSummary {
+  id: ID!
+  event_id: ID!
+  user_id: ID!
+  attendee_count: Int!
+  challenges: String!
+  successes: String!
+  improvements: String!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
+type SchoolReport {
+  id: ID
+  user_id: ID
+  curriculum: String!
+  lesson_plan: String!
+  school: String!
+  topics: String!
+  student_count: Int!
+  student_list: [String!]!
+  challenges: String!
+  successes: String!
+  improvements: String!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
 type LogWithNotes {
   log: Log!
+  notes: [Note]
+}
+
+type EventWithNotes {
+  event: Event!
+  notes: [Note]
+}
+
+type EventSummaryWithNotes {
+  event_summary: EventSummary!
+  notes: [Note]
+}
+
+type SchoolReportWithNotes {
+  school_report: SchoolReport!
   notes: [Note]
 }
 
@@ -50,9 +173,21 @@ type Query {
   users: [User!]!
   me: User!
   user(id: ID!): User!
+  itemNotes(item_id: ID!): [Note!]
   log(id: ID!): LogWithNotes!
   allLogs: [AllLogs!]!
   userLogs(user_id: ID!): [Log!]!
+  event(id: ID!): EventWithNotes!
+  eventSummary(id: ID!): EventSummaryWithNotes!
+  schoolReport(id: ID!): SchoolReportWithNotes!
+  events: [Event!]
+  eventSummaries: [EventSummary!]
+  schoolReports: [SchoolReport!]
+  grants: [Grant!]
+  contacts: [Contact!]
+  userEvents(user_id: ID!): [Event!]
+  userEventSummaries(user_id: ID!): [EventSummary!]
+  userSchoolReports(user_id: ID!): [SchoolReport!]  
 }
 
 input NewUser {
@@ -69,6 +204,17 @@ input UpdateUser {
   password: String!
   is_admin: Boolean!
   is_active: Boolean!
+}
+
+input NewNote {
+  item_id: ID!
+  title: String!
+  content: String!
+}
+
+input UpdateNote {
+  title: String!
+  content: String!
 }
 
 input LoginInput {
@@ -97,16 +243,159 @@ input UpdateLog {
   status: String!
 }
 
-input NewNote {
-  item_id: ID!
-  title: String!
-  content: String!
+input AgendaItemInput {
+  title: String
+  description: String
+  time_frame: String
 }
 
-input UpdateNote {
-  title: String!
-  content: String!
+input EventItemInput {
+  title: String
+  description: String
+  cost: String
 }
+
+input NewEvent {
+  title: String
+  description: String
+  start_date: String
+  set_up: String
+  clean_up: String
+  end_date: String
+  grant_id: ID
+  public: Boolean
+  rsvp: Boolean
+  annual_event: Boolean
+  new_event: Boolean
+  volunteers: Boolean
+  agenda: [AgendaItemInput!]
+  target_audience: String
+  parting_gifts: [EventItemInput!]
+  marketing_material: [EventItemInput!]
+  supplies: [EventItemInput!]
+  special_orders: [EventItemInput]
+  performance: String
+  vendors: String
+  food_and_beverage: [EventItemInput!]
+  caterer: String
+  food_head_count: Int
+  event_team: [ID]
+  budget: Float
+  affiliated_organization: String
+  educational_goals: [String!]
+  educational_outcomes: [String!]
+  grant_goals: [String!]
+}
+
+input UpdateEvent {
+  title: String
+  description: String
+  start_date: String
+  set_up: String
+  clean_up: String
+  end_date: String
+  grant_id: ID
+  public: Boolean
+  rsvp: Boolean
+  annual_event: Boolean
+  new_event: Boolean
+  volunteers: Boolean
+  agenda: [AgendaItemInput!]
+  target_audience: String
+  parting_gifts: [EventItemInput!]
+  marketing_material: [EventItemInput!]
+  supplies: [EventItemInput!]
+  special_orders: [EventItemInput]
+  performance: String
+  vendors: String
+  food_and_beverage: [EventItemInput!]
+  caterer: String
+  food_head_count: Int
+  event_team: [ID]
+  budget: Float
+  affiliated_organization: String
+  educational_goals: [String!]
+  educational_outcomes: [String!]
+  grant_goals: [String!]
+  status: String
+}
+
+input NewEventSummary {
+  event_id: ID
+  attendee_count: Int
+  challenges: String
+  successes: String
+  improvements: String
+}
+
+input UpdateEventSummary {
+  attendee_count: Int
+  challenges: String
+  successes: String
+  improvements: String
+  status: String
+}
+
+input NewSchoolReport {
+  curriculum: String
+  lesson_plan: String
+  school: String
+  topics: String
+  student_count: Int
+  student_list: [String!]
+  challenges: String
+  successes: String
+  improvements: String
+}
+
+input UpdateSchoolReport {
+  curriculum: String
+  lesson_plan: String
+  school: String
+  topics: String
+  student_count: Int
+  student_list: [String!]
+  challenges: String
+  successes: String
+  improvements: String
+  status: String
+}
+
+input NewGrant {
+  name: String
+  description: String
+  start_date: String
+  end_date: String
+  budget: Float
+  award_number: String
+  award_date: String
+}
+
+input UpdateGrant {
+  name: String
+  description: String
+  start_date: String
+  end_date: String
+  budget: Float
+  award_number: String
+  award_date: String
+  is_active: Boolean
+}
+
+input NewContact {
+  name: String
+  email: String
+  phone: String
+  notes: String
+}
+
+input UpdateContact {
+  name: String
+  email: String
+  phone: String
+  notes: String
+}
+
 
 type Mutation {
   createUser(newUser: NewUser!): String!
@@ -114,12 +403,33 @@ type Mutation {
   deleteUser(id: ID!): Boolean!
   login(login: LoginInput!): String!
   refreshToken(refreshToken: RefreshTokenInput!): String!
+  createGrant(newGrant: NewGrant!): Grant
+  updateGrant(id: ID!, updateGrant: UpdateGrant!): Grant
+  removeGrant(id: ID!): Boolean
+  createContact(newContact: NewContact!): Contact
+  updateContact(id: ID!, updateContact: UpdateContact!): Contact
+  removeContact(id: ID!): Boolean
+  createNote(newNote: NewNote!): Note!
+  updateNote(id: ID!, updateNote: UpdateNote!): Note!
+  removeNote(id: ID!): Boolean!
   createLog(newLog: NewLog!): Log!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
   removeLog(id: ID!): Boolean!
   approveLog(id: ID!): Boolean!
   rejectLog(id: ID!): Boolean!
-  createNote(newNote: NewNote!): Note!
-  updateNote(id: ID!, updateNote: UpdateNote!): Note!
-  removeNote(id: ID!): Boolean!
+  createEvent(newEvent: NewEvent!): Event!
+  updateEvent(id: ID!, updateEvent: UpdateEvent!): Event!
+  removeEvent(id: ID!): Boolean
+  approveEvent(id: ID!): Boolean
+  rejectEvent(id: ID!): Boolean
+  createEventSummary(newEventSummary: NewEventSummary!): EventSummary
+  updateEventSummary(id: ID!, updateEventSummary: UpdateEventSummary!): EventSummary
+  removeEventSummary(id: ID!): Boolean
+  approveEventSummary(id: ID!): Boolean
+  rejectEventSummary(id: ID!): Boolean
+  createSchoolReport(newSchoolReport: NewSchoolReport!): SchoolReport
+  updateSchoolReport(id: ID!, updateSchoolReport: UpdateSchoolReport!): SchoolReport
+  removeSchoolReport(id: ID!): Boolean
+  approveSchoolReport(id: ID!): Boolean
+  rejectSchoolReport(id: ID!): Boolean
 }

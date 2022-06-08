@@ -65,7 +65,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		IsActive:  user.IsActive,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
-		DeletedAt: user.DeletedAt,
+		DeletedAt: &user.DeletedAt,
 	}, nil
 }
 
@@ -122,6 +122,103 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, refreshToken model.
 		return "", err
 	}
 	return newToken, nil
+}
+
+func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGrant) (*model.Grant, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGrant model.UpdateGrant) (*model.Grant, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RemoveGrant(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.NewContact) (*model.Contact, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateContact(ctx context.Context, id string, updateContact model.UpdateContact) (*model.Contact, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RemoveContact(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
+	UserID := auth.ForUserID(ctx)
+	if UserID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var note notes.Note
+	note.UserID = UserID
+	note.ItemID = newNote.ItemID
+	note.Title = newNote.Title
+	note.Content = newNote.Content
+	note.Create()
+	return &model.Note{
+		ID:        &note.ID,
+		ItemID:    &note.ItemID,
+		UserID:    &note.UserID,
+		Title:     note.Title,
+		Content:   note.Content,
+		CreatedAt: note.CreatedAt,
+	}, nil
+}
+
+func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote model.UpdateNote) (*model.Note, error) {
+	UserID := auth.ForUserID(ctx)
+	IsAdmin := auth.ForAdmin(ctx)
+	if UserID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"_id", id}}
+	var note notes.Note
+	err := collection.FindOne(context.TODO(), filter).Decode(&note)
+	if err != nil {
+		return nil, err
+	}
+	if IsAdmin || note.UserID == UserID {
+		note.Title = updateNote.Title
+		note.Content = updateNote.Content
+		note.Update()
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	return &model.Note{
+		ID:        &note.ID,
+		UserID:    &note.UserID,
+		ItemID:    &note.ItemID,
+		Title:     note.Title,
+		Content:   note.Content,
+		CreatedAt: note.CreatedAt,
+		UpdatedAt: note.UpdatedAt,
+	}, nil
+}
+
+func (r *mutationResolver) RemoveNote(ctx context.Context, id string) (bool, error) {
+	UserID := auth.ForUserID(ctx)
+	IsAdmin := auth.ForAdmin(ctx)
+	if UserID == "" {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"_id", id}}
+	var note notes.Note
+	err := collection.FindOne(context.TODO(), filter).Decode(&note)
+	if err != nil {
+		return false, err
+	}
+	if IsAdmin || note.UserID == UserID {
+		note.Remove(id)
+	} else {
+		return false, fmt.Errorf("Unauthorized")
+	}
+	return true, nil
 }
 
 func (r *mutationResolver) CreateLog(ctx context.Context, newLog model.NewLog) (*model.Log, error) {
@@ -237,59 +334,63 @@ func (r *mutationResolver) RejectLog(ctx context.Context, id string) (bool, erro
 	return true, nil
 }
 
-func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
-	UserID := auth.ForUserID(ctx)
-	if UserID == "" {
-		return nil, fmt.Errorf("Unauthorized")
-	}
-	var note notes.Note
-	note.UserID = UserID
-	note.ItemID = newNote.ItemID
-	note.Title = newNote.Title
-	note.Content = newNote.Content
-	note.Create()
-	return &model.Note{
-		ID:        &note.ID,
-		ItemID:    &note.ItemID,
-		UserID:    &note.UserID,
-		Title:     note.Title,
-		Content:   note.Content,
-		CreatedAt: note.CreatedAt,
-	}, nil
+func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEvent) (*model.Event, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote model.UpdateNote) (*model.Note, error) {
-	UserID := auth.ForUserID(ctx)
-	IsAdmin := auth.ForAdmin(ctx)
-	if UserID == "" {
-		return nil, fmt.Errorf("Unauthorized")
-	}
-	collection := database.Db.Collection("notes")
-	filter := bson.D{{"_id", id}}
-	var note notes.Note
-	err := collection.FindOne(context.TODO(), filter).Decode(&note)
-	if err != nil {
-		return nil, err
-	}
-	if IsAdmin || note.UserID == UserID {
-		note.Title = updateNote.Title
-		note.Content = updateNote.Content
-		note.Update()
-	} else {
-		return nil, fmt.Errorf("Unauthorized")
-	}
-	return &model.Note{
-		ID:        &note.ID,
-		UserID:    &note.UserID,
-		ItemID:    &note.ItemID,
-		Title:     note.Title,
-		Content:   note.Content,
-		CreatedAt: note.CreatedAt,
-		UpdatedAt: note.UpdatedAt,
-	}, nil
+func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEvent model.UpdateEvent) (*model.Event, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) RemoveNote(ctx context.Context, id string) (bool, error) {
+func (r *mutationResolver) RemoveEvent(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) ApproveEvent(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RejectEvent(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSummary model.NewEventSummary) (*model.EventSummary, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, updateEventSummary model.UpdateEventSummary) (*model.EventSummary, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RemoveEventSummary(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) ApproveEventSummary(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RejectEventSummary(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolReport model.NewSchoolReport) (*model.SchoolReport, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, updateSchoolReport model.UpdateSchoolReport) (*model.SchoolReport, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RemoveSchoolReport(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) ApproveSchoolReport(ctx context.Context, id string) (*bool, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) RejectSchoolReport(ctx context.Context, id string) (*bool, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -351,6 +452,40 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 			Username:  user.Username,
 			IsAdmin:   user.IsAdmin,
 		}, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+}
+
+func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.Note, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	if IsAdmin || UserID != "" {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", itemID}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		return notes, nil
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -463,6 +598,50 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+}
+
+func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Events(ctx context.Context) ([]*model.Event, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.EventSummary, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.SchoolReport, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated1.MutationResolver implementation.
