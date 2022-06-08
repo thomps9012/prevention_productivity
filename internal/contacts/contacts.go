@@ -28,6 +28,7 @@ func (c *Contact) Create() {
 	c.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	c.UpdatedAt = c.CreatedAt
+	c.IsActive = true
 	_, err := collection.InsertOne(context.TODO(), c)
 	if err != nil {
 		panic(err)

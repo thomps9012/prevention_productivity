@@ -14,13 +14,12 @@ import (
 	"thomps9012/prevention_productivity/internal/logs"
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
-	// "thomps9012/prevention_productivity/internal/contacts"
+	"thomps9012/prevention_productivity/internal/contacts"
 	"thomps9012/prevention_productivity/internal/grants"
 	// "thomps9012/prevention_productivity/internal/events"
 	// "thomps9012/prevention_productivity/internal/eventSummaries"
 	// "thomps9012/prevention_productivity/internal/schoolReports"
 	"thomps9012/prevention_productivity/internal/utils"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -205,15 +204,67 @@ func (r *mutationResolver) RemoveGrant(ctx context.Context, id string) (*bool, e
 }
 
 func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.NewContact) (*model.Contact, error) {
-	panic(fmt.Errorf("not implemented"))
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var contact contacts.Contact
+	contact.Name = *newContact.Name
+	contact.Email = *newContact.Email
+	contact.Phone = *newContact.Phone
+	contact.Notes = *newContact.Notes
+	contact.CreatedBy = userID
+	contact.Create()
+	return &model.Contact{
+		ID:          &contact.ID,
+		Name:        &contact.Name,
+		Email:       &contact.Email,
+		Phone:       &contact.Phone,
+		Notes:       &contact.Notes,
+		CreatedBy:   contact.CreatedBy,
+		CreatedAt:   contact.CreatedAt,
+		UpdatedAt:   contact.UpdatedAt,
+		IsActive:    contact.IsActive,
+	}, nil
 }
 
 func (r *mutationResolver) UpdateContact(ctx context.Context, id string, updateContact model.UpdateContact) (*model.Contact, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var contact contacts.Contact
+	contact.ID = id
+	contact.Name = *updateContact.Name
+	contact.Email = *updateContact.Email
+	contact.Phone = *updateContact.Phone
+	contact.Notes = *updateContact.Notes
+	contact.Update(id)
+	return &model.Contact{
+		ID:          &contact.ID,
+		Name:        &contact.Name,
+		Email:       &contact.Email,
+		Phone:       &contact.Phone,
+		Notes:       &contact.Notes,
+		UpdatedAt:   contact.UpdatedAt,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveContact(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	if !isAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var contact contacts.Contact
+	contact.Delete(id)
+	// returns false if contact was deactivated
+	var result bool
+	if contact.IsActive {
+		result = false
+	} else {
+		result = true
+	}
+	return &result, nil
 }
 
 func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.Note, error) {
@@ -728,7 +779,63 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 }
 
 func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if !isAdmin && userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var contacts []*model.Contact
+	collection := database.Db.Collection("contacts")
+	if !isAdmin {
+		filter := bson.D{{"created_by", userID}}
+		cursor, err := collection.Find(context.TODO(), filter)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var contact *model.Contact
+			err := cursor.Decode(&contact)
+			if err != nil {
+				return nil, err
+			}
+			contacts = append(contacts, &model.Contact{
+				ID:           contact.ID,
+				Name:         contact.Name,
+				Email:        contact.Email,
+				Phone:        contact.Phone,
+				Notes: 	  contact.Notes,
+				CreatedAt:    contact.CreatedAt,
+				CreatedBy:    contact.CreatedBy,
+				UpdatedAt:    contact.UpdatedAt,
+				IsActive:     contact.IsActive,
+			})
+		}
+	} else {
+			cursor, err := collection.Find(context.TODO(), bson.D{})
+			if err != nil {
+				return nil, err
+			}
+			for cursor.Next(context.TODO()) {
+				var contact *model.Contact
+				err := cursor.Decode(&contact)
+				if err != nil {
+					return nil, err
+				}
+				contacts = append(contacts, &model.Contact{
+					ID:           contact.ID,
+					Name:         contact.Name,
+					Email:        contact.Email,
+					Phone:        contact.Phone,
+					Notes: 	  contact.Notes,
+					CreatedAt:    contact.CreatedAt,
+					CreatedBy:    contact.CreatedBy,
+					UpdatedAt:    contact.UpdatedAt,
+					IsActive:     contact.IsActive,
+					DeletedAt:	contact.DeletedAt,
+				})
+			}
+		}
+	return contacts, nil
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {
