@@ -230,7 +230,7 @@ type NewUser struct {
 }
 
 type Note struct {
-	ID        *string `json:"id" bson:"id"`
+	ID        *string `json:"id" bson:"_id"`
 	ItemID    *string `json:"item_id" bson:"item_id"`
 	UserID    *string `json:"user_id" bson:"user_id"`
 	Title     string  `json:"title" bson:"title"`
@@ -244,7 +244,7 @@ type RefreshTokenInput struct {
 }
 
 type SchoolReport struct {
-	ID           *string  `json:"id" bson:"id"`
+	ID           *string  `json:"id" bson:"_id"`
 	UserID       *string  `json:"user_id" bson:"user_id"`
 	Curriculum   string   `json:"curriculum"`
 	LessonPlan   string   `json:"lesson_plan" bson:"lesson_plan"`
