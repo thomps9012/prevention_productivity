@@ -18,6 +18,7 @@ import (
 	"thomps9012/prevention_productivity/internal/notes"
 	"thomps9012/prevention_productivity/internal/users"
 	"thomps9012/prevention_productivity/internal/utils"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -469,7 +470,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 	event.AnnualEvent = *newEvent.AnnualEvent
 	event.NewEvent = *newEvent.NewEvent
 	event.Volunteers = *newEvent.Volunteers
-	event.TargetAudience = newEvent.TargetAudience
+	event.TargetAudience = *newEvent.TargetAudience
 	event.Vendors = *newEvent.Vendors
 	event.Caterer = *newEvent.Caterer
 	event.FoodHeadCount = *newEvent.FoodHeadCount
@@ -484,13 +485,12 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 	event.MarketingMaterial = newEvent.MarketingMaterial
 	event.Supplies = newEvent.Supplies
 	event.SpecialOrders = newEvent.SpecialOrders
-	event.PartingGifts = newEvent.PartingGifts
 	event.FoodAndBeverage = newEvent.FoodAndBeverage
 	event.Create()
 	return &model.Event{
 		ID:          &event.ID,
 		EventLead:   &event.EventLead,
-		GrantID:    event.GrantID,
+		GrantID:     event.GrantID,
 		Title:       event.Title,
 		Description: event.Description,
 		StartDate:   event.StartDate,

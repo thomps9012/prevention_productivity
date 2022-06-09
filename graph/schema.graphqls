@@ -89,8 +89,8 @@ type Event {
   food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
-  event_team: [ID]!
-  volunteer_list: [String!]
+  event_team: [ID]
+  volunteer_list: [String]
   budget: Float!
   affiliated_organization: String
   educational_goals: [String!]!
@@ -262,23 +262,24 @@ input NewEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [String!]
-  target_audience: String!
-  parting_gifts: [String!]
-  marketing_material: [String!]
-  supplies: [String!]
-  special_orders: [String!]
+  agenda: [String]
+  target_audience: String
+  parting_gifts: [String]
+  marketing_material: [String]
+  supplies: [String]
+  special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [String!]
+  food_and_beverage: [String]
   caterer: String
   food_head_count: Int
   event_team: [ID]
+  volunteer_list: [String]
   budget: Float
   affiliated_organization: String
-  educational_goals: [String!]
-  educational_outcomes: [String!]
-  grant_goals: [String!]
+  educational_goals: [String]
+  educational_outcomes: [String]
+  grant_goals: [String]
 }
 
 input UpdateEvent {
@@ -294,23 +295,24 @@ input UpdateEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [String!]
+  agenda: [String]
   target_audience: String
-  parting_gifts: [String!]
-  marketing_material: [String!]
-  supplies: [String!]
+  parting_gifts: [String]
+  marketing_material: [String]
+  supplies: [String]
   special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [String!]
+  food_and_beverage: [String]
   caterer: String
   food_head_count: Int
   event_team: [ID]
+  volunteer_list: [String]
   budget: Float
   affiliated_organization: String
-  educational_goals: [String!]
-  educational_outcomes: [String!]
-  grant_goals: [String!]
+  educational_goals: [String]
+  educational_outcomes: [String]
+  grant_goals: [String]
   status: String
 }
 

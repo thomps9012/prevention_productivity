@@ -2016,8 +2016,8 @@ type Event {
   food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
-  event_team: [ID]!
-  volunteer_list: [String!]
+  event_team: [ID]
+  volunteer_list: [String]
   budget: Float!
   affiliated_organization: String
   educational_goals: [String!]!
@@ -2189,23 +2189,24 @@ input NewEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [String!]
-  target_audience: String!
-  parting_gifts: [String!]
-  marketing_material: [String!]
-  supplies: [String!]
-  special_orders: [String!]
+  agenda: [String]
+  target_audience: String
+  parting_gifts: [String]
+  marketing_material: [String]
+  supplies: [String]
+  special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [String!]
+  food_and_beverage: [String]
   caterer: String
   food_head_count: Int
   event_team: [ID]
+  volunteer_list: [String]
   budget: Float
   affiliated_organization: String
-  educational_goals: [String!]
-  educational_outcomes: [String!]
-  grant_goals: [String!]
+  educational_goals: [String]
+  educational_outcomes: [String]
+  grant_goals: [String]
 }
 
 input UpdateEvent {
@@ -2221,23 +2222,24 @@ input UpdateEvent {
   annual_event: Boolean
   new_event: Boolean
   volunteers: Boolean
-  agenda: [String!]
+  agenda: [String]
   target_audience: String
-  parting_gifts: [String!]
-  marketing_material: [String!]
-  supplies: [String!]
+  parting_gifts: [String]
+  marketing_material: [String]
+  supplies: [String]
   special_orders: [String]
   performance: String
   vendors: String
-  food_and_beverage: [String!]
+  food_and_beverage: [String]
   caterer: String
   food_head_count: Int
   event_team: [ID]
+  volunteer_list: [String]
   budget: Float
   affiliated_organization: String
-  educational_goals: [String!]
-  educational_outcomes: [String!]
-  grant_goals: [String!]
+  educational_goals: [String]
+  educational_outcomes: [String]
+  grant_goals: [String]
   status: String
 }
 
@@ -5430,14 +5432,11 @@ func (ec *executionContext) _Event_event_team(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]*string)
 	fc.Result = res
-	return ec.marshalNID2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOID2ᚕᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_event_team(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5476,9 +5475,9 @@ func (ec *executionContext) _Event_volunteer_list(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.([]*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_volunteer_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14732,7 +14731,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14740,7 +14739,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target_audience"))
-			it.TargetAudience, err = ec.unmarshalNString2string(ctx, v)
+			it.TargetAudience, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14748,7 +14747,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14756,7 +14755,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_material"))
-			it.MarketingMaterial, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.MarketingMaterial, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14764,7 +14763,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14796,7 +14795,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14824,6 +14823,14 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			if err != nil {
 				return it, err
 			}
+		case "volunteer_list":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volunteer_list"))
+			it.VolunteerList, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "budget":
 			var err error
 
@@ -14844,7 +14851,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_goals"))
-			it.EducationalGoals, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.EducationalGoals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14852,7 +14859,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_outcomes"))
-			it.EducationalOutcomes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.EducationalOutcomes, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14860,7 +14867,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grant_goals"))
-			it.GrantGoals, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.GrantGoals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15403,7 +15410,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15419,7 +15426,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15427,7 +15434,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_material"))
-			it.MarketingMaterial, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.MarketingMaterial, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15435,7 +15442,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15467,7 +15474,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15495,6 +15502,14 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
+		case "volunteer_list":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volunteer_list"))
+			it.VolunteerList, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "budget":
 			var err error
 
@@ -15515,7 +15530,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_goals"))
-			it.EducationalGoals, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.EducationalGoals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15523,7 +15538,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_outcomes"))
-			it.EducationalOutcomes, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.EducationalOutcomes, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15531,7 +15546,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grant_goals"))
-			it.GrantGoals, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			it.GrantGoals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16343,9 +16358,6 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Event_event_team(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "volunteer_list":
 
 			out.Values[i] = ec._Event_volunteer_list(ctx, field, obj)
@@ -18305,32 +18317,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOID2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNID2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOID2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
