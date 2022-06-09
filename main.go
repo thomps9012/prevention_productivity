@@ -53,5 +53,5 @@ log.Printf("Visit `http://localhost:%s/graphql` in your browswer", port)
 originsOk := handlers.AllowedOrigins([]string{"*"})
 headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
-log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router)))
+http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }
