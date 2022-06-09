@@ -54,6 +54,7 @@ func (e *Event) Create() {
 	e.ID = strings.Replace(uuid.New().String(), "-", "", -1)
 	e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	e.Status = "pending"
 	_, err := collection.InsertOne(context.TODO(), e)
 	if err != nil {
 		panic(err)

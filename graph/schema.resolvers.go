@@ -482,6 +482,8 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 	event.GrantGoals = newEvent.GrantGoals
 	event.Agenda = newEvent.Agenda
 	event.PartingGifts = newEvent.PartingGifts
+	event.VolunteerList = newEvent.VolunteerList
+	event.Performance = *newEvent.Performance
 	event.MarketingMaterial = newEvent.MarketingMaterial
 	event.Supplies = newEvent.Supplies
 	event.SpecialOrders = newEvent.SpecialOrders
@@ -496,6 +498,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 		StartDate:   event.StartDate,
 		EndDate:     event.EndDate,
 		CreatedAt:   event.CreatedAt,
+		Status: 	event.Status,
 	}, nil
 }
 
@@ -507,41 +510,45 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEve
 	}
 	collection := database.Db.Collection("events")
 	filter := bson.D{{"_id", id}}
+	println(id)
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
 	if err != nil {
 		return nil, err
 	}
+	println(userID)
+	println(event.EventLead)
 	if isAdmin || event.EventLead == userID {
 		event.Title = *updateEvent.Title
 		event.Description = *updateEvent.Description
 		event.StartDate = *updateEvent.StartDate
-		event.EndDate = *updateEvent.EndDate
 		event.SetUp = *updateEvent.SetUp
 		event.CleanUp = *updateEvent.CleanUp
+		event.EndDate = *updateEvent.EndDate
 		event.GrantID = *updateEvent.GrantID
 		event.Public = *updateEvent.Public
 		event.Rsvp = *updateEvent.Rsvp
 		event.AnnualEvent = *updateEvent.AnnualEvent
 		event.NewEvent = *updateEvent.NewEvent
 		event.Volunteers = *updateEvent.Volunteers
+		event.Agenda = updateEvent.Agenda
 		event.TargetAudience = *updateEvent.TargetAudience
+		event.PartingGifts = updateEvent.PartingGifts
+		event.MarketingMaterial = updateEvent.MarketingMaterial
+		event.Supplies = updateEvent.Supplies
+		event.SpecialOrders = updateEvent.SpecialOrders
+		event.Performance = *updateEvent.Performance
 		event.Vendors = *updateEvent.Vendors
+		event.FoodAndBeverage = updateEvent.FoodAndBeverage
 		event.Caterer = *updateEvent.Caterer
 		event.FoodHeadCount = *updateEvent.FoodHeadCount
 		event.EventTeam = updateEvent.EventTeam
+		event.VolunteerList = updateEvent.VolunteerList
 		event.Budget = *updateEvent.Budget
 		event.AffiliatedOrganization = updateEvent.AffiliatedOrganization
 		event.EducationalGoals = updateEvent.EducationalGoals
 		event.EducationalOutcomes = updateEvent.EducationalOutcomes
 		event.GrantGoals = updateEvent.GrantGoals
-		event.Agenda = updateEvent.Agenda
-		event.PartingGifts = updateEvent.PartingGifts
-		event.MarketingMaterial = updateEvent.MarketingMaterial
-		event.Supplies = updateEvent.Supplies
-		event.SpecialOrders = updateEvent.SpecialOrders
-		event.PartingGifts = updateEvent.PartingGifts
-		event.FoodAndBeverage = updateEvent.FoodAndBeverage
 		event.Update()
 	}
 	return &model.Event{
@@ -578,11 +585,43 @@ func (r *mutationResolver) RemoveEvent(ctx context.Context, id string) (*bool, e
 }
 
 func (r *mutationResolver) ApproveEvent(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("events")
+	filter := bson.D{{"_id", id}}
+	var event events.Event
+	err := collection.FindOne(context.TODO(), filter).Decode(&event)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	event.Approve(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) RejectEvent(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("events")
+	filter := bson.D{{"_id", id}}
+	var event events.Event
+	err := collection.FindOne(context.TODO(), filter).Decode(&event)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	event.Reject(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSummary model.NewEventSummary) (*model.EventSummary, error) {
@@ -927,10 +966,17 @@ func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.Sch
 }
 
 func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) {
-	// add in Note Count
-	// isAdmin := auth.ForAdmin(ctx)
-	// userID := auth.ForUserID(ctx)
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if isAdmin {
+		filter := bson.D{}
+		return utils.GetEvents(filter)
+	} else if userID != "" {
+		filter := bson.D{{"event_lead", userID}}
+		return utils.GetEvents(filter)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error) {
