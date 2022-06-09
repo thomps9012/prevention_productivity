@@ -115,37 +115,38 @@ func GetEvents(filter bson.D) ([]*model.AllEvents, error) {
 
 func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 	// this function breaks if logs don't meet the model requirements
-	eventsCollection := database.Db.Collection("events")
+	println("hit")
 	eventSummariesCollection := database.Db.Collection("event_summaries")
+	eventsCollection := database.Db.Collection("events")
 	notesCollection := database.Db.Collection("notes")
 	userCollection := database.Db.Collection("users")
 	var allEventSummaries []*model.AllEventSummaries
 
-	cursor, err := eventsCollection.Find(context.TODO(), filter)
+	cursor, err := eventSummariesCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
 	for cursor.Next(context.TODO()) {
-		var event *model.Event
-		err := cursor.Decode(&event)
+		var eventSummary *model.EventSummary
+		err := cursor.Decode(&eventSummary)
 		if err != nil {
 			return nil, err
 		}
-		noteFilter := bson.D{{"item_id", event.ID}}
+		noteFilter := bson.D{{"item_id", eventSummary.ID}}
 		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
 		if noteErr != nil {
 			return nil, err
 		}
 		intNoteCount := int(noteCount)
 		var user *model.User
-		userFilter := bson.D{{"_id", event.EventLead}}
+		userFilter := bson.D{{"_id", eventSummary.UserID}}
 		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
 		if err != nil {
 			return nil, err
 		}
-		var eventSummary *model.EventSummary
-		eventSummaryFilter := bson.D{{"event_id", event.ID}}
-		err = eventSummariesCollection.FindOne(context.TODO(), eventSummaryFilter).Decode(&eventSummary)
+		var event *model.Event
+		eventFilter := bson.D{{"_id", eventSummary.EventID}}
+		err = eventsCollection.FindOne(context.TODO(), eventFilter).Decode(&event)
 		if err != nil {
 			return nil, err
 		}

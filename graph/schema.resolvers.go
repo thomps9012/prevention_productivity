@@ -633,6 +633,7 @@ func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSumma
 	}
 	var eventSummary eventSummaries.EventSummary
 	eventSummary.EventID = *newEventSummary.EventID
+	eventSummary.UserID = userID
 	eventSummary.AttendeeCount = *newEventSummary.AttendeeCount
 	eventSummary.Challenges = *newEventSummary.Challenges
 	eventSummary.Successes = *newEventSummary.Successes
@@ -641,10 +642,12 @@ func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSumma
 	return &model.EventSummary{
 		ID:              eventSummary.ID,
 		EventID:         eventSummary.EventID,
+		UserID:          eventSummary.UserID,
 		AttendeeCount:   eventSummary.AttendeeCount,
 		Challenges:      eventSummary.Challenges,
 		Successes:       eventSummary.Successes,
 		Improvements:    eventSummary.Improvements,
+		Status: 		eventSummary.Status,
 		CreatedAt:       eventSummary.CreatedAt,
 		UpdatedAt:       eventSummary.UpdatedAt,
 	}, nil
@@ -671,6 +674,7 @@ func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, up
 	return &model.EventSummary{
 		ID:              eventSummary.ID,
 		EventID:         eventSummary.EventID,
+		UserID:          eventSummary.UserID,
 		AttendeeCount:   eventSummary.AttendeeCount,
 		Challenges:      eventSummary.Challenges,
 		Successes:       eventSummary.Successes,
@@ -740,13 +744,78 @@ func (r *mutationResolver) RejectEventSummary(ctx context.Context, id string) (*
 	result = true
 	return &result, nil
 }
-// need to build out CU components of school report
+
 func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolReport model.NewSchoolReport) (*model.SchoolReport, error) {
-	panic(fmt.Errorf("not implemented"))
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var schoolReport schoolReports.SchoolReport
+	schoolReport.Curriculum = *newSchoolReport.Curriculum
+	schoolReport.LessonPlan = *newSchoolReport.LessonPlan
+	schoolReport.School = *newSchoolReport.School
+	schoolReport.Topics = *newSchoolReport.Topics
+	schoolReport.StudentCount = *newSchoolReport.StudentCount
+	schoolReport.StudentList = newSchoolReport.StudentList
+	schoolReport.Challenges = *newSchoolReport.Challenges
+	schoolReport.Successes = *newSchoolReport.Successes
+	schoolReport.Improvements = *newSchoolReport.Improvements
+	schoolReport.Create()
+	return &model.SchoolReport{
+		ID:              &schoolReport.ID,
+		Curriculum:      schoolReport.Curriculum,
+		LessonPlan:      schoolReport.LessonPlan,
+		School:          schoolReport.School,
+		Topics:          schoolReport.Topics,
+		StudentCount:    schoolReport.StudentCount,
+		StudentList:     schoolReport.StudentList,
+		Challenges:      schoolReport.Challenges,
+		Successes:       schoolReport.Successes,
+		Improvements:    schoolReport.Improvements,
+		CreatedAt:       schoolReport.CreatedAt,
+		UpdatedAt:       schoolReport.UpdatedAt,
+		Status: 		schoolReport.Status,
+	}, nil
 }
 
 func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, updateSchoolReport model.UpdateSchoolReport) (*model.SchoolReport, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var schoolReport schoolReports.SchoolReport
+	collection := database.Db.Collection("school_reports")
+	filter := bson.D{{"_id", id}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin && schoolReport.UserID != &userID {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	schoolReport.Curriculum = *updateSchoolReport.Curriculum
+	schoolReport.LessonPlan = *updateSchoolReport.LessonPlan
+	schoolReport.School = *updateSchoolReport.School
+	schoolReport.Topics = *updateSchoolReport.Topics
+	schoolReport.StudentCount = *updateSchoolReport.StudentCount
+	schoolReport.StudentList = updateSchoolReport.StudentList
+	schoolReport.Challenges = *updateSchoolReport.Challenges
+	schoolReport.Successes = *updateSchoolReport.Successes
+	schoolReport.Improvements = *updateSchoolReport.Improvements
+	schoolReport.Update(id)
+	return &model.SchoolReport{
+		ID:              &schoolReport.ID,
+		Curriculum:      schoolReport.Curriculum,
+		LessonPlan:      schoolReport.LessonPlan,
+		School:          schoolReport.School,
+		Topics:          schoolReport.Topics,
+		StudentCount:    schoolReport.StudentCount,
+		StudentList:     schoolReport.StudentList,
+		Challenges:      schoolReport.Challenges,
+		Successes:       schoolReport.Successes,
+		Improvements:    schoolReport.Improvements,
+		CreatedAt:       schoolReport.CreatedAt,
+		UpdatedAt:       schoolReport.UpdatedAt,
+		Status: 		schoolReport.Status,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveSchoolReport(ctx context.Context, id string) (*bool, error) {
