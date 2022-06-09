@@ -10,7 +10,7 @@ import (
 )
 
 type SchoolReport struct {
-		ID           string  `json:"id" bson:"id"`
+		ID           string  `json:"id" bson:"_id"`
 		UserID       *string  `json:"user_id" bson:"user_id"`
 		Curriculum   string   `json:"curriculum"`
 		LessonPlan   string   `json:"lesson_plan" bson:"lesson_plan"`
@@ -41,7 +41,7 @@ func (e *SchoolReport) Create() {
 func (e *SchoolReport) Update(id string) {
 		collection := database.Db.Collection("school_reports")
 		e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-		filter := bson.D{{"id", id}}
+		filter := bson.D{{"_id", id}}
 		update := bson.D{
 			{"$set", bson.D{
 				{"curriculum", e.Curriculum},
@@ -68,7 +68,7 @@ func (e *SchoolReport) Update(id string) {
 
 func (e *SchoolReport) Delete(id string) {
 		collection := database.Db.Collection("school_reports")
-		filter := bson.D{{"id", id}}
+		filter := bson.D{{"_id", id}}
 		result, err := collection.DeleteOne(context.TODO(), filter)
 		if err != nil {
 				panic(err)
@@ -81,7 +81,7 @@ func (e *SchoolReport) Delete(id string) {
 func (e *SchoolReport) Approve(id string) {
 		collection := database.Db.Collection("school_reports")
 		e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-		filter := bson.D{{"id", id}}
+		filter := bson.D{{"_id", id}}
 		update := bson.D{
 			{"$set", bson.D{
 				{"status", "approved"},
@@ -100,7 +100,7 @@ func (e *SchoolReport) Approve(id string) {
 func (e *SchoolReport) Reject(id string) {
 		collection := database.Db.Collection("school_reports")
 		e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-		filter := bson.D{{"id", id}}
+		filter := bson.D{{"_id", id}}
 		update := bson.D{
 			{"$set", bson.D{
 				{"status", "rejected"},

@@ -753,6 +753,7 @@ func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolRepo
 	var schoolReport schoolReports.SchoolReport
 	schoolReport.Curriculum = *newSchoolReport.Curriculum
 	schoolReport.LessonPlan = *newSchoolReport.LessonPlan
+	schoolReport.UserID = &userID
 	schoolReport.School = *newSchoolReport.School
 	schoolReport.Topics = *newSchoolReport.Topics
 	schoolReport.StudentCount = *newSchoolReport.StudentCount
@@ -763,6 +764,7 @@ func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolRepo
 	schoolReport.Create()
 	return &model.SchoolReport{
 		ID:              &schoolReport.ID,
+		UserID: 		schoolReport.UserID,
 		Curriculum:      schoolReport.Curriculum,
 		LessonPlan:      schoolReport.LessonPlan,
 		School:          schoolReport.School,
@@ -803,6 +805,7 @@ func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, up
 	schoolReport.Update(id)
 	return &model.SchoolReport{
 		ID:              &schoolReport.ID,
+		UserID: 		schoolReport.UserID,
 		Curriculum:      schoolReport.Curriculum,
 		LessonPlan:      schoolReport.LessonPlan,
 		School:          schoolReport.School,
