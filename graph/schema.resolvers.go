@@ -625,13 +625,60 @@ func (r *mutationResolver) RejectEvent(ctx context.Context, id string) (*bool, e
 	result = true
 	return &result, nil
 }
-// need to build out CU components of event summaries
+
 func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSummary model.NewEventSummary) (*model.EventSummary, error) {
-	panic(fmt.Errorf("not implemented"))
+	userID := auth.ForUserID(ctx)
+	if userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var eventSummary eventSummaries.EventSummary
+	eventSummary.EventID = *newEventSummary.EventID
+	eventSummary.AttendeeCount = *newEventSummary.AttendeeCount
+	eventSummary.Challenges = *newEventSummary.Challenges
+	eventSummary.Successes = *newEventSummary.Successes
+	eventSummary.Improvements = *newEventSummary.Improvements
+	eventSummary.Create()
+	return &model.EventSummary{
+		ID:              eventSummary.ID,
+		EventID:         eventSummary.EventID,
+		AttendeeCount:   eventSummary.AttendeeCount,
+		Challenges:      eventSummary.Challenges,
+		Successes:       eventSummary.Successes,
+		Improvements:    eventSummary.Improvements,
+		CreatedAt:       eventSummary.CreatedAt,
+		UpdatedAt:       eventSummary.UpdatedAt,
+	}, nil
 }
 
 func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, updateEventSummary model.UpdateEventSummary) (*model.EventSummary, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var eventSummary eventSummaries.EventSummary
+	collection := database.Db.Collection("event_summaries")
+	filter := bson.D{{"_id", id}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin && eventSummary.UserID != userID {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	eventSummary.AttendeeCount = *updateEventSummary.AttendeeCount
+	eventSummary.Challenges = *updateEventSummary.Challenges
+	eventSummary.Successes = *updateEventSummary.Successes
+	eventSummary.Improvements = *updateEventSummary.Improvements
+	eventSummary.Update(id)
+	return &model.EventSummary{
+		ID:              eventSummary.ID,
+		EventID:         eventSummary.EventID,
+		AttendeeCount:   eventSummary.AttendeeCount,
+		Challenges:      eventSummary.Challenges,
+		Successes:       eventSummary.Successes,
+		Improvements:    eventSummary.Improvements,
+		Status: 		eventSummary.Status,
+		CreatedAt:       eventSummary.CreatedAt,
+		UpdatedAt:       eventSummary.UpdatedAt,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveEventSummary(ctx context.Context, id string) (*bool, error) {
