@@ -45,6 +45,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AllEventSummaries struct {
+		Event        func(childComplexity int) int
 		EventSummary func(childComplexity int) int
 		NoteCount    func(childComplexity int) int
 		User         func(childComplexity int) int
@@ -351,6 +352,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AllEventSummaries.event":
+		if e.complexity.AllEventSummaries.Event == nil {
+			break
+		}
+
+		return e.complexity.AllEventSummaries.Event(childComplexity), true
 
 	case "AllEventSummaries.event_summary":
 		if e.complexity.AllEventSummaries.EventSummary == nil {
@@ -2091,6 +2099,7 @@ type AllEvents {
 }
 
 type AllEventSummaries {
+  event: Event!
   event_summary: EventSummary!
   user: User
   noteCount: Int
@@ -3148,6 +3157,122 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AllEventSummaries_event(ctx context.Context, field graphql.CollectedField, obj *model.AllEventSummaries) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllEventSummaries_event(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Event, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Event)
+	fc.Result = res
+	return ec.marshalNEvent2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEvent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllEventSummaries_event(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllEventSummaries",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Event_id(ctx, field)
+			case "event_lead":
+				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "title":
+				return ec.fieldContext_Event_title(ctx, field)
+			case "description":
+				return ec.fieldContext_Event_description(ctx, field)
+			case "start_date":
+				return ec.fieldContext_Event_start_date(ctx, field)
+			case "set_up":
+				return ec.fieldContext_Event_set_up(ctx, field)
+			case "clean_up":
+				return ec.fieldContext_Event_clean_up(ctx, field)
+			case "end_date":
+				return ec.fieldContext_Event_end_date(ctx, field)
+			case "grant_id":
+				return ec.fieldContext_Event_grant_id(ctx, field)
+			case "public":
+				return ec.fieldContext_Event_public(ctx, field)
+			case "rsvp":
+				return ec.fieldContext_Event_rsvp(ctx, field)
+			case "annual_event":
+				return ec.fieldContext_Event_annual_event(ctx, field)
+			case "new_event":
+				return ec.fieldContext_Event_new_event(ctx, field)
+			case "volunteers":
+				return ec.fieldContext_Event_volunteers(ctx, field)
+			case "agenda":
+				return ec.fieldContext_Event_agenda(ctx, field)
+			case "target_audience":
+				return ec.fieldContext_Event_target_audience(ctx, field)
+			case "parting_gifts":
+				return ec.fieldContext_Event_parting_gifts(ctx, field)
+			case "marketing_material":
+				return ec.fieldContext_Event_marketing_material(ctx, field)
+			case "supplies":
+				return ec.fieldContext_Event_supplies(ctx, field)
+			case "special_orders":
+				return ec.fieldContext_Event_special_orders(ctx, field)
+			case "performance":
+				return ec.fieldContext_Event_performance(ctx, field)
+			case "vendors":
+				return ec.fieldContext_Event_vendors(ctx, field)
+			case "food_and_beverage":
+				return ec.fieldContext_Event_food_and_beverage(ctx, field)
+			case "caterer":
+				return ec.fieldContext_Event_caterer(ctx, field)
+			case "food_head_count":
+				return ec.fieldContext_Event_food_head_count(ctx, field)
+			case "event_team":
+				return ec.fieldContext_Event_event_team(ctx, field)
+			case "volunteer_list":
+				return ec.fieldContext_Event_volunteer_list(ctx, field)
+			case "budget":
+				return ec.fieldContext_Event_budget(ctx, field)
+			case "affiliated_organization":
+				return ec.fieldContext_Event_affiliated_organization(ctx, field)
+			case "educational_goals":
+				return ec.fieldContext_Event_educational_goals(ctx, field)
+			case "educational_outcomes":
+				return ec.fieldContext_Event_educational_outcomes(ctx, field)
+			case "grant_goals":
+				return ec.fieldContext_Event_grant_goals(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Event_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Event_updated_at(ctx, field)
+			case "status":
+				return ec.fieldContext_Event_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _AllEventSummaries_event_summary(ctx context.Context, field graphql.CollectedField, obj *model.AllEventSummaries) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AllEventSummaries_event_summary(ctx, field)
@@ -10951,6 +11076,8 @@ func (ec *executionContext) fieldContext_Query_eventSummaries(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "event":
+				return ec.fieldContext_AllEventSummaries_event(ctx, field)
 			case "event_summary":
 				return ec.fieldContext_AllEventSummaries_event_summary(ctx, field)
 			case "user":
@@ -15968,6 +16095,13 @@ func (ec *executionContext) _AllEventSummaries(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AllEventSummaries")
+		case "event":
+
+			out.Values[i] = ec._AllEventSummaries_event(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "event_summary":
 
 			out.Values[i] = ec._AllEventSummaries_event_summary(ctx, field, obj)

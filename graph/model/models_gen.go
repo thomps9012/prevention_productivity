@@ -3,6 +3,7 @@
 package model
 
 type AllEventSummaries struct {
+	Event *Event `json:"event"`
 	EventSummary *EventSummary `json:"event_summary" bson:"event_summary"`
 	User         *User         `json:"user"`
 	NoteCount    *int          `json:"noteCount"`

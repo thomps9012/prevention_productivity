@@ -11,11 +11,13 @@ import (
 	"thomps9012/prevention_productivity/internal/auth"
 	"thomps9012/prevention_productivity/internal/contacts"
 	database "thomps9012/prevention_productivity/internal/db"
+	"thomps9012/prevention_productivity/internal/eventSummaries"
 	"thomps9012/prevention_productivity/internal/events"
 	"thomps9012/prevention_productivity/internal/grants"
 	"thomps9012/prevention_productivity/internal/jwt"
 	"thomps9012/prevention_productivity/internal/logs"
 	"thomps9012/prevention_productivity/internal/notes"
+	"thomps9012/prevention_productivity/internal/schoolReports"
 	"thomps9012/prevention_productivity/internal/users"
 	"thomps9012/prevention_productivity/internal/utils"
 
@@ -498,7 +500,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 		StartDate:   event.StartDate,
 		EndDate:     event.EndDate,
 		CreatedAt:   event.CreatedAt,
-		Status: 	event.Status,
+		Status:      event.Status,
 	}, nil
 }
 
@@ -623,7 +625,7 @@ func (r *mutationResolver) RejectEvent(ctx context.Context, id string) (*bool, e
 	result = true
 	return &result, nil
 }
-
+// need to build out CU components of event summaries
 func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSummary model.NewEventSummary) (*model.EventSummary, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -633,17 +635,65 @@ func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, up
 }
 
 func (r *mutationResolver) RemoveEventSummary(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("event_summaries")
+	filter := bson.D{{"_id", id}}
+	var eventSummary eventSummaries.EventSummary
+	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	eventSummary.Delete(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) ApproveEventSummary(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("event_summaries")
+	filter := bson.D{{"_id", id}}
+	var eventSummary eventSummaries.EventSummary
+	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	eventSummary.Approve(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) RejectEventSummary(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorized")
+	}
+	collection := database.Db.Collection("event_summaries")
+	filter := bson.D{{"_id", id}}
+	var eventSummary eventSummaries.EventSummary
+	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	eventSummary.Reject(id)
+	result = true
+	return &result, nil
 }
-
+// need to build out CU components of school report
 func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolReport model.NewSchoolReport) (*model.SchoolReport, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -653,15 +703,63 @@ func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, up
 }
 
 func (r *mutationResolver) RemoveSchoolReport(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorizaed")
+	}
+	collection := database.Db.Collection("school_reports")
+	filter := bson.D{{"_id", id}}
+	var schoolReport schoolReports.SchoolReport
+	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	schoolReport.Delete(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) ApproveSchoolReport(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorizaed")
+	}
+	collection := database.Db.Collection("school_reports")
+	filter := bson.D{{"_id", id}}
+	var schoolReport schoolReports.SchoolReport
+	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	schoolReport.Approve(id)
+	result = true
+	return &result, nil
 }
 
 func (r *mutationResolver) RejectSchoolReport(ctx context.Context, id string) (*bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	var result bool
+	if !isAdmin {
+		result = false
+		return &result, fmt.Errorf("Unauthorizaed")
+	}
+	collection := database.Db.Collection("school_reports")
+	filter := bson.D{{"_id", id}}
+	var schoolReport schoolReports.SchoolReport
+	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
+	if err != nil {
+		result = false
+		return &result, err
+	}
+	schoolReport.Reject(id)
+	result = true
+	return &result, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -954,15 +1052,124 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 }
 
 func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error) {
-	// isAdmin := auth.ForAdmin(ctx)
-	// userID := auth.ForUserID(ctx)
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var eventSummaryWithNotes *model.EventSummaryWithNotes
+	var eventSummary *model.EventSummary
+	eventSummaryCollection := database.Db.Collection("event_summaries")
+	eventSummaryFilter := bson.D{{"_id", id}}
+	err := eventSummaryCollection.FindOne(context.TODO(), eventSummaryFilter).Decode(&eventSummary)
+	if err != nil {
+		return nil, err
+	}
+	summaryAuthor := eventSummary.UserID
+	if isAdmin || summaryAuthor == userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		eventSummaryWithNotes = &model.EventSummaryWithNotes{
+			EventSummary: &model.EventSummary{
+				ID:                     eventSummary.ID,
+				UserID: 			   eventSummary.UserID,
+				EventID: 			  eventSummary.EventID,
+				AttendeeCount: 		eventSummary.AttendeeCount,
+				Challenges: 		   eventSummary.Challenges,
+				Successes: 			 eventSummary.Successes,
+				Improvements: 		  eventSummary.Improvements,
+				Status: 			   eventSummary.Status,
+				CreatedAt: 			eventSummary.CreatedAt,
+				UpdatedAt: 			eventSummary.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return eventSummaryWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+
 }
 
 func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error) {
-	// isAdmin := auth.ForAdmin(ctx)
-	// userID := auth.ForUserID(ctx)
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var schoolReportWithNotes *model.SchoolReportWithNotes
+	var schoolReport *model.SchoolReport
+	schoolReportCollection := database.Db.Collection("school_reports")
+	schoolReportFilter := bson.D{{"_id", id}}
+	err := schoolReportCollection.FindOne(context.TODO(), schoolReportFilter).Decode(&schoolReport)
+	if err != nil {
+		return nil, err
+	}
+	reportAuthor := schoolReport.UserID
+	if isAdmin || reportAuthor == &userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		schoolReportWithNotes = &model.SchoolReportWithNotes{
+			SchoolReport: &model.SchoolReport{
+				ID:                     schoolReport.ID,
+				UserID:                 schoolReport.UserID,
+				Curriculum: 		   schoolReport.Curriculum,
+				LessonPlan: 		   schoolReport.LessonPlan,
+				School: 			   schoolReport.School,
+				Topics: 			   schoolReport.Topics,
+				StudentCount: 		   schoolReport.StudentCount,
+				StudentList: 		   schoolReport.StudentList,
+				Challenges:             schoolReport.Challenges,
+				Successes:              schoolReport.Successes,
+				Improvements:           schoolReport.Improvements,
+				Status:                 schoolReport.Status,
+				CreatedAt:              schoolReport.CreatedAt,
+				UpdatedAt:              schoolReport.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return schoolReportWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) {
@@ -980,17 +1187,31 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) 
 }
 
 func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error) {
-	// add in Note Count
-	// isAdmin := auth.ForAdmin(ctx)
-	// userID := auth.ForUserID(ctx)
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if isAdmin {
+		filter := bson.D{}
+		return utils.GetEventSummaries(filter)
+	} else if userID != "" {
+		filter := bson.D{{"user_id", userID}}
+		return utils.GetEventSummaries(filter)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error) {
-	// add in Note Count
-	// isAdmin := auth.ForAdmin(ctx)
-	// userID := auth.ForUserID(ctx)
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if isAdmin {
+		filter := bson.D{}
+		return utils.GetSchoolReports(filter)
+	} else if userID != "" {
+		filter := bson.D{{"user_id", userID}}
+		return utils.GetSchoolReports(filter)
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
@@ -1089,14 +1310,17 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {
+	// build out an admin search functionality
 	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error) {
+	// build out an admin search functionality
 	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error) {
+	// build out an admin search functionality
 	panic(fmt.Errorf("not implemented"))
 }
 

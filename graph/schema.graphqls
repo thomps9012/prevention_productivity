@@ -164,6 +164,7 @@ type AllEvents {
 }
 
 type AllEventSummaries {
+  event: Event!
   event_summary: EventSummary!
   user: User
   noteCount: Int
