@@ -75,21 +75,26 @@ func CheckPasswordHash(hash, password string) bool {
 func (u *User) Update(id string) {
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"_id", id}}
-	println("update function")
-	println(u.Password)
 	u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	hashed, hashErr := HashPassword(u.Password)
-	if hashErr != nil {
-		fmt.Println(hashErr)
+	println("update pw", u.Password)
+	if(len(u.Password) <= 0) {
+		println("not updating pw")
+		_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt}}})
+		if err != nil {
+			panic(err)
+		}
 	}
-	u.Password = hashed
-	println(u.Password)
-	println(u.UpdatedAt)
-	println(u.IsActive)
-	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
-	if err != nil {
-		panic(err)
-	}
+		hashed, hashErr := HashPassword(u.Password)
+		u.Password = hashed
+		println("update pw", u.Password)
+		fmt.Printf("%v\n", u)
+		if hashErr != nil {
+			fmt.Println(hashErr)
+			_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
+			if err != nil {
+				panic(err)
+			}
+		}
 }
 
 func (u *User) Delete() {

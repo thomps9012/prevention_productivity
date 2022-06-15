@@ -196,9 +196,9 @@ type Query {
   eventSummaries: [AllEventSummaries!]
   schoolReports: [AllSchoolReports!]
   grants: [Grant!]
-  grant: Grant!
+  grant(id: ID!): Grant!
   contacts: [Contact!]
-  contactInfo: ContactInfo!
+  contactInfo(id: ID!): ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  

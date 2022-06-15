@@ -230,13 +230,13 @@ type ComplexityRoot struct {
 
 	Query struct {
 		AllLogs            func(childComplexity int) int
-		ContactInfo        func(childComplexity int) int
+		ContactInfo        func(childComplexity int, id string) int
 		Contacts           func(childComplexity int) int
 		Event              func(childComplexity int, id string) int
 		EventSummaries     func(childComplexity int) int
 		EventSummary       func(childComplexity int, id string) int
 		Events             func(childComplexity int) int
-		Grant              func(childComplexity int) int
+		Grant              func(childComplexity int, id string) int
 		Grants             func(childComplexity int) int
 		ItemNotes          func(childComplexity int, itemID string) int
 		Log                func(childComplexity int, id string) int
@@ -339,9 +339,9 @@ type QueryResolver interface {
 	EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error)
 	SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error)
 	Grants(ctx context.Context) ([]*model.Grant, error)
-	Grant(ctx context.Context) (*model.Grant, error)
+	Grant(ctx context.Context, id string) (*model.Grant, error)
 	Contacts(ctx context.Context) ([]*model.Contact, error)
-	ContactInfo(ctx context.Context) (*model.ContactInfo, error)
+	ContactInfo(ctx context.Context, id string) (*model.ContactInfo, error)
 	UserEvents(ctx context.Context, userID string) ([]*model.Event, error)
 	UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error)
 	UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error)
@@ -1517,7 +1517,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.ContactInfo(childComplexity), true
+		args, err := ec.field_Query_contactInfo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ContactInfo(childComplexity, args["id"].(string)), true
 
 	case "Query.contacts":
 		if e.complexity.Query.Contacts == nil {
@@ -1569,7 +1574,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Grant(childComplexity), true
+		args, err := ec.field_Query_grant_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Grant(childComplexity, args["id"].(string)), true
 
 	case "Query.grants":
 		if e.complexity.Query.Grants == nil {
@@ -2168,9 +2178,9 @@ type Query {
   eventSummaries: [AllEventSummaries!]
   schoolReports: [AllSchoolReports!]
   grants: [Grant!]
-  grant: Grant!
+  grant(id: ID!): Grant!
   contacts: [Contact!]
-  contactInfo: ContactInfo!
+  contactInfo(id: ID!): ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  
@@ -3014,6 +3024,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_contactInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_eventSummary_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3030,6 +3055,21 @@ func (ec *executionContext) field_Query_eventSummary_args(ctx context.Context, r
 }
 
 func (ec *executionContext) field_Query_event_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_grant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -11399,7 +11439,7 @@ func (ec *executionContext) _Query_grant(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Grant(rctx)
+		return ec.resolvers.Query().Grant(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11451,6 +11491,17 @@ func (ec *executionContext) fieldContext_Query_grant(ctx context.Context, field 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Grant", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_grant_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -11532,7 +11583,7 @@ func (ec *executionContext) _Query_contactInfo(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ContactInfo(rctx)
+		return ec.resolvers.Query().ContactInfo(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11564,6 +11615,17 @@ func (ec *executionContext) fieldContext_Query_contactInfo(ctx context.Context, 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ContactInfo", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_contactInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }

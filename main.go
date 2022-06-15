@@ -48,7 +48,7 @@ func main() {
 gqlPlayground := playground.Handler("GraphQL playground", "/graphql")
 router.Get("/", gqlPlayground)
 log.Printf("Listening on localhost:%s\n", port)
-log.Printf("Visit `http://localhost:%s/graphql` in your browswer", port)
+log.Printf("Visit `http://localhost:%s/graphql` in your browser", port)
 // switch below on production
 originsOk := handlers.AllowedOrigins([]string{"*"})
 headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})

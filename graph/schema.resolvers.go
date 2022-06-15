@@ -41,17 +41,17 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.User, error) {
 	isAdmin := auth.ForAdmin(ctx)
-	// possibly add a check to make sure the user is updating their own account
-	if !isAdmin {
+	userID := auth.ForUserID(ctx)
+	println("userid", id)
+	println("editorID", userID)
+	if !isAdmin && id != userID {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-	collection := database.Db.Collection("users")
-	filter := bson.D{{"_id", id}}
-	var user users.User
-	println("userid", id)
-	println("first_name", updateUser.FirstName)
-	err := collection.FindOne(context.TODO(), filter).Decode(&user)
-	if err != nil {
+		collection := database.Db.Collection("users")
+		filter := bson.D{{"_id", id}}
+		var user users.User
+		err := collection.FindOne(context.TODO(), filter).Decode(&user)
+		if err != nil {
 		return nil, err
 	}
 	user.FirstName = updateUser.FirstName
@@ -72,7 +72,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: &user.DeletedAt,
-	}, nil
+		}, nil
+
 }
 
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
@@ -1368,8 +1369,19 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 	return grants, nil
 }
 
-func (r *queryResolver) Grant(ctx context.Context) (*model.Grant, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Grant(ctx context.Context, id string) (*model.Grant, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if !isAdmin || userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var grant *model.Grant
+	collection := database.Db.Collection("grants")
+	err := collection.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&grant)
+	if err != nil {
+		return nil, err
+	}
+	return grant, nil
 }
 
 func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) {
@@ -1432,8 +1444,35 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 	return contacts, nil
 }
 
-func (r *queryResolver) ContactInfo(ctx context.Context) (*model.ContactInfo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) ContactInfo(ctx context.Context, id string) (*model.ContactInfo, error) {
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	if !isAdmin && userID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	contactsColl := database.Db.Collection("contacts")
+	usersColl := database.Db.Collection("users")
+	var contactInfo *model.ContactInfo
+	var contact *model.Contact
+	var user *model.User
+	err := contactsColl.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&contact)
+	if err != nil {
+		return nil, err
+	}
+	err = usersColl.FindOne(context.TODO(), bson.D{{"_id", contact.CreatedBy}}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin {
+		if(user.ID != &userID) {
+			return nil, fmt.Errorf("Unauthorized")
+		}
+	}
+	contactInfo = &model.ContactInfo{
+		Contact: contact,
+		ContactCreator:    user,
+	}
+	return contactInfo, nil
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {
