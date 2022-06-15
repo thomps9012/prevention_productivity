@@ -41,6 +41,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.User, error) {
 	isAdmin := auth.ForAdmin(ctx)
+	// possibly add a check to make sure the user is updating their own account
 	if !isAdmin {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -640,16 +641,16 @@ func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSumma
 	eventSummary.Improvements = *newEventSummary.Improvements
 	eventSummary.Create()
 	return &model.EventSummary{
-		ID:              eventSummary.ID,
-		EventID:         eventSummary.EventID,
-		UserID:          eventSummary.UserID,
-		AttendeeCount:   eventSummary.AttendeeCount,
-		Challenges:      eventSummary.Challenges,
-		Successes:       eventSummary.Successes,
-		Improvements:    eventSummary.Improvements,
-		Status: 		eventSummary.Status,
-		CreatedAt:       eventSummary.CreatedAt,
-		UpdatedAt:       eventSummary.UpdatedAt,
+		ID:            eventSummary.ID,
+		EventID:       eventSummary.EventID,
+		UserID:        eventSummary.UserID,
+		AttendeeCount: eventSummary.AttendeeCount,
+		Challenges:    eventSummary.Challenges,
+		Successes:     eventSummary.Successes,
+		Improvements:  eventSummary.Improvements,
+		Status:        eventSummary.Status,
+		CreatedAt:     eventSummary.CreatedAt,
+		UpdatedAt:     eventSummary.UpdatedAt,
 	}, nil
 }
 
@@ -672,16 +673,16 @@ func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, up
 	eventSummary.Improvements = *updateEventSummary.Improvements
 	eventSummary.Update(id)
 	return &model.EventSummary{
-		ID:              eventSummary.ID,
-		EventID:         eventSummary.EventID,
-		UserID:          eventSummary.UserID,
-		AttendeeCount:   eventSummary.AttendeeCount,
-		Challenges:      eventSummary.Challenges,
-		Successes:       eventSummary.Successes,
-		Improvements:    eventSummary.Improvements,
-		Status: 		eventSummary.Status,
-		CreatedAt:       eventSummary.CreatedAt,
-		UpdatedAt:       eventSummary.UpdatedAt,
+		ID:            eventSummary.ID,
+		EventID:       eventSummary.EventID,
+		UserID:        eventSummary.UserID,
+		AttendeeCount: eventSummary.AttendeeCount,
+		Challenges:    eventSummary.Challenges,
+		Successes:     eventSummary.Successes,
+		Improvements:  eventSummary.Improvements,
+		Status:        eventSummary.Status,
+		CreatedAt:     eventSummary.CreatedAt,
+		UpdatedAt:     eventSummary.UpdatedAt,
 	}, nil
 }
 
@@ -763,20 +764,20 @@ func (r *mutationResolver) CreateSchoolReport(ctx context.Context, newSchoolRepo
 	schoolReport.Improvements = *newSchoolReport.Improvements
 	schoolReport.Create()
 	return &model.SchoolReport{
-		ID:              &schoolReport.ID,
-		UserID: 		schoolReport.UserID,
-		Curriculum:      schoolReport.Curriculum,
-		LessonPlan:      schoolReport.LessonPlan,
-		School:          schoolReport.School,
-		Topics:          schoolReport.Topics,
-		StudentCount:    schoolReport.StudentCount,
-		StudentList:     schoolReport.StudentList,
-		Challenges:      schoolReport.Challenges,
-		Successes:       schoolReport.Successes,
-		Improvements:    schoolReport.Improvements,
-		CreatedAt:       schoolReport.CreatedAt,
-		UpdatedAt:       schoolReport.UpdatedAt,
-		Status: 		schoolReport.Status,
+		ID:           &schoolReport.ID,
+		UserID:       schoolReport.UserID,
+		Curriculum:   schoolReport.Curriculum,
+		LessonPlan:   schoolReport.LessonPlan,
+		School:       schoolReport.School,
+		Topics:       schoolReport.Topics,
+		StudentCount: schoolReport.StudentCount,
+		StudentList:  schoolReport.StudentList,
+		Challenges:   schoolReport.Challenges,
+		Successes:    schoolReport.Successes,
+		Improvements: schoolReport.Improvements,
+		CreatedAt:    schoolReport.CreatedAt,
+		UpdatedAt:    schoolReport.UpdatedAt,
+		Status:       schoolReport.Status,
 	}, nil
 }
 
@@ -804,20 +805,20 @@ func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, up
 	schoolReport.Improvements = *updateSchoolReport.Improvements
 	schoolReport.Update(id)
 	return &model.SchoolReport{
-		ID:              &schoolReport.ID,
-		UserID: 		schoolReport.UserID,
-		Curriculum:      schoolReport.Curriculum,
-		LessonPlan:      schoolReport.LessonPlan,
-		School:          schoolReport.School,
-		Topics:          schoolReport.Topics,
-		StudentCount:    schoolReport.StudentCount,
-		StudentList:     schoolReport.StudentList,
-		Challenges:      schoolReport.Challenges,
-		Successes:       schoolReport.Successes,
-		Improvements:    schoolReport.Improvements,
-		CreatedAt:       schoolReport.CreatedAt,
-		UpdatedAt:       schoolReport.UpdatedAt,
-		Status: 		schoolReport.Status,
+		ID:           &schoolReport.ID,
+		UserID:       schoolReport.UserID,
+		Curriculum:   schoolReport.Curriculum,
+		LessonPlan:   schoolReport.LessonPlan,
+		School:       schoolReport.School,
+		Topics:       schoolReport.Topics,
+		StudentCount: schoolReport.StudentCount,
+		StudentList:  schoolReport.StudentList,
+		Challenges:   schoolReport.Challenges,
+		Successes:    schoolReport.Successes,
+		Improvements: schoolReport.Improvements,
+		CreatedAt:    schoolReport.CreatedAt,
+		UpdatedAt:    schoolReport.UpdatedAt,
+		Status:       schoolReport.Status,
 	}, nil
 }
 
@@ -1209,16 +1210,16 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 		}
 		eventSummaryWithNotes = &model.EventSummaryWithNotes{
 			EventSummary: &model.EventSummary{
-				ID:                     eventSummary.ID,
-				UserID: 			   eventSummary.UserID,
-				EventID: 			  eventSummary.EventID,
-				AttendeeCount: 		eventSummary.AttendeeCount,
-				Challenges: 		   eventSummary.Challenges,
-				Successes: 			 eventSummary.Successes,
-				Improvements: 		  eventSummary.Improvements,
-				Status: 			   eventSummary.Status,
-				CreatedAt: 			eventSummary.CreatedAt,
-				UpdatedAt: 			eventSummary.UpdatedAt,
+				ID:            eventSummary.ID,
+				UserID:        eventSummary.UserID,
+				EventID:       eventSummary.EventID,
+				AttendeeCount: eventSummary.AttendeeCount,
+				Challenges:    eventSummary.Challenges,
+				Successes:     eventSummary.Successes,
+				Improvements:  eventSummary.Improvements,
+				Status:        eventSummary.Status,
+				CreatedAt:     eventSummary.CreatedAt,
+				UpdatedAt:     eventSummary.UpdatedAt,
 			},
 			Notes: notes,
 		}
@@ -1226,7 +1227,6 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-
 }
 
 func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error) {
@@ -1268,20 +1268,20 @@ func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.Sch
 		}
 		schoolReportWithNotes = &model.SchoolReportWithNotes{
 			SchoolReport: &model.SchoolReport{
-				ID:                     schoolReport.ID,
-				UserID:                 schoolReport.UserID,
-				Curriculum: 		   schoolReport.Curriculum,
-				LessonPlan: 		   schoolReport.LessonPlan,
-				School: 			   schoolReport.School,
-				Topics: 			   schoolReport.Topics,
-				StudentCount: 		   schoolReport.StudentCount,
-				StudentList: 		   schoolReport.StudentList,
-				Challenges:             schoolReport.Challenges,
-				Successes:              schoolReport.Successes,
-				Improvements:           schoolReport.Improvements,
-				Status:                 schoolReport.Status,
-				CreatedAt:              schoolReport.CreatedAt,
-				UpdatedAt:              schoolReport.UpdatedAt,
+				ID:           schoolReport.ID,
+				UserID:       schoolReport.UserID,
+				Curriculum:   schoolReport.Curriculum,
+				LessonPlan:   schoolReport.LessonPlan,
+				School:       schoolReport.School,
+				Topics:       schoolReport.Topics,
+				StudentCount: schoolReport.StudentCount,
+				StudentList:  schoolReport.StudentList,
+				Challenges:   schoolReport.Challenges,
+				Successes:    schoolReport.Successes,
+				Improvements: schoolReport.Improvements,
+				Status:       schoolReport.Status,
+				CreatedAt:    schoolReport.CreatedAt,
+				UpdatedAt:    schoolReport.UpdatedAt,
 			},
 			Notes: notes,
 		}
@@ -1368,6 +1368,10 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 	return grants, nil
 }
 
+func (r *queryResolver) Grant(ctx context.Context) (*model.Grant, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
@@ -1426,6 +1430,10 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 		}
 	}
 	return contacts, nil
+}
+
+func (r *queryResolver) ContactInfo(ctx context.Context) (*model.ContactInfo, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {

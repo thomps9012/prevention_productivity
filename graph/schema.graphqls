@@ -176,6 +176,11 @@ type AllSchoolReports {
   noteCount: Int
 }
 
+type ContactInfo {
+  contact: Contact!
+  contact_creator: User!
+}
+
 type Query {
   users: [User!]!
   me: User!
@@ -191,7 +196,9 @@ type Query {
   eventSummaries: [AllEventSummaries!]
   schoolReports: [AllSchoolReports!]
   grants: [Grant!]
+  grant: Grant!
   contacts: [Contact!]
+  contactInfo: ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  

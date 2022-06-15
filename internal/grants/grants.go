@@ -32,7 +32,7 @@ func (g *Grant) Create() {
 	} else {
 		g.IsActive = false
 	}
-	g.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	g.CreatedAt = time.Now().Format("01-02-2006 15:04:05")
 	g.UpdatedAt = g.CreatedAt
 	_, err := collection.InsertOne(context.TODO(), g)
 	if err != nil {
@@ -42,9 +42,9 @@ func (g *Grant) Create() {
 
 func (g *Grant) Update(id string) {
 	collection := database.Db.Collection("grants")
-	g.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	g.UpdatedAt = time.Now().Format("01-02-2006 15:04:05")
 	filter := bson.D{{"_id", id}}
-	if (g.EndDate > time.Now().Format("2006-01-02 15:04:05")) {
+	if (g.EndDate > time.Now().Format("01-02-2006 15:04:05")) {
 		g.IsActive = true
 	} else {
 		g.IsActive = false

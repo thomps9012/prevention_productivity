@@ -40,6 +40,11 @@ type Contact struct {
 	DeletedAt string  `json:"deleted_at" bson:"deleted_at"`
 }
 
+type ContactInfo struct {
+	Contact        *Contact `json:"contact"`
+	ContactCreator *User    `json:"contact_creator" bson:"contact_creator"`
+}
+
 type Event struct {
 	ID                     *string   `json:"id" bson:"_id"`
 	EventLead              *string   `json:"event_lead" bson:"event_lead"`

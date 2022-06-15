@@ -82,6 +82,11 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	ContactInfo struct {
+		Contact        func(childComplexity int) int
+		ContactCreator func(childComplexity int) int
+	}
+
 	Event struct {
 		AffiliatedOrganization func(childComplexity int) int
 		Agenda                 func(childComplexity int) int
@@ -225,11 +230,13 @@ type ComplexityRoot struct {
 
 	Query struct {
 		AllLogs            func(childComplexity int) int
+		ContactInfo        func(childComplexity int) int
 		Contacts           func(childComplexity int) int
 		Event              func(childComplexity int, id string) int
 		EventSummaries     func(childComplexity int) int
 		EventSummary       func(childComplexity int, id string) int
 		Events             func(childComplexity int) int
+		Grant              func(childComplexity int) int
 		Grants             func(childComplexity int) int
 		ItemNotes          func(childComplexity int, itemID string) int
 		Log                func(childComplexity int, id string) int
@@ -332,7 +339,9 @@ type QueryResolver interface {
 	EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error)
 	SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error)
 	Grants(ctx context.Context) ([]*model.Grant, error)
+	Grant(ctx context.Context) (*model.Grant, error)
 	Contacts(ctx context.Context) ([]*model.Contact, error)
+	ContactInfo(ctx context.Context) (*model.ContactInfo, error)
 	UserEvents(ctx context.Context, userID string) ([]*model.Event, error)
 	UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error)
 	UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error)
@@ -513,6 +522,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.UpdatedAt(childComplexity), true
+
+	case "ContactInfo.contact":
+		if e.complexity.ContactInfo.Contact == nil {
+			break
+		}
+
+		return e.complexity.ContactInfo.Contact(childComplexity), true
+
+	case "ContactInfo.contact_creator":
+		if e.complexity.ContactInfo.ContactCreator == nil {
+			break
+		}
+
+		return e.complexity.ContactInfo.ContactCreator(childComplexity), true
 
 	case "Event.affiliated_organization":
 		if e.complexity.Event.AffiliatedOrganization == nil {
@@ -1489,6 +1512,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.AllLogs(childComplexity), true
 
+	case "Query.contactInfo":
+		if e.complexity.Query.ContactInfo == nil {
+			break
+		}
+
+		return e.complexity.Query.ContactInfo(childComplexity), true
+
 	case "Query.contacts":
 		if e.complexity.Query.Contacts == nil {
 			break
@@ -1533,6 +1563,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Events(childComplexity), true
+
+	case "Query.grant":
+		if e.complexity.Query.Grant == nil {
+			break
+		}
+
+		return e.complexity.Query.Grant(childComplexity), true
 
 	case "Query.grants":
 		if e.complexity.Query.Grants == nil {
@@ -2111,6 +2148,11 @@ type AllSchoolReports {
   noteCount: Int
 }
 
+type ContactInfo {
+  contact: Contact!
+  contact_creator: User!
+}
+
 type Query {
   users: [User!]!
   me: User!
@@ -2126,7 +2168,9 @@ type Query {
   eventSummaries: [AllEventSummaries!]
   schoolReports: [AllSchoolReports!]
   grants: [Grant!]
+  grant: Grant!
   contacts: [Contact!]
+  contactInfo: ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  
@@ -4440,6 +4484,140 @@ func (ec *executionContext) fieldContext_Contact_deleted_at(ctx context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ContactInfo_contact(ctx context.Context, field graphql.CollectedField, obj *model.ContactInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ContactInfo_contact(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Contact, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Contact)
+	fc.Result = res
+	return ec.marshalNContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ContactInfo_contact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ContactInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Contact_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Contact_name(ctx, field)
+			case "email":
+				return ec.fieldContext_Contact_email(ctx, field)
+			case "phone":
+				return ec.fieldContext_Contact_phone(ctx, field)
+			case "notes":
+				return ec.fieldContext_Contact_notes(ctx, field)
+			case "is_active":
+				return ec.fieldContext_Contact_is_active(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Contact_created_by(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Contact_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Contact_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Contact_deleted_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Contact", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ContactInfo_contact_creator(ctx context.Context, field graphql.CollectedField, obj *model.ContactInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ContactInfo_contact_creator(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContactCreator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ContactInfo_contact_creator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ContactInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "is_admin":
+				return ec.fieldContext_User_is_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "is_active":
+				return ec.fieldContext_User_is_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -11207,6 +11385,76 @@ func (ec *executionContext) fieldContext_Query_grants(ctx context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_grant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_grant(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Grant(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Grant)
+	fc.Result = res
+	return ec.marshalNGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_grant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Grant_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Grant_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Grant_description(ctx, field)
+			case "start_date":
+				return ec.fieldContext_Grant_start_date(ctx, field)
+			case "award_date":
+				return ec.fieldContext_Grant_award_date(ctx, field)
+			case "end_date":
+				return ec.fieldContext_Grant_end_date(ctx, field)
+			case "award_number":
+				return ec.fieldContext_Grant_award_number(ctx, field)
+			case "budget":
+				return ec.fieldContext_Grant_budget(ctx, field)
+			case "is_active":
+				return ec.fieldContext_Grant_is_active(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Grant_created_by(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Grant_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Grant_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Grant", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_contacts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_contacts(ctx, field)
 	if err != nil {
@@ -11265,6 +11513,56 @@ func (ec *executionContext) fieldContext_Query_contacts(ctx context.Context, fie
 				return ec.fieldContext_Contact_deleted_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Contact", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_contactInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_contactInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ContactInfo(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContactInfo)
+	fc.Result = res
+	return ec.marshalNContactInfo2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_contactInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "contact":
+				return ec.fieldContext_ContactInfo_contact(ctx, field)
+			case "contact_creator":
+				return ec.fieldContext_ContactInfo_contact_creator(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ContactInfo", field.Name)
 		},
 	}
 	return fc, nil
@@ -16312,6 +16610,41 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var contactInfoImplementors = []string{"ContactInfo"}
+
+func (ec *executionContext) _ContactInfo(ctx context.Context, sel ast.SelectionSet, obj *model.ContactInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, contactInfoImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ContactInfo")
+		case "contact":
+
+			out.Values[i] = ec._ContactInfo_contact(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "contact_creator":
+
+			out.Values[i] = ec._ContactInfo_contact_creator(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var eventImplementors = []string{"Event"}
 
 func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
@@ -17594,6 +17927,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "grant":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_grant(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "contacts":
 			field := field
 
@@ -17604,6 +17960,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_contacts(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "contactInfo":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_contactInfo(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -18361,6 +18740,20 @@ func (ec *executionContext) marshalNContact2ᚖthomps9012ᚋprevention_productiv
 	return ec._Contact(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNContactInfo2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactInfo(ctx context.Context, sel ast.SelectionSet, v model.ContactInfo) graphql.Marshaler {
+	return ec._ContactInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNContactInfo2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactInfo(ctx context.Context, sel ast.SelectionSet, v *model.ContactInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ContactInfo(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNEvent2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v model.Event) graphql.Marshaler {
 	return ec._Event(ctx, sel, &v)
 }
@@ -18426,6 +18819,10 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) marshalNGrant2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx context.Context, sel ast.SelectionSet, v model.Grant) graphql.Marshaler {
+	return ec._Grant(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx context.Context, sel ast.SelectionSet, v *model.Grant) graphql.Marshaler {
