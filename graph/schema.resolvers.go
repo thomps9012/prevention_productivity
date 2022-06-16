@@ -108,7 +108,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	user.Password = login.Password
 	correct := user.Authenticate()
 	if !correct {
-		return "", fmt.Errorf("Invalid email or password")
+		return nil, fmt.Errorf("Invalid email or password")
 	}
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"email", login.Email}}
@@ -117,14 +117,14 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	println(userDB.IsAdmin)
 	println(userDB.ID)
 	if !userDB.IsActive {
-		return "", fmt.Errorf("User is not active")
+		return nil, fmt.Errorf("User is not active")
 	}
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	token, err := jwt.GenerateToken(userDB.Email, userDB.IsAdmin, userDB.ID)
 	if err != nil {
-		return "", err
+		return nil, fmt.Errorf("Invalid email or password")
 	}
 	return token, nil
 }
