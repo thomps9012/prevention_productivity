@@ -68,7 +68,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		fmt.Println(err)
 	}
 	if count > 1 {
-		return nil, fmt.Errorf("user already exists")
+		return nil,fmt.Errorf("user already exists")
 	}
 	user.Update(id)
 	return &model.User{
@@ -108,7 +108,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	user.Password = login.Password
 	correct := user.Authenticate()
 	if !correct {
-		return nil, fmt.Errorf("Invalid email or password")
+		return "", fmt.Errorf("Invalid email or password")
 	}
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"email", login.Email}}
@@ -117,14 +117,14 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	println(userDB.IsAdmin)
 	println(userDB.ID)
 	if !userDB.IsActive {
-		return nil, fmt.Errorf("User is not active")
+		return "", fmt.Errorf("User is not active")
 	}
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	token, err := jwt.GenerateToken(userDB.Email, userDB.IsAdmin, userDB.ID)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid email or password")
+		return "", err
 	}
 	return token, nil
 }
