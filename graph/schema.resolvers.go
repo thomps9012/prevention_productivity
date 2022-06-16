@@ -1347,7 +1347,7 @@ func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.AllSchoolRe
 func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
-	if !isAdmin || userID == "" {
+	if !isAdmin && userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	var grants []*model.Grant
@@ -1383,7 +1383,7 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 func (r *queryResolver) Grant(ctx context.Context, id string) (*model.Grant, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
-	if !isAdmin || userID == "" {
+	if !isAdmin && userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	var grant *model.Grant
