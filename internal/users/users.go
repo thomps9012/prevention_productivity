@@ -6,7 +6,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"context"
 	"fmt"
-	// "strings"
 	"github.com/google/uuid"
 	"time"
 )
@@ -82,7 +81,6 @@ func (u *User) Update(id string) {
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"_id", id}}
 	u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	println("update pw", u.Password)
 	if(len(u.Password) <= 0) {
 		println("not updating pw")
 		fmt.Printf("%v\n", u)
@@ -91,7 +89,7 @@ func (u *User) Update(id string) {
 			panic(err)
 		}
 		println(result.ModifiedCount)
-		} else {
+	} else {
 			
 			hashed, hashErr := HashPassword(u.Password)
 			u.Password = hashed

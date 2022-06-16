@@ -3,7 +3,6 @@ package notes
 import (
 	"time"
 	"context"
-	"strings"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	database "thomps9012/prevention_productivity/internal/db"

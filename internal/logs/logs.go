@@ -4,7 +4,6 @@ import (
 	database "thomps9012/prevention_productivity/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"context"
-	"strings"
 	"github.com/google/uuid"
 	"time"
 )

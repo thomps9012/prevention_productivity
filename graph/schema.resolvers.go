@@ -63,6 +63,13 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	user.Password = updateUser.Password
 	user.IsActive = updateUser.IsActive
 	user.IsAdmin = updateUser.IsAdmin
+	count, err := collection.CountDocuments(context.TODO(), bson.D{{"email", updateUser.Email}})
+	if err != nil {
+		fmt.Println(err)
+	}
+	if count > 1 {
+		return nil, fmt.Errorf("user already exists")
+	}
 	user.Update(id)
 	return &model.User{
 		ID:        &user.ID,
