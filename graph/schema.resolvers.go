@@ -67,7 +67,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	if err != nil {
 		fmt.Println(err)
 	}
-	if count > 1 {
+	if count > 0 {
 		return nil,fmt.Errorf("user already exists")
 	}
 	user.Update(id)
