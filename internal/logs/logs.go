@@ -25,7 +25,7 @@ type Log struct {
 
 func (l *Log) Create() {
 	collection := database.Db.Collection("logs")
-	l.ID = strings.Replace(uuid.New().String(), "-", "", -1)
+	l.ID = uuid.New().String()
 	l.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	l.UpdatedAt = l.CreatedAt
 	l.Status = "pending"

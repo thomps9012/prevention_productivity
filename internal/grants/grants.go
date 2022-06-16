@@ -26,7 +26,7 @@ type Grant struct {
 
 func (g *Grant) Create() {
 	collection := database.Db.Collection("grants")
-	g.ID = strings.Replace(uuid.New().String(), "-", "", -1)
+	g.ID = uuid.New().String()
 	if (g.EndDate > time.Now().Format("01-02-2006 15:04:05")) {
 		g.IsActive = true
 	} else {

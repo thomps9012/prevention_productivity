@@ -21,7 +21,7 @@ type Note struct {
 
 func (n *Note) Create() {
 	collection := database.Db.Collection("notes")
-	n.ID = strings.Replace(uuid.New().String(), "-", "", -1)
+	n.ID = uuid.New().String()
 	n.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	n.UpdatedAt = n.CreatedAt
 	_, err := collection.InsertOne(context.TODO(), n)

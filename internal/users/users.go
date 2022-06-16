@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"context"
 	"fmt"
-	"strings"
+	// "strings"
 	"github.com/google/uuid"
 	"time"
 )
@@ -26,21 +26,27 @@ type User struct {
 
 
 func (u *User) Create() {
-	// add in email validation
 	collection := database.Db.Collection("users")
-	hashed, err := HashPassword(u.Password)
+	filter := bson.D{{"email", u.Email}}
+	var user User
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
-		fmt.Println(err)
-	}
-	u.Password = hashed
-	u.IsAdmin = false
-	u.IsActive = true
-	u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-	u.UpdatedAt = u.CreatedAt
-	u.ID = strings.Replace(uuid.New().String(), "-", "", -1)
-	_, err = collection.InsertOne(context.TODO(), u)
-	if err != nil {
-		panic(err)
+		u.ID = uuid.New().String()
+		u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+		u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+		u.IsActive = true
+		u.IsAdmin = false
+		hashed, hashErr := HashPassword(u.Password)
+		u.Password = hashed
+		if hashErr != nil {
+			fmt.Println(hashErr)
+		}
+		_, err := collection.InsertOne(context.TODO(), u)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fmt.Errorf("user already exists")
 	}
 }
 

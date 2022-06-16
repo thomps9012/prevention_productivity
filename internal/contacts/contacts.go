@@ -25,7 +25,7 @@ type Contact struct {
 
 func (c *Contact) Create() {
 	collection := database.Db.Collection("contacts")
-	c.ID = strings.Replace(uuid.New().String(), "-", "", -1)
+	c.ID = uuid.New().String()
 	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	c.UpdatedAt = c.CreatedAt
 	c.IsActive = true

@@ -32,6 +32,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	user.Email = newUser.Email
 	user.Password = newUser.Password
 	user.Create()
+	if user.ID == "" {
+		return "", fmt.Errorf("User already exists")
+	}
 	token, err := jwt.GenerateToken(user.Email, user.IsAdmin, user.ID)
 	if err != nil {
 		return "", err
@@ -98,7 +101,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	user.Password = login.Password
 	correct := user.Authenticate()
 	if !correct {
-		return "", &users.WrongEmailOrPassword{}
+		return "", fmt.Errorf("Invalid email or password")
 	}
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"email", login.Email}}
@@ -107,7 +110,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	println(userDB.IsAdmin)
 	println(userDB.ID)
 	if !userDB.IsActive {
-		return "", &users.UserNotActive{}
+		return "", fmt.Errorf("User is not active")
 	}
 	if err != nil {
 		return "", err
@@ -1336,7 +1339,8 @@ func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.AllSchoolRe
 
 func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 	isAdmin := auth.ForAdmin(ctx)
-	if !isAdmin {
+	userID := auth.ForUserID(ctx)
+	if !isAdmin || userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	var grants []*model.Grant

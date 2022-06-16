@@ -28,7 +28,7 @@ type SchoolReport struct {
 
 func (e *SchoolReport) Create() {
 		collection := database.Db.Collection("school_reports")
-		e.ID = strings.Replace(uuid.New().String(), "-", "", -1)
+		e.ID = uuid.New().String()
 		e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 		e.UpdatedAt = e.CreatedAt
 		e.Status = "pending"
