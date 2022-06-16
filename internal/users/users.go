@@ -79,22 +79,27 @@ func (u *User) Update(id string) {
 	println("update pw", u.Password)
 	if(len(u.Password) <= 0) {
 		println("not updating pw")
-		_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt}}})
+		fmt.Printf("%v\n", u)
+		result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt}}})
 		if err != nil {
 			panic(err)
 		}
-	}
-		hashed, hashErr := HashPassword(u.Password)
-		u.Password = hashed
-		println("update pw", u.Password)
-		fmt.Printf("%v\n", u)
-		if hashErr != nil {
-			fmt.Println(hashErr)
-			_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
+		println(result.ModifiedCount)
+		} else {
+			
+			hashed, hashErr := HashPassword(u.Password)
+			u.Password = hashed
+			println("update pw", u.Password)
+			fmt.Printf("%v\n", u)
+			if hashErr != nil {
+				fmt.Println(hashErr)
+			}
+			result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
 			if err != nil {
 				panic(err)
 			}
-		}
+		println(result.ModifiedCount)
+	}
 }
 
 func (u *User) Delete() {
