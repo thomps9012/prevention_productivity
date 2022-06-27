@@ -389,6 +389,7 @@ input UpdateGrant {
 
 input NewContact {
   name: String
+  type: String
   email: String
   phone: String
   notes: String
@@ -396,6 +397,7 @@ input NewContact {
 
 input UpdateContact {
   name: String
+  type: String
   email: String
   phone: String
   notes: String

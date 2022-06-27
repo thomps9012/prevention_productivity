@@ -1,4 +1,4 @@
-package model
+ackage model
 
 type AllEventSummaries struct {
 	Event *Event `json:"event"`
@@ -145,6 +145,7 @@ type LoginInput struct {
 
 type NewContact struct {
 	Name  *string `json:"name"`
+	Type  *string `json:"type"`
 	Email *string `json:"email"`
 	Phone *string `json:"phone"`
 	Notes *string `json:"notes"`
@@ -273,6 +274,7 @@ type SchoolReportWithNotes struct {
 type UpdateContact struct {
 	Name  *string `json:"name"`
 	Email *string `json:"email"`
+	Type *string `json:"type"`
 	Phone *string `json:"phone"`
 	Notes *string `json:"notes"`
 }

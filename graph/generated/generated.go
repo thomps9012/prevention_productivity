@@ -2379,6 +2379,7 @@ input UpdateGrant {
 
 input NewContact {
   name: String
+  type: String
   email: String
   phone: String
   notes: String
@@ -2386,6 +2387,7 @@ input NewContact {
 
 input UpdateContact {
   name: String
+  type: String
   email: String
   phone: String
   notes: String
@@ -15137,6 +15139,14 @@ func (ec *executionContext) unmarshalInputNewContact(ctx context.Context, obj in
 			if err != nil {
 				return it, err
 			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "email":
 			var err error
 
@@ -15813,6 +15823,14 @@ func (ec *executionContext) unmarshalInputUpdateContact(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
