@@ -221,6 +221,7 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 	}
 	var contact contacts.Contact
 	contact.Name = *newContact.Name
+	contact.Type = *newContact.Type
 	contact.Email = *newContact.Email
 	contact.Phone = *newContact.Phone
 	contact.Notes = *newContact.Notes
@@ -229,6 +230,7 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 	return &model.Contact{
 		ID:        &contact.ID,
 		Name:      &contact.Name,
+		Type:      &contact.Type,
 		Email:     &contact.Email,
 		Phone:     &contact.Phone,
 		Notes:     &contact.Notes,
@@ -247,6 +249,7 @@ func (r *mutationResolver) UpdateContact(ctx context.Context, id string, updateC
 	var contact contacts.Contact
 	contact.ID = id
 	contact.Name = *updateContact.Name
+	contact.Type = *updateContact.Type
 	contact.Email = *updateContact.Email
 	contact.Phone = *updateContact.Phone
 	contact.Notes = *updateContact.Notes
@@ -254,6 +257,7 @@ func (r *mutationResolver) UpdateContact(ctx context.Context, id string, updateC
 	return &model.Contact{
 		ID:        &contact.ID,
 		Name:      &contact.Name,
+		Type:      &contact.Type,
 		Email:     &contact.Email,
 		Phone:     &contact.Phone,
 		Notes:     &contact.Notes,
