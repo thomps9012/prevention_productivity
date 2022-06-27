@@ -31,6 +31,7 @@ type Contact struct {
 	Email     *string `json:"email"`
 	Phone     *string `json:"phone"`
 	Notes     *string `json:"notes"`
+	Type		*string `json:"type"`
 	IsActive  bool    `json:"is_active"`
 	CreatedBy string  `json:"created_by" bson:"created_by"`
 	CreatedAt string  `json:"created_at" bson:"created_at"`

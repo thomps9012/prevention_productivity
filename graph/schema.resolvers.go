@@ -50,11 +50,11 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	if !isAdmin && id != userID {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-		collection := database.Db.Collection("users")
-		filter := bson.D{{"_id", id}}
-		var user users.User
-		err := collection.FindOne(context.TODO(), filter).Decode(&user)
-		if err != nil {
+	collection := database.Db.Collection("users")
+	filter := bson.D{{"_id", id}}
+	var user users.User
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
 		return nil, err
 	}
 	user.FirstName = updateUser.FirstName
@@ -68,7 +68,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		fmt.Println(err)
 	}
 	if count > 0 {
-		return nil,fmt.Errorf("user already exists")
+		return nil, fmt.Errorf("user already exists")
 	}
 	user.Update(id)
 	return &model.User{
@@ -82,8 +82,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: &user.DeletedAt,
-		}, nil
-
+	}, nil
 }
 
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
@@ -1475,13 +1474,13 @@ func (r *queryResolver) ContactInfo(ctx context.Context, id string) (*model.Cont
 		return nil, err
 	}
 	if !isAdmin {
-		if(user.ID != &userID) {
+		if user.ID != &userID {
 			return nil, fmt.Errorf("Unauthorized")
 		}
 	}
 	contactInfo = &model.ContactInfo{
-		Contact: contact,
-		ContactCreator:    user,
+		Contact:        contact,
+		ContactCreator: user,
 	}
 	return contactInfo, nil
 }

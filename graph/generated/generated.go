@@ -79,6 +79,7 @@ type ComplexityRoot struct {
 		Name      func(childComplexity int) int
 		Notes     func(childComplexity int) int
 		Phone     func(childComplexity int) int
+		Type      func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 	}
 
@@ -515,6 +516,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.Phone(childComplexity), true
+
+	case "Contact.type":
+		if e.complexity.Contact.Type == nil {
+			break
+		}
+
+		return e.complexity.Contact.Type(childComplexity), true
 
 	case "Contact.updated_at":
 		if e.complexity.Contact.UpdatedAt == nil {
@@ -2000,6 +2008,7 @@ type Contact {
   email: String
   phone: String
   notes: String
+  type: String
   is_active: Boolean!
   created_by: ID!
   created_at: String!
@@ -4309,6 +4318,47 @@ func (ec *executionContext) fieldContext_Contact_notes(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Contact_type(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Contact_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Contact_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Contact",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Contact_is_active(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Contact_is_active(ctx, field)
 	if err != nil {
@@ -4578,6 +4628,8 @@ func (ec *executionContext) fieldContext_ContactInfo_contact(ctx context.Context
 				return ec.fieldContext_Contact_phone(ctx, field)
 			case "notes":
 				return ec.fieldContext_Contact_notes(ctx, field)
+			case "type":
+				return ec.fieldContext_Contact_type(ctx, field)
 			case "is_active":
 				return ec.fieldContext_Contact_is_active(ctx, field)
 			case "created_by":
@@ -8550,6 +8602,8 @@ func (ec *executionContext) fieldContext_Mutation_createContact(ctx context.Cont
 				return ec.fieldContext_Contact_phone(ctx, field)
 			case "notes":
 				return ec.fieldContext_Contact_notes(ctx, field)
+			case "type":
+				return ec.fieldContext_Contact_type(ctx, field)
 			case "is_active":
 				return ec.fieldContext_Contact_is_active(ctx, field)
 			case "created_by":
@@ -8624,6 +8678,8 @@ func (ec *executionContext) fieldContext_Mutation_updateContact(ctx context.Cont
 				return ec.fieldContext_Contact_phone(ctx, field)
 			case "notes":
 				return ec.fieldContext_Contact_notes(ctx, field)
+			case "type":
+				return ec.fieldContext_Contact_type(ctx, field)
 			case "is_active":
 				return ec.fieldContext_Contact_is_active(ctx, field)
 			case "created_by":
@@ -11552,6 +11608,8 @@ func (ec *executionContext) fieldContext_Query_contacts(ctx context.Context, fie
 				return ec.fieldContext_Contact_phone(ctx, field)
 			case "notes":
 				return ec.fieldContext_Contact_notes(ctx, field)
+			case "type":
+				return ec.fieldContext_Contact_type(ctx, field)
 			case "is_active":
 				return ec.fieldContext_Contact_is_active(ctx, field)
 			case "created_by":
@@ -16625,6 +16683,10 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 		case "notes":
 
 			out.Values[i] = ec._Contact_notes(ctx, field, obj)
+
+		case "type":
+
+			out.Values[i] = ec._Contact_type(ctx, field, obj)
 
 		case "is_active":
 

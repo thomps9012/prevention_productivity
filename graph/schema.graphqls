@@ -18,6 +18,7 @@ type Contact {
   email: String
   phone: String
   notes: String
+  type: String
   is_active: Boolean!
   created_by: ID!
   created_at: String!
