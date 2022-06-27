@@ -1404,10 +1404,10 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 	if !isAdmin && userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-	var contacts []*model.Contact
+		var contacts []*model.Contact
 	collection := database.Db.Collection("contacts")
 	if !isAdmin {
-		filter := bson.D{{"created_by", userID}}
+		filter := bson.D{{"$or", bson.A{bson.D{{"type", "Student"}}, bson.D{{"type", "Parent"}}}}}
 		cursor, err := collection.Find(context.TODO(), filter)
 		if err != nil {
 			return nil, err
@@ -1421,6 +1421,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 			contacts = append(contacts, &model.Contact{
 				ID:        contact.ID,
 				Name:      contact.Name,
+				Type:		contact.Type,
 				Email:     contact.Email,
 				Phone:     contact.Phone,
 				Notes:     contact.Notes,
@@ -1444,6 +1445,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 			contacts = append(contacts, &model.Contact{
 				ID:        contact.ID,
 				Name:      contact.Name,
+				Type: 	contact.Type,
 				Email:     contact.Email,
 				Phone:     contact.Phone,
 				Notes:     contact.Notes,

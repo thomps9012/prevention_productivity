@@ -1,4 +1,4 @@
-ackage model
+package model
 
 type AllEventSummaries struct {
 	Event *Event `json:"event"`
