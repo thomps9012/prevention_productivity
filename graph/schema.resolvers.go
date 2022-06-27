@@ -1479,10 +1479,8 @@ func (r *queryResolver) ContactInfo(ctx context.Context, id string) (*model.Cont
 	if err != nil {
 		return nil, err
 	}
-	if !isAdmin {
-		if user.ID != &userID {
-			return nil, fmt.Errorf("Unauthorized")
-		}
+	if !isAdmin && (*contact.Type != "Parent" && *contact.Type != "Student") {
+		return nil, fmt.Errorf("Unauthorized")
 	}
 	contactInfo = &model.ContactInfo{
 		Contact:        contact,
