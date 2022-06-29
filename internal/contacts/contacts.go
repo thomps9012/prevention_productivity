@@ -16,7 +16,7 @@ type Contact struct {
 	Phone string `json:"phone" bson:"phone"`
 	Type string `json:"type" bson:"type"`
 	Notes string `json:"notes" bson:"notes"`
-	IsActive bool `json:"is_active"`
+	IsActive bool `json:"is_active" bson:"is_active"`
 	CreatedBy string `json:"created_by" bson:"created_by"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
