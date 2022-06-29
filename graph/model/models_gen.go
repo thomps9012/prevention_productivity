@@ -32,7 +32,7 @@ type Contact struct {
 	Phone     *string `json:"phone"`
 	Notes     *string `json:"notes"`
 	Type		*string `json:"type"`
-	IsActive  bool    `json:"is_active"`
+	IsActive  bool    `json:"is_active" bson:"is_active"`
 	CreatedBy string  `json:"created_by" bson:"created_by"`
 	CreatedAt string  `json:"created_at" bson:"created_at"`
 	UpdatedAt string  `json:"updated_at" bson:"updated_at"`
