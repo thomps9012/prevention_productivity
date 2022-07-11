@@ -30,6 +30,8 @@ type Grant {
   id: ID
   name: String!
   description: String!
+  goals: [String]
+  objectives: [String]
   start_date: String!
   award_date: String
   end_date: String!
@@ -369,6 +371,8 @@ input UpdateSchoolReport {
 input NewGrant {
   name: String
   description: String
+  goals: [String]
+  objectives: [String]
   start_date: String
   end_date: String
   budget: Float
@@ -379,6 +383,8 @@ input NewGrant {
 input UpdateGrant {
   name: String
   description: String
+  goals: [String]
+  objectives: [String]
   start_date: String
   end_date: String
   budget: Float

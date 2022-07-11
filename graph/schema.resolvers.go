@@ -150,6 +150,8 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 	grant.Name = *newGrant.Name
 	grant.CreatedBy = userID
 	grant.Description = *newGrant.Description
+	grant.Goals = newGrant.Goals
+	grant.Objectives = newGrant.Objectives
 	grant.StartDate = *newGrant.StartDate
 	grant.EndDate = *newGrant.EndDate
 	grant.Budget = *newGrant.Budget
@@ -161,6 +163,8 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 		CreatedBy:   grant.CreatedBy,
 		Name:        grant.Name,
 		Description: grant.Description,
+		Goals:       grant.Goals,
+		Objectives:  grant.Objectives,
 		StartDate:   grant.StartDate,
 		EndDate:     grant.EndDate,
 		Budget:      &grant.Budget,
@@ -181,6 +185,8 @@ func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGra
 	grant.ID = id
 	grant.Name = *updateGrant.Name
 	grant.Description = *updateGrant.Description
+	grant.Goals = updateGrant.Goals
+	grant.Objectives = updateGrant.Objectives
 	grant.StartDate = *updateGrant.StartDate
 	grant.EndDate = *updateGrant.EndDate
 	grant.Budget = *updateGrant.Budget
@@ -191,6 +197,8 @@ func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGra
 		ID:          &grant.ID,
 		Name:        grant.Name,
 		Description: grant.Description,
+		Goals:       grant.Goals,
+		Objectives:  grant.Objectives,
 		StartDate:   grant.StartDate,
 		EndDate:     grant.EndDate,
 		Budget:      &grant.Budget,
@@ -1369,6 +1377,8 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 			ID:          grant.ID,
 			Name:        grant.Name,
 			Description: grant.Description,
+			Goals:       grant.Goals,
+			Objectives:  grant.Objectives,
 			StartDate:   grant.StartDate,
 			AwardDate:   grant.AwardDate,
 			EndDate:     grant.EndDate,
@@ -1404,7 +1414,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 	if !isAdmin && userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-		var contacts []*model.Contact
+	var contacts []*model.Contact
 	collection := database.Db.Collection("contacts")
 	if !isAdmin {
 		filter := bson.D{{"$or", bson.A{bson.D{{"type", "Student"}}, bson.D{{"type", "Parent"}}}}}
@@ -1421,7 +1431,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 			contacts = append(contacts, &model.Contact{
 				ID:        contact.ID,
 				Name:      contact.Name,
-				Type:		contact.Type,
+				Type:      contact.Type,
 				Email:     contact.Email,
 				Phone:     contact.Phone,
 				Notes:     contact.Notes,
@@ -1445,7 +1455,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 			contacts = append(contacts, &model.Contact{
 				ID:        contact.ID,
 				Name:      contact.Name,
-				Type: 	contact.Type,
+				Type:      contact.Type,
 				Email:     contact.Email,
 				Phone:     contact.Phone,
 				Notes:     contact.Notes,

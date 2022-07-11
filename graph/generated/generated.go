@@ -157,9 +157,11 @@ type ComplexityRoot struct {
 		CreatedBy   func(childComplexity int) int
 		Description func(childComplexity int) int
 		EndDate     func(childComplexity int) int
+		Goals       func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsActive    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Objectives  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 	}
@@ -937,6 +939,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Grant.EndDate(childComplexity), true
 
+	case "Grant.goals":
+		if e.complexity.Grant.Goals == nil {
+			break
+		}
+
+		return e.complexity.Grant.Goals(childComplexity), true
+
 	case "Grant.id":
 		if e.complexity.Grant.ID == nil {
 			break
@@ -957,6 +966,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grant.Name(childComplexity), true
+
+	case "Grant.objectives":
+		if e.complexity.Grant.Objectives == nil {
+			break
+		}
+
+		return e.complexity.Grant.Objectives(childComplexity), true
 
 	case "Grant.start_date":
 		if e.complexity.Grant.StartDate == nil {
@@ -2020,6 +2036,8 @@ type Grant {
   id: ID
   name: String!
   description: String!
+  goals: [String]
+  objectives: [String]
   start_date: String!
   award_date: String
   end_date: String!
@@ -2359,6 +2377,8 @@ input UpdateSchoolReport {
 input NewGrant {
   name: String
   description: String
+  goals: [String]
+  objectives: [String]
   start_date: String
   end_date: String
   budget: Float
@@ -2369,6 +2389,8 @@ input NewGrant {
 input UpdateGrant {
   name: String
   description: String
+  goals: [String]
+  objectives: [String]
   start_date: String
   end_date: String
   budget: Float
@@ -7104,6 +7126,88 @@ func (ec *executionContext) fieldContext_Grant_description(ctx context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Grant_goals(ctx context.Context, field graphql.CollectedField, obj *model.Grant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Grant_goals(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Goals, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Grant_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Grant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Grant_objectives(ctx context.Context, field graphql.CollectedField, obj *model.Grant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Grant_objectives(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Objectives, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Grant_objectives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Grant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Grant_start_date(ctx context.Context, field graphql.CollectedField, obj *model.Grant) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Grant_start_date(ctx, field)
 	if err != nil {
@@ -8392,6 +8496,10 @@ func (ec *executionContext) fieldContext_Mutation_createGrant(ctx context.Contex
 				return ec.fieldContext_Grant_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Grant_description(ctx, field)
+			case "goals":
+				return ec.fieldContext_Grant_goals(ctx, field)
+			case "objectives":
+				return ec.fieldContext_Grant_objectives(ctx, field)
 			case "start_date":
 				return ec.fieldContext_Grant_start_date(ctx, field)
 			case "award_date":
@@ -8470,6 +8578,10 @@ func (ec *executionContext) fieldContext_Mutation_updateGrant(ctx context.Contex
 				return ec.fieldContext_Grant_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Grant_description(ctx, field)
+			case "goals":
+				return ec.fieldContext_Grant_goals(ctx, field)
+			case "objectives":
+				return ec.fieldContext_Grant_objectives(ctx, field)
 			case "start_date":
 				return ec.fieldContext_Grant_start_date(ctx, field)
 			case "award_date":
@@ -11458,6 +11570,10 @@ func (ec *executionContext) fieldContext_Query_grants(ctx context.Context, field
 				return ec.fieldContext_Grant_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Grant_description(ctx, field)
+			case "goals":
+				return ec.fieldContext_Grant_goals(ctx, field)
+			case "objectives":
+				return ec.fieldContext_Grant_objectives(ctx, field)
 			case "start_date":
 				return ec.fieldContext_Grant_start_date(ctx, field)
 			case "award_date":
@@ -11528,6 +11644,10 @@ func (ec *executionContext) fieldContext_Query_grant(ctx context.Context, field 
 				return ec.fieldContext_Grant_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Grant_description(ctx, field)
+			case "goals":
+				return ec.fieldContext_Grant_goals(ctx, field)
+			case "objectives":
+				return ec.fieldContext_Grant_objectives(ctx, field)
 			case "start_date":
 				return ec.fieldContext_Grant_start_date(ctx, field)
 			case "award_date":
@@ -15512,6 +15632,22 @@ func (ec *executionContext) unmarshalInputNewGrant(ctx context.Context, obj inte
 			if err != nil {
 				return it, err
 			}
+		case "goals":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("goals"))
+			it.Goals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "objectives":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectives"))
+			it.Objectives, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "start_date":
 			var err error
 
@@ -16204,6 +16340,22 @@ func (ec *executionContext) unmarshalInputUpdateGrant(ctx context.Context, obj i
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "goals":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("goals"))
+			it.Goals, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "objectives":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectives"))
+			it.Objectives, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -17218,6 +17370,14 @@ func (ec *executionContext) _Grant(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "goals":
+
+			out.Values[i] = ec._Grant_goals(ctx, field, obj)
+
+		case "objectives":
+
+			out.Values[i] = ec._Grant_objectives(ctx, field, obj)
+
 		case "start_date":
 
 			out.Values[i] = ec._Grant_start_date(ctx, field, obj)

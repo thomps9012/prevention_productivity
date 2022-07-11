@@ -1,7 +1,7 @@
 package model
 
 type AllEventSummaries struct {
-	Event *Event `json:"event"`
+	Event        *Event        `json:"event"`
 	EventSummary *EventSummary `json:"event_summary" bson:"event_summary"`
 	User         *User         `json:"user"`
 	NoteCount    *int          `json:"noteCount"`
@@ -31,7 +31,7 @@ type Contact struct {
 	Email     *string `json:"email"`
 	Phone     *string `json:"phone"`
 	Notes     *string `json:"notes"`
-	Type		*string `json:"type"`
+	Type      *string `json:"type"`
 	IsActive  bool    `json:"is_active" bson:"is_active"`
 	CreatedBy string  `json:"created_by" bson:"created_by"`
 	CreatedAt string  `json:"created_at" bson:"created_at"`
@@ -106,18 +106,20 @@ type EventWithNotes struct {
 }
 
 type Grant struct {
-	ID          *string  `json:"id" bson:"_id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	StartDate   string   `json:"start_date" bson:"start_date"`
-	AwardDate   *string  `json:"award_date" bson:"award_date"`
-	EndDate     string   `json:"end_date" bson:"end_date"`
-	AwardNumber string   `json:"award_number" bson:"award_number"`
-	Budget      *float64 `json:"budget"`
-	IsActive    bool     `json:"is_active"`
-	CreatedBy   string   `json:"created_by" bson:"created_by"`
-	CreatedAt   string   `json:"created_at" bson:"created_at"`
-	UpdatedAt   string   `json:"updated_at" bson:"updated_at"`
+	ID          *string   `json:"id" bson:"_id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	StartDate   string    `json:"start_date" bson:"start_date"`
+	Goals       []*string `json:"goals"	bson:"goals"`
+	Objectives  []*string `json:"objectives" bson:"objectives"`
+	AwardDate   *string   `json:"award_date" bson:"award_date"`
+	EndDate     string    `json:"end_date" bson:"end_date"`
+	AwardNumber string    `json:"award_number" bson:"award_number"`
+	Budget      *float64  `json:"budget"`
+	IsActive    bool      `json:"is_active"`
+	CreatedBy   string    `json:"created_by" bson:"created_by"`
+	CreatedAt   string    `json:"created_at" bson:"created_at"`
+	UpdatedAt   string    `json:"updated_at" bson:"updated_at"`
 }
 
 type Log struct {
@@ -179,9 +181,9 @@ type NewEvent struct {
 	VolunteerList          []*string `json:"volunteer_list" bson:"volunteer_list"`
 	Budget                 *float64  `json:"budget"`
 	AffiliatedOrganization *string   `json:"affiliated_organization" bson:"affiliated_organization"`
-	EducationalGoals       []*string  `json:"educational_goals" bson:"educational_goals"`
-	EducationalOutcomes    []*string  `json:"educational_outcomes" bson:"educational_outcomes"`
-	GrantGoals             []*string  `json:"grant_goals" bson:"grant_goals"`
+	EducationalGoals       []*string `json:"educational_goals" bson:"educational_goals"`
+	EducationalOutcomes    []*string `json:"educational_outcomes" bson:"educational_outcomes"`
+	GrantGoals             []*string `json:"grant_goals" bson:"grant_goals"`
 }
 
 type NewEventSummary struct {
@@ -193,13 +195,15 @@ type NewEventSummary struct {
 }
 
 type NewGrant struct {
-	Name        *string  `json:"name"`
-	Description *string  `json:"description"`
-	StartDate   *string  `json:"start_date" bson:"start_date"`
-	EndDate     *string  `json:"end_date" bson:"end_date"`
-	Budget      *float64 `json:"budget"`
-	AwardNumber *string  `json:"award_number" bson:"award_number"`
-	AwardDate   *string  `json:"award_date" bson:"award_date"`
+	Name        *string   `json:"name"`
+	Description *string   `json:"description"`
+	Goals       []*string `json:"goals"	bson:"goals"`
+	Objectives  []*string `json:"objectives" bson:"objectives"`
+	StartDate   *string   `json:"start_date" bson:"start_date"`
+	EndDate     *string   `json:"end_date" bson:"end_date"`
+	Budget      *float64  `json:"budget"`
+	AwardNumber *string   `json:"award_number" bson:"award_number"`
+	AwardDate   *string   `json:"award_date" bson:"award_date"`
 }
 
 type NewLog struct {
@@ -274,7 +278,7 @@ type SchoolReportWithNotes struct {
 type UpdateContact struct {
 	Name  *string `json:"name"`
 	Email *string `json:"email"`
-	Type *string `json:"type"`
+	Type  *string `json:"type"`
 	Phone *string `json:"phone"`
 	Notes *string `json:"notes"`
 }
@@ -322,14 +326,16 @@ type UpdateEventSummary struct {
 }
 
 type UpdateGrant struct {
-	Name        *string  `json:"name"`
-	Description *string  `json:"description"`
-	StartDate   *string  `json:"start_date" bson:"start_date"`
-	EndDate     *string  `json:"end_date" bson:"end_date"`
-	Budget      *float64 `json:"budget"`
-	AwardNumber *string  `json:"award_number" bson:"award_number"`
-	AwardDate   *string  `json:"award_date" bson:"award_date"`
-	IsActive    *bool    `json:"is_active" bson:"is_active"`
+	Name        *string   `json:"name"`
+	Description *string   `json:"description"`
+	Goals       []*string `json:"goals"	bson:"goals"`
+	Objectives  []*string `json:"objectives" bson:"objectives"`
+	StartDate   *string   `json:"start_date" bson:"start_date"`
+	EndDate     *string   `json:"end_date" bson:"end_date"`
+	Budget      *float64  `json:"budget"`
+	AwardNumber *string   `json:"award_number" bson:"award_number"`
+	AwardDate   *string   `json:"award_date" bson:"award_date"`
+	IsActive    *bool     `json:"is_active" bson:"is_active"`
 }
 
 type UpdateLog struct {
