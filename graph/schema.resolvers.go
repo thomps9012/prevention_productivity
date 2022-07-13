@@ -1002,7 +1002,29 @@ func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.
 }
 
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error) {
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	UserID := auth.ForUserID(ctx)
+	var note *model.Note
+	noteCollection := database.Db.Collection("notes")
+	noteFilter := bson.D{{"_id", id}}
+	err := noteCollection.FindOne(context.TODO(), noteFilter).Decode(&note)
+	if err != nil {
+		return nil, err
+	}
+	if isAdmin || *note.UserID == UserID {
+		return &model.Note{
+			ID:        note.ID,
+			UserID:    note.UserID,
+			ItemID:    note.ItemID,
+			Title:     note.Title,
+			Content:   note.Content,
+			CreatedAt: note.CreatedAt,
+			UpdatedAt: note.UpdatedAt,
+		}, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {
