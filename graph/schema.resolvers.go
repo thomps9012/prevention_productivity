@@ -62,7 +62,9 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	user.Email = updateUser.Email
 	user.Password = updateUser.Password
 	user.IsActive = updateUser.IsActive
-	user.IsAdmin = updateUser.IsAdmin
+	if isAdmin {
+		user.IsAdmin = updateUser.IsAdmin
+	}
 	count, err := collection.CountDocuments(context.TODO(), bson.D{{"email", updateUser.Email}})
 	if err != nil {
 		fmt.Println(err)
