@@ -964,6 +964,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 			IsActive:  user.IsActive,
 			UpdatedAt: user.UpdatedAt,
 			CreatedAt: user.CreatedAt,
+			DeletedAt: user.DeletedAt,
 		}, nil
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
