@@ -1,26 +1,26 @@
 package logs
 
 import (
-	database "thomps9012/prevention_productivity/internal/db"
-	"go.mongodb.org/mongo-driver/bson"
 	"context"
-	"github.com/google/uuid"
+	database "thomps9012/prevention_productivity/internal/db"
 	"time"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Log struct {
-	ID	   string `json:"id" bson:"_id"`
-	UserID string `json:"user_id" bson:"user_id"`
-	FocusArea string `json:"focus_area" bson:"focus_area"`
-	Actions string `json:"actions" bson:"actions"`
-	Successes string `json:"successes" bson:"successes"`
+	ID           string `json:"id" bson:"_id"`
+	UserID       string `json:"user_id" bson:"user_id"`
+	FocusArea    string `json:"focus_area" bson:"focus_area"`
+	Actions      string `json:"actions" bson:"actions"`
+	Successes    string `json:"successes" bson:"successes"`
 	Improvements string `json:"improvements" bson:"improvements"`
-	NextSteps string `json:"next_steps bson:"next_steps"`
-	Status string `json:"status" bson:"status"`
-	CreatedAt string `json:"created_at" bson:"created_at"`
-	UpdatedAt string `json:"updated_at" bson:"updated_at"`
+	NextSteps    string `json:"next_steps" bson:"next_steps"`
+	Status       string `json:"status" bson:"status"`
+	CreatedAt    string `json:"created_at" bson:"created_at"`
+	UpdatedAt    string `json:"updated_at" bson:"updated_at"`
 }
-
 
 func (l *Log) Create() {
 	collection := database.Db.Collection("logs")
@@ -40,14 +40,14 @@ func (l *Log) Update(id string) {
 	filter := bson.D{{"_id", id}}
 	println(l.UpdatedAt)
 	update := bson.D{
-		{"$set", bson.D{
-			{"focus_area", l.FocusArea},
-			{"actions", l.Actions},
-			{"successes", l.Successes},
-			{"improvements", l.Improvements},
-			{"next_steps", l.NextSteps},
-			{"status", l.Status},
-			{"updated_at", l.UpdatedAt},
+		{"$set", bson.M{
+			"focus_area":   l.FocusArea,
+			"actions":      l.Actions,
+			"successes":    l.Successes,
+			"improvements": l.Improvements,
+			"next_steps":   l.NextSteps,
+			"status":       l.Status,
+			"updated_at":   l.UpdatedAt,
 		}},
 	}
 	println(update)

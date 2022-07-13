@@ -67,7 +67,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	if err != nil {
 		fmt.Println(err)
 	}
-	if count > 0 {
+	if count > 1 {
 		return nil, fmt.Errorf("user already exists")
 	}
 	user.Update(id)
@@ -999,6 +999,10 @@ func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+}
+
+func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {

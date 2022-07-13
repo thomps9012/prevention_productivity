@@ -1,22 +1,23 @@
 package contacts
 
 import (
-	database "thomps9012/prevention_productivity/internal/db"
-	"go.mongodb.org/mongo-driver/bson"
 	"context"
-	"time"
-	"github.com/google/uuid"
 	"fmt"
+	database "thomps9012/prevention_productivity/internal/db"
+	"time"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Contact struct {
-	ID	   string `json:"id" bson:"_id"`
-	Name string `json:"name" bson:"name"`
-	Email string `json:"email" bson:"email"`
-	Phone string `json:"phone" bson:"phone"`
-	Type string `json:"type" bson:"type"`
-	Notes string `json:"notes" bson:"notes"`
-	IsActive bool `json:"is_active" bson:"is_active"`
+	ID        string `json:"id" bson:"_id"`
+	Name      string `json:"name" bson:"name"`
+	Email     string `json:"email" bson:"email"`
+	Phone     string `json:"phone" bson:"phone"`
+	Type      string `json:"type" bson:"type"`
+	Notes     string `json:"notes" bson:"notes"`
+	IsActive  bool   `json:"is_active" bson:"is_active"`
 	CreatedBy string `json:"created_by" bson:"created_by"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
@@ -45,6 +46,7 @@ func (c *Contact) Update(id string) {
 			{"email", c.Email},
 			{"phone", c.Phone},
 			{"notes", c.Notes},
+			{"type", c.Type},
 			{"updated_at", c.UpdatedAt},
 		}},
 	}
@@ -80,5 +82,3 @@ func (c *Contact) Delete(id string) {
 		fmt.Println("No document found")
 	}
 }
-
-	

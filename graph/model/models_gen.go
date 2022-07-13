@@ -110,7 +110,7 @@ type Grant struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	StartDate   string    `json:"start_date" bson:"start_date"`
-	Goals       []*string `json:"goals"	bson:"goals"`
+	Goals       []*string `json:"goals" bson:"goals"`
 	Objectives  []*string `json:"objectives" bson:"objectives"`
 	AwardDate   *string   `json:"award_date" bson:"award_date"`
 	EndDate     string    `json:"end_date" bson:"end_date"`
@@ -197,7 +197,7 @@ type NewEventSummary struct {
 type NewGrant struct {
 	Name        *string   `json:"name"`
 	Description *string   `json:"description"`
-	Goals       []*string `json:"goals"	bson:"goals"`
+	Goals       []*string `json:"goals" bson:"goals"`
 	Objectives  []*string `json:"objectives" bson:"objectives"`
 	StartDate   *string   `json:"start_date" bson:"start_date"`
 	EndDate     *string   `json:"end_date" bson:"end_date"`
@@ -260,7 +260,7 @@ type SchoolReport struct {
 	LessonPlan   string   `json:"lesson_plan" bson:"lesson_plan"`
 	School       string   `json:"school"`
 	Topics       string   `json:"topics"`
-	StudentCount int      `json:"student_count" 	bson:"student_count"`
+	StudentCount int      `json:"student_count" bson:"student_count"`
 	StudentList  []string `json:"student_list" bson:"student_list"`
 	Challenges   string   `json:"challenges"`
 	Successes    string   `json:"successes"`
@@ -308,7 +308,7 @@ type UpdateEvent struct {
 	Caterer                *string   `json:"caterer"`
 	FoodHeadCount          *int      `json:"food_head_count" bson:"food_head_count"`
 	EventTeam              []*string `json:"event_team" bson:"event_team"`
-	VolunteerList          []*string `json:"volunteer_list" 	bson:"volunteer_list"`
+	VolunteerList          []*string `json:"volunteer_list" bson:"volunteer_list"`
 	Budget                 *float64  `json:"budget"`
 	AffiliatedOrganization *string   `json:"affiliated_organization" bson:"affiliated_organization"`
 	EducationalGoals       []*string `json:"educational_goals" bson:"educational_goals"`
@@ -328,7 +328,7 @@ type UpdateEventSummary struct {
 type UpdateGrant struct {
 	Name        *string   `json:"name"`
 	Description *string   `json:"description"`
-	Goals       []*string `json:"goals"	bson:"goals"`
+	Goals       []*string `json:"goals" bson:"goals"`
 	Objectives  []*string `json:"objectives" bson:"objectives"`
 	StartDate   *string   `json:"start_date" bson:"start_date"`
 	EndDate     *string   `json:"end_date" bson:"end_date"`
@@ -357,7 +357,7 @@ type UpdateSchoolReport struct {
 	LessonPlan   *string  `json:"lesson_plan" bson:"lesson_plan"`
 	School       *string  `json:"school"`
 	Topics       *string  `json:"topics"`
-	StudentCount *int     `json:"student_count" 	bson:"student_count"`
+	StudentCount *int     `json:"student_count" bson:"student_count"`
 	StudentList  []string `json:"student_list" bson:"student_list"`
 	Challenges   *string  `json:"challenges"`
 	Successes    *string  `json:"successes"`

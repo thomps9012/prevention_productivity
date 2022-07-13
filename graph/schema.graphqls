@@ -189,6 +189,7 @@ type Query {
   me: User!
   user(id: ID!): User!
   itemNotes(item_id: ID!): [Note!]
+  note(id: ID!): Note!
   log(id: ID!): LogWithNotes!
   allLogs: [AllLogs!]!
   userLogs(user_id: ID!): [Log!]!
