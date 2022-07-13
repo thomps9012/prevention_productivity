@@ -19,7 +19,7 @@ type Contact {
   phone: String
   notes: String
   type: String
-  is_active: Boolean!
+  active: Boolean!
   created_by: ID!
   created_at: String!
   updated_at: String!
@@ -37,7 +37,7 @@ type Grant {
   end_date: String!
   award_number: String!
   budget: Float
-  is_active: Boolean!
+  active: Boolean!
   created_by: ID!
   created_at: String!
   updated_at: String!
@@ -391,7 +391,7 @@ input UpdateGrant {
   budget: Float
   award_number: String
   award_date: String
-  is_active: Boolean
+  active: Boolean
 }
 
 input NewContact {

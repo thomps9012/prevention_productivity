@@ -70,12 +70,12 @@ type ComplexityRoot struct {
 	}
 
 	Contact struct {
+		Active    func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		CreatedBy func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		ID        func(childComplexity int) int
-		IsActive  func(childComplexity int) int
 		Name      func(childComplexity int) int
 		Notes     func(childComplexity int) int
 		Phone     func(childComplexity int) int
@@ -150,6 +150,7 @@ type ComplexityRoot struct {
 	}
 
 	Grant struct {
+		Active      func(childComplexity int) int
 		AwardDate   func(childComplexity int) int
 		AwardNumber func(childComplexity int) int
 		Budget      func(childComplexity int) int
@@ -159,7 +160,6 @@ type ComplexityRoot struct {
 		EndDate     func(childComplexity int) int
 		Goals       func(childComplexity int) int
 		ID          func(childComplexity int) int
-		IsActive    func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Objectives  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
@@ -278,13 +278,13 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		Active    func(childComplexity int) int
+		Admin     func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		FirstName func(childComplexity int) int
 		ID        func(childComplexity int) int
-		IsActive  func(childComplexity int) int
-		IsAdmin   func(childComplexity int) int
 		LastName  func(childComplexity int) int
 		Password  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -458,6 +458,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AllSchoolReports.User(childComplexity), true
 
+	case "Contact.active":
+		if e.complexity.Contact.Active == nil {
+			break
+		}
+
+		return e.complexity.Contact.Active(childComplexity), true
+
 	case "Contact.created_at":
 		if e.complexity.Contact.CreatedAt == nil {
 			break
@@ -492,13 +499,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.ID(childComplexity), true
-
-	case "Contact.is_active":
-		if e.complexity.Contact.IsActive == nil {
-			break
-		}
-
-		return e.complexity.Contact.IsActive(childComplexity), true
 
 	case "Contact.name":
 		if e.complexity.Contact.Name == nil {
@@ -892,6 +892,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventWithNotes.Notes(childComplexity), true
 
+	case "Grant.active":
+		if e.complexity.Grant.Active == nil {
+			break
+		}
+
+		return e.complexity.Grant.Active(childComplexity), true
+
 	case "Grant.award_date":
 		if e.complexity.Grant.AwardDate == nil {
 			break
@@ -954,13 +961,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grant.ID(childComplexity), true
-
-	case "Grant.is_active":
-		if e.complexity.Grant.IsActive == nil {
-			break
-		}
-
-		return e.complexity.Grant.IsActive(childComplexity), true
 
 	case "Grant.name":
 		if e.complexity.Grant.Name == nil {
@@ -1855,6 +1855,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportWithNotes.SchoolReport(childComplexity), true
 
+	case "User.active":
+		if e.complexity.User.Active == nil {
+			break
+		}
+
+		return e.complexity.User.Active(childComplexity), true
+
+	case "User.admin":
+		if e.complexity.User.Admin == nil {
+			break
+		}
+
+		return e.complexity.User.Admin(childComplexity), true
+
 	case "User.created_at":
 		if e.complexity.User.CreatedAt == nil {
 			break
@@ -1889,20 +1903,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
-
-	case "User.is_active":
-		if e.complexity.User.IsActive == nil {
-			break
-		}
-
-		return e.complexity.User.IsActive(childComplexity), true
-
-	case "User.is_admin":
-		if e.complexity.User.IsAdmin == nil {
-			break
-		}
-
-		return e.complexity.User.IsAdmin(childComplexity), true
 
 	case "User.last_name":
 		if e.complexity.User.LastName == nil {
@@ -2025,11 +2025,11 @@ var sources = []*ast.Source{
   email: String!
   username: String!
   password: String!
-  is_admin: Boolean!
+  admin: Boolean!
   created_at: String!
   updated_at: String!
   deleted_at: String
-  is_active: Boolean!
+  active: Boolean!
 }
 
 type Contact {
@@ -2039,7 +2039,7 @@ type Contact {
   phone: String
   notes: String
   type: String
-  is_active: Boolean!
+  active: Boolean!
   created_by: ID!
   created_at: String!
   updated_at: String!
@@ -2057,7 +2057,7 @@ type Grant {
   end_date: String!
   award_number: String!
   budget: Float
-  is_active: Boolean!
+  active: Boolean!
   created_by: ID!
   created_at: String!
   updated_at: String!
@@ -2240,8 +2240,8 @@ input UpdateUser {
   last_name: String!
   email: String!
   password: String!
-  is_admin: Boolean!
-  is_active: Boolean!
+  admin: Boolean!
+  active: Boolean!
 }
 
 input NewNote {
@@ -2411,7 +2411,7 @@ input UpdateGrant {
   budget: Float
   award_number: String
   award_date: String
-  is_active: Boolean
+  active: Boolean
 }
 
 input NewContact {
@@ -3535,16 +3535,16 @@ func (ec *executionContext) fieldContext_AllEventSummaries_user(ctx context.Cont
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3757,16 +3757,16 @@ func (ec *executionContext) fieldContext_AllEvents_user(ctx context.Context, fie
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3929,16 +3929,16 @@ func (ec *executionContext) fieldContext_AllLogs_user(ctx context.Context, field
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4109,16 +4109,16 @@ func (ec *executionContext) fieldContext_AllSchoolReports_user(ctx context.Conte
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4413,8 +4413,8 @@ func (ec *executionContext) fieldContext_Contact_type(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Contact_is_active(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Contact_is_active(ctx, field)
+func (ec *executionContext) _Contact_active(ctx context.Context, field graphql.CollectedField, obj *model.Contact) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Contact_active(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4427,7 +4427,7 @@ func (ec *executionContext) _Contact_is_active(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.IsActive, nil
+		return obj.Active, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4444,7 +4444,7 @@ func (ec *executionContext) _Contact_is_active(ctx context.Context, field graphq
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Contact_is_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Contact_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Contact",
 		Field:      field,
@@ -4684,8 +4684,8 @@ func (ec *executionContext) fieldContext_ContactInfo_contact(ctx context.Context
 				return ec.fieldContext_Contact_notes(ctx, field)
 			case "type":
 				return ec.fieldContext_Contact_type(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Contact_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Contact_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Contact_created_by(ctx, field)
 			case "created_at":
@@ -4752,16 +4752,16 @@ func (ec *executionContext) fieldContext_ContactInfo_contact_creator(ctx context
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -7452,8 +7452,8 @@ func (ec *executionContext) fieldContext_Grant_budget(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Grant_is_active(ctx context.Context, field graphql.CollectedField, obj *model.Grant) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Grant_is_active(ctx, field)
+func (ec *executionContext) _Grant_active(ctx context.Context, field graphql.CollectedField, obj *model.Grant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Grant_active(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -7466,7 +7466,7 @@ func (ec *executionContext) _Grant_is_active(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.IsActive, nil
+		return obj.Active, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7483,7 +7483,7 @@ func (ec *executionContext) _Grant_is_active(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Grant_is_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Grant_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Grant",
 		Field:      field,
@@ -8291,16 +8291,16 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -8540,8 +8540,8 @@ func (ec *executionContext) fieldContext_Mutation_createGrant(ctx context.Contex
 				return ec.fieldContext_Grant_award_number(ctx, field)
 			case "budget":
 				return ec.fieldContext_Grant_budget(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Grant_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Grant_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Grant_created_by(ctx, field)
 			case "created_at":
@@ -8622,8 +8622,8 @@ func (ec *executionContext) fieldContext_Mutation_updateGrant(ctx context.Contex
 				return ec.fieldContext_Grant_award_number(ctx, field)
 			case "budget":
 				return ec.fieldContext_Grant_budget(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Grant_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Grant_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Grant_created_by(ctx, field)
 			case "created_at":
@@ -8748,8 +8748,8 @@ func (ec *executionContext) fieldContext_Mutation_createContact(ctx context.Cont
 				return ec.fieldContext_Contact_notes(ctx, field)
 			case "type":
 				return ec.fieldContext_Contact_type(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Contact_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Contact_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Contact_created_by(ctx, field)
 			case "created_at":
@@ -8824,8 +8824,8 @@ func (ec *executionContext) fieldContext_Mutation_updateContact(ctx context.Cont
 				return ec.fieldContext_Contact_notes(ctx, field)
 			case "type":
 				return ec.fieldContext_Contact_type(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Contact_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Contact_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Contact_created_by(ctx, field)
 			case "created_at":
@@ -10804,16 +10804,16 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10872,16 +10872,16 @@ func (ec *executionContext) fieldContext_Query_me(ctx context.Context, field gra
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -10940,16 +10940,16 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_username(ctx, field)
 			case "password":
 				return ec.fieldContext_User_password(ctx, field)
-			case "is_admin":
-				return ec.fieldContext_User_is_admin(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
 			case "created_at":
 				return ec.fieldContext_User_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_User_updated_at(ctx, field)
 			case "deleted_at":
 				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "is_active":
-				return ec.fieldContext_User_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -11685,8 +11685,8 @@ func (ec *executionContext) fieldContext_Query_grants(ctx context.Context, field
 				return ec.fieldContext_Grant_award_number(ctx, field)
 			case "budget":
 				return ec.fieldContext_Grant_budget(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Grant_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Grant_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Grant_created_by(ctx, field)
 			case "created_at":
@@ -11759,8 +11759,8 @@ func (ec *executionContext) fieldContext_Query_grant(ctx context.Context, field 
 				return ec.fieldContext_Grant_award_number(ctx, field)
 			case "budget":
 				return ec.fieldContext_Grant_budget(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Grant_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Grant_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Grant_created_by(ctx, field)
 			case "created_at":
@@ -11833,8 +11833,8 @@ func (ec *executionContext) fieldContext_Query_contacts(ctx context.Context, fie
 				return ec.fieldContext_Contact_notes(ctx, field)
 			case "type":
 				return ec.fieldContext_Contact_type(ctx, field)
-			case "is_active":
-				return ec.fieldContext_Contact_is_active(ctx, field)
+			case "active":
+				return ec.fieldContext_Contact_active(ctx, field)
 			case "created_by":
 				return ec.fieldContext_Contact_created_by(ctx, field)
 			case "created_at":
@@ -13322,8 +13322,8 @@ func (ec *executionContext) fieldContext_User_password(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _User_is_admin(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_is_admin(ctx, field)
+func (ec *executionContext) _User_admin(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_admin(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13353,7 +13353,7 @@ func (ec *executionContext) _User_is_admin(ctx context.Context, field graphql.Co
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_is_admin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_admin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -13495,8 +13495,8 @@ func (ec *executionContext) fieldContext_User_deleted_at(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_is_active(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_is_active(ctx, field)
+func (ec *executionContext) _User_active(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_active(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13526,7 +13526,7 @@ func (ec *executionContext) _User_is_active(ctx context.Context, field graphql.C
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_is_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -16500,11 +16500,11 @@ func (ec *executionContext) unmarshalInputUpdateGrant(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "is_active":
+		case "active":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_active"))
-			it.IsActive, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			it.Active, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16744,18 +16744,18 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 			if err != nil {
 				return it, err
 			}
-		case "is_admin":
+		case "admin":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_admin"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("admin"))
 			it.Admin, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "is_active":
+		case "active":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_active"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
 			it.Active, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
@@ -16959,9 +16959,9 @@ func (ec *executionContext) _Contact(ctx context.Context, sel ast.SelectionSet, 
 
 			out.Values[i] = ec._Contact_type(ctx, field, obj)
 
-		case "is_active":
+		case "active":
 
-			out.Values[i] = ec._Contact_is_active(ctx, field, obj)
+			out.Values[i] = ec._Contact_active(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -17508,9 +17508,9 @@ func (ec *executionContext) _Grant(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Grant_budget(ctx, field, obj)
 
-		case "is_active":
+		case "active":
 
-			out.Values[i] = ec._Grant_is_active(ctx, field, obj)
+			out.Values[i] = ec._Grant_active(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18696,9 +18696,9 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "is_admin":
+		case "admin":
 
-			out.Values[i] = ec._User_is_admin(ctx, field, obj)
+			out.Values[i] = ec._User_admin(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18721,9 +18721,9 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 
 			out.Values[i] = ec._User_deleted_at(ctx, field, obj)
 
-		case "is_active":
+		case "active":
 
-			out.Values[i] = ec._User_is_active(ctx, field, obj)
+			out.Values[i] = ec._User_active(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

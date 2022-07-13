@@ -17,7 +17,7 @@ type Contact struct {
 	Phone     string `json:"phone" bson:"phone"`
 	Type      string `json:"type" bson:"type"`
 	Notes     string `json:"notes" bson:"notes"`
-	IsActive  bool   `json:"is_active" bson:"is_active"`
+	Active    bool
 	CreatedBy string `json:"created_by" bson:"created_by"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
@@ -29,7 +29,7 @@ func (c *Contact) Create() {
 	c.ID = uuid.New().String()
 	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	c.UpdatedAt = c.CreatedAt
-	c.IsActive = true
+	c.Active = true
 	_, err := collection.InsertOne(context.TODO(), c)
 	if err != nil {
 		panic(err)
@@ -64,11 +64,11 @@ func (c *Contact) Update(id string) {
 func (c *Contact) Delete(id string) {
 	collection := database.Db.Collection("contacts")
 	filter := bson.D{{"_id", id}}
-	c.IsActive = false
+	c.Active = false
 	c.DeletedAt = time.Now().Format("2006-01-02 15:04:05")
 	update := bson.D{
 		{"$set", bson.D{
-			{"is_active", c.IsActive},
+			{"is_active", c.Active},
 			{"deleted_at", c.DeletedAt},
 		}},
 	}

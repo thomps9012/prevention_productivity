@@ -23,16 +23,16 @@ type Grant struct {
 	CreatedBy   string    `json:"created_by" bson:"created_by"`
 	CreatedAt   string    `json:"created_at" bson:"created_at"`
 	UpdatedAt   string    `json:"updated_at" bson:"updated_at"`
-	IsActive    bool      `json:"is_active"`
+	Active      bool
 }
 
 func (g *Grant) Create() {
 	collection := database.Db.Collection("grants")
 	g.ID = uuid.New().String()
 	if g.EndDate > time.Now().Format("01-02-2006 15:04:05") {
-		g.IsActive = true
+		g.Active = true
 	} else {
-		g.IsActive = false
+		g.Active = false
 	}
 	g.CreatedAt = time.Now().Format("01-02-2006 15:04:05")
 	g.UpdatedAt = g.CreatedAt
@@ -47,9 +47,9 @@ func (g *Grant) Update(id string) {
 	g.UpdatedAt = time.Now().Format("01-02-2006 15:04:05")
 	filter := bson.D{{"_id", id}}
 	if g.EndDate > time.Now().Format("01-02-2006 15:04:05") {
-		g.IsActive = true
+		g.Active = true
 	} else {
-		g.IsActive = false
+		g.Active = false
 	}
 	update := bson.D{
 		{"$set", bson.D{

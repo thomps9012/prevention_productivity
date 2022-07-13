@@ -32,11 +32,11 @@ type Contact struct {
 	Phone     *string `json:"phone"`
 	Notes     *string `json:"notes"`
 	Type      *string `json:"type"`
-	IsActive  bool    `json:"is_active" bson:"is_active"`
-	CreatedBy string  `json:"created_by" bson:"created_by"`
-	CreatedAt string  `json:"created_at" bson:"created_at"`
-	UpdatedAt string  `json:"updated_at" bson:"updated_at"`
-	DeletedAt string  `json:"deleted_at" bson:"deleted_at"`
+	Active    bool
+	CreatedBy string `json:"created_by" bson:"created_by"`
+	CreatedAt string `json:"created_at" bson:"created_at"`
+	UpdatedAt string `json:"updated_at" bson:"updated_at"`
+	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
 }
 
 type ContactInfo struct {
@@ -116,7 +116,7 @@ type Grant struct {
 	EndDate     string    `json:"end_date" bson:"end_date"`
 	AwardNumber string    `json:"award_number" bson:"award_number"`
 	Budget      *float64  `json:"budget"`
-	IsActive    bool      `json:"is_active"`
+	Active      bool      `json:"is_active"`
 	CreatedBy   string    `json:"created_by" bson:"created_by"`
 	CreatedAt   string    `json:"created_at" bson:"created_at"`
 	UpdatedAt   string    `json:"updated_at" bson:"updated_at"`
@@ -335,7 +335,7 @@ type UpdateGrant struct {
 	Budget      *float64  `json:"budget"`
 	AwardNumber *string   `json:"award_number" bson:"award_number"`
 	AwardDate   *string   `json:"award_date" bson:"award_date"`
-	IsActive    *bool     `json:"is_active" bson:"is_active"`
+	Active      *bool
 }
 
 type UpdateLog struct {

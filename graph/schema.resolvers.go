@@ -175,7 +175,7 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 		AwardDate:   &grant.AwardDate,
 		CreatedAt:   grant.CreatedAt,
 		UpdatedAt:   grant.UpdatedAt,
-		IsActive:    grant.IsActive,
+		Active:      grant.Active,
 	}, nil
 }
 
@@ -208,7 +208,7 @@ func (r *mutationResolver) UpdateGrant(ctx context.Context, id string, updateGra
 		AwardNumber: grant.AwardNumber,
 		AwardDate:   &grant.AwardDate,
 		UpdatedAt:   grant.UpdatedAt,
-		IsActive:    grant.IsActive,
+		Active:      grant.Active,
 	}, nil
 }
 
@@ -248,7 +248,7 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 		CreatedBy: contact.CreatedBy,
 		CreatedAt: contact.CreatedAt,
 		UpdatedAt: contact.UpdatedAt,
-		IsActive:  contact.IsActive,
+		Active:    contact.Active,
 	}, nil
 }
 
@@ -285,7 +285,7 @@ func (r *mutationResolver) RemoveContact(ctx context.Context, id string) (*bool,
 	contact.Delete(id)
 	// returns false if contact was deactivated
 	var result bool
-	if contact.IsActive {
+	if contact.Active {
 		result = false
 	} else {
 		result = true
@@ -1031,7 +1031,6 @@ func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {
@@ -1420,7 +1419,7 @@ func (r *queryResolver) Grants(ctx context.Context) ([]*model.Grant, error) {
 			CreatedAt:   grant.CreatedAt,
 			CreatedBy:   grant.CreatedBy,
 			UpdatedAt:   grant.UpdatedAt,
-			IsActive:    grant.IsActive,
+			Active:      grant.Active,
 		})
 	}
 	return grants, nil
@@ -1471,7 +1470,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 				CreatedAt: contact.CreatedAt,
 				CreatedBy: contact.CreatedBy,
 				UpdatedAt: contact.UpdatedAt,
-				IsActive:  contact.IsActive,
+				Active:    contact.Active,
 			})
 		}
 	} else {
@@ -1495,7 +1494,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 				CreatedAt: contact.CreatedAt,
 				CreatedBy: contact.CreatedBy,
 				UpdatedAt: contact.UpdatedAt,
-				IsActive:  contact.IsActive,
+				Active:    contact.Active,
 				DeletedAt: contact.DeletedAt,
 			})
 		}
