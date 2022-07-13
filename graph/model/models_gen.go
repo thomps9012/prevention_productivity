@@ -116,10 +116,10 @@ type Grant struct {
 	EndDate     string    `json:"end_date" bson:"end_date"`
 	AwardNumber string    `json:"award_number" bson:"award_number"`
 	Budget      *float64  `json:"budget"`
-	Active      bool      `json:"is_active"`
-	CreatedBy   string    `json:"created_by" bson:"created_by"`
-	CreatedAt   string    `json:"created_at" bson:"created_at"`
-	UpdatedAt   string    `json:"updated_at" bson:"updated_at"`
+	Active      bool
+	CreatedBy   string `json:"created_by" bson:"created_by"`
+	CreatedAt   string `json:"created_at" bson:"created_at"`
+	UpdatedAt   string `json:"updated_at" bson:"updated_at"`
 }
 
 type Log struct {

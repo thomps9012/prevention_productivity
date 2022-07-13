@@ -70,12 +70,12 @@ type ComplexityRoot struct {
 	}
 
 	Contact struct {
-		Active    func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		CreatedBy func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		ID        func(childComplexity int) int
+		Active  func(childComplexity int) int
 		Name      func(childComplexity int) int
 		Notes     func(childComplexity int) int
 		Phone     func(childComplexity int) int
@@ -150,7 +150,6 @@ type ComplexityRoot struct {
 	}
 
 	Grant struct {
-		Active      func(childComplexity int) int
 		AwardDate   func(childComplexity int) int
 		AwardNumber func(childComplexity int) int
 		Budget      func(childComplexity int) int
@@ -160,6 +159,7 @@ type ComplexityRoot struct {
 		EndDate     func(childComplexity int) int
 		Goals       func(childComplexity int) int
 		ID          func(childComplexity int) int
+		Active    func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Objectives  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
@@ -278,13 +278,13 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Active    func(childComplexity int) int
-		Admin     func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		FirstName func(childComplexity int) int
 		ID        func(childComplexity int) int
+		Active  func(childComplexity int) int
+		Admin   func(childComplexity int) int
 		LastName  func(childComplexity int) int
 		Password  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -458,13 +458,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AllSchoolReports.User(childComplexity), true
 
-	case "Contact.active":
-		if e.complexity.Contact.Active == nil {
-			break
-		}
-
-		return e.complexity.Contact.Active(childComplexity), true
-
 	case "Contact.created_at":
 		if e.complexity.Contact.CreatedAt == nil {
 			break
@@ -499,6 +492,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.ID(childComplexity), true
+
+	case "Contact.active":
+		if e.complexity.Contact.Active == nil {
+			break
+		}
+
+		return e.complexity.Contact.Active(childComplexity), true
 
 	case "Contact.name":
 		if e.complexity.Contact.Name == nil {
@@ -892,13 +892,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventWithNotes.Notes(childComplexity), true
 
-	case "Grant.active":
-		if e.complexity.Grant.Active == nil {
-			break
-		}
-
-		return e.complexity.Grant.Active(childComplexity), true
-
 	case "Grant.award_date":
 		if e.complexity.Grant.AwardDate == nil {
 			break
@@ -961,6 +954,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grant.ID(childComplexity), true
+
+	case "Grant.active":
+		if e.complexity.Grant.Active == nil {
+			break
+		}
+
+		return e.complexity.Grant.Active(childComplexity), true
 
 	case "Grant.name":
 		if e.complexity.Grant.Name == nil {
@@ -1855,20 +1855,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportWithNotes.SchoolReport(childComplexity), true
 
-	case "User.active":
-		if e.complexity.User.Active == nil {
-			break
-		}
-
-		return e.complexity.User.Active(childComplexity), true
-
-	case "User.admin":
-		if e.complexity.User.Admin == nil {
-			break
-		}
-
-		return e.complexity.User.Admin(childComplexity), true
-
 	case "User.created_at":
 		if e.complexity.User.CreatedAt == nil {
 			break
@@ -1903,6 +1889,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
+
+	case "User.active":
+		if e.complexity.User.Active == nil {
+			break
+		}
+
+		return e.complexity.User.Active(childComplexity), true
+
+	case "User.admin":
+		if e.complexity.User.Admin == nil {
+			break
+		}
+
+		return e.complexity.User.Admin(childComplexity), true
 
 	case "User.last_name":
 		if e.complexity.User.LastName == nil {

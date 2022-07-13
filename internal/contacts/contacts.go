@@ -68,7 +68,7 @@ func (c *Contact) Delete(id string) {
 	c.DeletedAt = time.Now().Format("2006-01-02 15:04:05")
 	update := bson.D{
 		{"$set", bson.D{
-			{"is_active", c.Active},
+			{"active", c.Active},
 			{"deleted_at", c.DeletedAt},
 		}},
 	}
