@@ -370,8 +370,8 @@ type UpdateUser struct {
 	LastName  string `json:"last_name" bson:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	IsAdmin   bool   `json:"is_admin"`
-	IsActive  bool   `json:"is_active"`
+	Admin     bool
+	Active    bool
 }
 
 type User struct {
@@ -381,9 +381,9 @@ type User struct {
 	Email     string  `json:"email"`
 	Username  string  `json:"username"`
 	Password  string  `json:"password"`
-	IsAdmin   bool    `json:"is_admin"`
+	Admin     bool
 	CreatedAt string  `json:"created_at" bson:"created_at"`
 	UpdatedAt string  `json:"updated_at" bson:"updated_at"`
 	DeletedAt *string `json:"deleted_at" bson:"deleted_at"`
-	IsActive  bool    `json:"is_active"`
+	Active    bool
 }

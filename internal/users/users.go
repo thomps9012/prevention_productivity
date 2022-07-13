@@ -17,8 +17,8 @@ type User struct {
 	LastName  string `json:"lastName" bson:"last_name"`
 	Email     string `json:"email" bson:"email"`
 	Password  string `json:"password" bson:"password"`
-	IsAdmin   bool   `json:"isAdmin"`
-	IsActive  bool   `json:"isActive"`
+	Admin     bool
+	Active    bool
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
 	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
@@ -33,8 +33,8 @@ func (u *User) Create() {
 		u.ID = uuid.New().String()
 		u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 		u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-		u.IsActive = true
-		u.IsAdmin = false
+		u.Active = true
+		u.Admin = false
 		hashed, hashErr := HashPassword(u.Password)
 		u.Password = hashed
 		if hashErr != nil {
@@ -84,7 +84,7 @@ func (u *User) Update(id string) {
 	if len(u.Password) <= 0 {
 		println("not updating pw")
 		fmt.Printf("%v\n", u)
-		result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt, "is_active": u.IsActive, "is_admin": u.IsAdmin}}})
+		result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt, "active": u.Active, "admin": u.Admin}}})
 		if err != nil {
 			panic(err)
 		}
@@ -109,7 +109,7 @@ func (u *User) Update(id string) {
 func (u *User) Delete() {
 	collection := database.Db.Collection("users")
 	filter := bson.D{{"email", u.Email}}
-	u.IsActive = false
+	u.Active = false
 	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
 	if err != nil {
 		panic(err)

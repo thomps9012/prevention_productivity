@@ -35,7 +35,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 	if user.ID == "" {
 		return "", fmt.Errorf("User already exists")
 	}
-	token, err := jwt.GenerateToken(user.Email, user.IsAdmin, user.ID)
+	token, err := jwt.GenerateToken(user.Email, user.Admin, user.ID)
 	if err != nil {
 		return "", err
 	}
@@ -61,9 +61,10 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	user.LastName = updateUser.LastName
 	user.Email = updateUser.Email
 	user.Password = updateUser.Password
-	user.IsActive = updateUser.IsActive
+	user.Active = updateUser.Active
 	if isAdmin {
-		user.IsAdmin = updateUser.IsAdmin
+		println("isAdmin", updateUser.Admin)
+		user.Admin = updateUser.Admin
 	}
 	count, err := collection.CountDocuments(context.TODO(), bson.D{{"email", updateUser.Email}})
 	if err != nil {
@@ -79,8 +80,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		LastName:  user.LastName,
 		Email:     user.Email,
 		Password:  user.Password,
-		IsAdmin:   user.IsAdmin,
-		IsActive:  user.IsActive,
+		Admin:     user.Admin,
+		Active:    user.Active,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		DeletedAt: &user.DeletedAt,
@@ -115,15 +116,15 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 	filter := bson.D{{"email", login.Email}}
 	var userDB users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
-	println(userDB.IsAdmin)
+	println(userDB.Admin)
 	println(userDB.ID)
-	if !userDB.IsActive {
+	if !userDB.Active {
 		return "User is not active", fmt.Errorf("User is not active")
 	}
 	if err != nil {
 		return "", err
 	}
-	token, err := jwt.GenerateToken(userDB.Email, userDB.IsAdmin, userDB.ID)
+	token, err := jwt.GenerateToken(userDB.Email, userDB.Admin, userDB.ID)
 	if err != nil {
 		return "", err
 	}
@@ -962,8 +963,8 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 			LastName:  user.LastName,
 			Email:     user.Email,
 			Username:  user.Username,
-			IsAdmin:   user.IsAdmin,
-			IsActive:  user.IsActive,
+			Admin:     user.Admin,
+			Active:    user.Active,
 			UpdatedAt: user.UpdatedAt,
 			CreatedAt: user.CreatedAt,
 			DeletedAt: user.DeletedAt,
