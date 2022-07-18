@@ -1639,6 +1639,7 @@ func (r *queryResolver) UserSchoolReports(ctx context.Context, userID string) ([
 			Curriculum:   report.Curriculum,
 			School:       report.School,
 			StudentCount: report.StudentCount,
+			Status:       report.Status,
 			CreatedAt:    report.CreatedAt,
 			UpdatedAt:    report.UpdatedAt,
 		})
