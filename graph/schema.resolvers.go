@@ -1160,7 +1160,8 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 		var logs []*model.Log
 		collection := database.Db.Collection("logs")
 		filter := bson.D{{"user_id", userID}}
-		cursor, err := collection.Find(context.TODO(), filter)
+		findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+		cursor, err := collection.Find(context.TODO(), filter, findOptions)
 		if err != nil {
 			return nil, err
 		}
@@ -1586,7 +1587,8 @@ func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model
 	var events []*model.Event
 	collection := database.Db.Collection("events")
 	filter := bson.D{{"event_lead", userID}}
-	cursor, err := collection.Find(context.TODO(), filter)
+	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -1623,7 +1625,8 @@ func (r *queryResolver) UserSchoolReports(ctx context.Context, userID string) ([
 	var reports []*model.SchoolReport
 	collection := database.Db.Collection("school_reports")
 	filter := bson.D{{"user_id", userID}}
-	cursor, err := collection.Find(context.TODO(), filter)
+	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -1655,7 +1658,8 @@ func (r *queryResolver) UserNotes(ctx context.Context, userID string) ([]*model.
 	var notes []*model.Note
 	collection := database.Db.Collection("notes")
 	filter := bson.D{{"user_id", userID}}
-	cursor, err := collection.Find(context.TODO(), filter)
+	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
