@@ -206,6 +206,7 @@ type Query {
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  
+  userNotes(user_id: ID!): [Note!]
 }
 
 input NewUser {

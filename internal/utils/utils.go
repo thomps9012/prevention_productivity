@@ -2,28 +2,27 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
+
 	"go.mongodb.org/mongo-driver/bson"
-	"fmt"
 )
 
 func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
-	// this function breaks if logs don't meet the model requirements
+	// this times out
 	logsCollection := database.Db.Collection("logs")
 	notesCollection := database.Db.Collection("notes")
 	userCollection := database.Db.Collection("users")
-	var allLogs []*model.AllLogs
-
 	cursor, err := logsCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
+	var allLogs []*model.AllLogs
 	for cursor.Next(context.TODO()) {
+		println("logs found")
 		var log *model.Log
 		err := cursor.Decode(&log)
-		println(log.FocusArea)
-		println(log.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -33,9 +32,7 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 			return nil, err
 		}
 		intNoteCount := int(noteCount)
-		println(noteCount)
 		var user *model.User
-		fmt.Println("%v", log.UserID)
 		userFilter := bson.D{{"_id", log.UserID}}
 		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
 		if err != nil {
@@ -56,9 +53,9 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 			},
 			NoteCount: &intNoteCount,
 		}
-		println(singleLog)
 		allLogs = append(allLogs, singleLog)
 	}
+	fmt.Printf("%v logs being returned", allLogs)
 	return allLogs, nil
 }
 
@@ -94,7 +91,7 @@ func GetEvents(filter bson.D) ([]*model.AllEvents, error) {
 		singleEvent := &model.AllEvents{
 			Event: &model.Event{
 				ID:        event.ID,
-				Title: event.Title,
+				Title:     event.Title,
 				StartDate: event.StartDate,
 				Status:    event.Status,
 				CreatedAt: event.CreatedAt,
@@ -111,7 +108,6 @@ func GetEvents(filter bson.D) ([]*model.AllEvents, error) {
 	}
 	return allEvents, nil
 }
-
 
 func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 	// this function breaks if logs don't meet the model requirements
@@ -153,7 +149,7 @@ func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 		singleEventSummary := &model.AllEventSummaries{
 			Event: &model.Event{
 				ID:        event.ID,
-				Title: event.Title,
+				Title:     event.Title,
 				StartDate: event.StartDate,
 			},
 			User: &model.User{
@@ -163,12 +159,12 @@ func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 			},
 			NoteCount: &intNoteCount,
 			EventSummary: &model.EventSummary{
-				ID:        eventSummary.ID,
-				EventID:   eventSummary.EventID,
+				ID:            eventSummary.ID,
+				EventID:       eventSummary.EventID,
 				AttendeeCount: eventSummary.AttendeeCount,
-				Status:    eventSummary.Status,
-				CreatedAt: eventSummary.CreatedAt,
-				UpdatedAt: eventSummary.UpdatedAt,
+				Status:        eventSummary.Status,
+				CreatedAt:     eventSummary.CreatedAt,
+				UpdatedAt:     eventSummary.UpdatedAt,
 			},
 		}
 		allEventSummaries = append(allEventSummaries, singleEventSummary)
@@ -207,11 +203,11 @@ func GetSchoolReports(filter bson.D) ([]*model.AllSchoolReports, error) {
 		}
 		singleSchoolReport := &model.AllSchoolReports{
 			SchoolReport: &model.SchoolReport{
-				ID:        schoolReport.ID,
+				ID:         schoolReport.ID,
 				Curriculum: schoolReport.Curriculum,
-				Status:    schoolReport.Status,
-				CreatedAt: schoolReport.CreatedAt,
-				UpdatedAt: schoolReport.UpdatedAt,
+				Status:     schoolReport.Status,
+				CreatedAt:  schoolReport.CreatedAt,
+				UpdatedAt:  schoolReport.UpdatedAt,
 			},
 			User: &model.User{
 				ID:        user.ID,

@@ -1,10 +1,9 @@
-package database 
+package database
 
 import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,8 +11,8 @@ import (
 
 var Db *mongo.Database
 
-func InitDB(){
-	ATLAS_URI := os.Getenv("ATLAS_URI")
+func InitDB() {
+	ATLAS_URI := "mongodb+srv://spars01:H0YXCAGHoUihHcSZ@cluster0.wuezj.mongodb.net/prevention_productivity?retryWrites=true&w=majority"
 	// Set client options
 	if ATLAS_URI == "" {
 		ATLAS_URI = "mongodb://localhost:27017"
@@ -39,7 +38,7 @@ func InitDB(){
 	Db = client.Database("prevention_productivity")
 }
 
-func CloseDB(){
+func CloseDB() {
 	err := Db.Client().Disconnect(context.TODO())
 
 	if err != nil {

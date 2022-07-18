@@ -1099,7 +1099,53 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	println("hit")
 	if IsAdmin {
 		filter := bson.D{}
-		return utils.GetLogs(filter)
+		// this times out
+		logsCollection := database.Db.Collection("logs")
+		notesCollection := database.Db.Collection("notes")
+		userCollection := database.Db.Collection("users")
+		cursor, err := logsCollection.Find(context.TODO(), filter)
+		if err != nil {
+			return nil, err
+		}
+		var allLogs []*model.AllLogs
+		for cursor.Next(context.TODO()) {
+			println("logs found")
+			var log *model.Log
+			err := cursor.Decode(&log)
+			if err != nil {
+				return nil, err
+			}
+			noteFilter := bson.D{{"item_id", log.ID}}
+			noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
+			if noteErr != nil {
+				return nil, err
+			}
+			intNoteCount := int(noteCount)
+			var user *model.User
+			userFilter := bson.D{{"_id", log.UserID}}
+			err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
+			if err != nil {
+				return nil, err
+			}
+			singleLog := &model.AllLogs{
+				Log: &model.Log{
+					ID:        log.ID,
+					FocusArea: log.FocusArea,
+					Status:    log.Status,
+					CreatedAt: log.CreatedAt,
+					UpdatedAt: log.UpdatedAt,
+				},
+				User: &model.User{
+					ID:        user.ID,
+					FirstName: user.FirstName,
+					LastName:  user.LastName,
+				},
+				NoteCount: &intNoteCount,
+			}
+			allLogs = append(allLogs, singleLog)
+		}
+		println("return")
+		return allLogs, nil
 	} else if UserID != "" {
 		filter := bson.D{{"user_id", UserID}}
 		return utils.GetLogs(filter)
@@ -1134,6 +1180,7 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 				NextSteps:    log.NextSteps,
 				Status:       log.Status,
 				CreatedAt:    log.CreatedAt,
+				UpdatedAt:    log.UpdatedAt,
 			})
 		}
 		return logs, nil
@@ -1532,8 +1579,35 @@ func (r *queryResolver) ContactInfo(ctx context.Context, id string) (*model.Cont
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.Event, error) {
-	// build out an admin search functionality
-	panic(fmt.Errorf("not implemented"))
+	IsAdmin := auth.ForAdmin(ctx)
+	if !IsAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var events []*model.Event
+	collection := database.Db.Collection("events")
+	filter := bson.D{{"event_lead", userID}}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var event *model.Event
+		err := cursor.Decode(&event)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, &model.Event{
+			ID:          event.ID,
+			Title:       event.Title,
+			Description: event.Description,
+			StartDate:   event.StartDate,
+			EndDate:     event.EndDate,
+			Status:      event.Status,
+			CreatedAt:   event.CreatedAt,
+			UpdatedAt:   event.UpdatedAt,
+		})
+	}
+	return events, nil
 }
 
 func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error) {
@@ -1542,8 +1616,64 @@ func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) (
 }
 
 func (r *queryResolver) UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error) {
-	// build out an admin search functionality
-	panic(fmt.Errorf("not implemented"))
+	IsAdmin := auth.ForAdmin(ctx)
+	if !IsAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var reports []*model.SchoolReport
+	collection := database.Db.Collection("school_reports")
+	filter := bson.D{{"user_id", userID}}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var report *model.SchoolReport
+		err := cursor.Decode(&report)
+		if err != nil {
+			return nil, err
+		}
+		reports = append(reports, &model.SchoolReport{
+			ID:           report.ID,
+			UserID:       report.UserID,
+			Curriculum:   report.Curriculum,
+			School:       report.School,
+			StudentCount: report.StudentCount,
+			CreatedAt:    report.CreatedAt,
+			UpdatedAt:    report.UpdatedAt,
+		})
+	}
+	return reports, nil
+}
+
+func (r *queryResolver) UserNotes(ctx context.Context, userID string) ([]*model.Note, error) {
+	IsAdmin := auth.ForAdmin(ctx)
+	if !IsAdmin {
+		return nil, fmt.Errorf("Unauthorized")
+	}
+	var notes []*model.Note
+	collection := database.Db.Collection("notes")
+	filter := bson.D{{"user_id", userID}}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var note *model.Note
+		err := cursor.Decode(&note)
+		if err != nil {
+			return nil, err
+		}
+		notes = append(notes, &model.Note{
+			ID:        note.ID,
+			UserID:    note.UserID,
+			ItemID:    note.ItemID,
+			Title:     note.Title,
+			CreatedAt: note.CreatedAt,
+			UpdatedAt: note.UpdatedAt,
+		})
+	}
+	return notes, nil
 }
 
 // Mutation returns generated1.MutationResolver implementation.

@@ -70,12 +70,12 @@ type ComplexityRoot struct {
 	}
 
 	Contact struct {
+		Active    func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		CreatedBy func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		ID        func(childComplexity int) int
-		Active  func(childComplexity int) int
 		Name      func(childComplexity int) int
 		Notes     func(childComplexity int) int
 		Phone     func(childComplexity int) int
@@ -150,6 +150,7 @@ type ComplexityRoot struct {
 	}
 
 	Grant struct {
+		Active      func(childComplexity int) int
 		AwardDate   func(childComplexity int) int
 		AwardNumber func(childComplexity int) int
 		Budget      func(childComplexity int) int
@@ -159,7 +160,6 @@ type ComplexityRoot struct {
 		EndDate     func(childComplexity int) int
 		Goals       func(childComplexity int) int
 		ID          func(childComplexity int) int
-		Active    func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Objectives  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
@@ -251,6 +251,7 @@ type ComplexityRoot struct {
 		UserEventSummaries func(childComplexity int, userID string) int
 		UserEvents         func(childComplexity int, userID string) int
 		UserLogs           func(childComplexity int, userID string) int
+		UserNotes          func(childComplexity int, userID string) int
 		UserSchoolReports  func(childComplexity int, userID string) int
 		Users              func(childComplexity int) int
 	}
@@ -278,13 +279,13 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		Active    func(childComplexity int) int
+		Admin     func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		FirstName func(childComplexity int) int
 		ID        func(childComplexity int) int
-		Active  func(childComplexity int) int
-		Admin   func(childComplexity int) int
 		LastName  func(childComplexity int) int
 		Password  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -350,6 +351,7 @@ type QueryResolver interface {
 	UserEvents(ctx context.Context, userID string) ([]*model.Event, error)
 	UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error)
 	UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error)
+	UserNotes(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
 type executableSchema struct {
@@ -458,6 +460,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AllSchoolReports.User(childComplexity), true
 
+	case "Contact.active":
+		if e.complexity.Contact.Active == nil {
+			break
+		}
+
+		return e.complexity.Contact.Active(childComplexity), true
+
 	case "Contact.created_at":
 		if e.complexity.Contact.CreatedAt == nil {
 			break
@@ -492,13 +501,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Contact.ID(childComplexity), true
-
-	case "Contact.active":
-		if e.complexity.Contact.Active == nil {
-			break
-		}
-
-		return e.complexity.Contact.Active(childComplexity), true
 
 	case "Contact.name":
 		if e.complexity.Contact.Name == nil {
@@ -892,6 +894,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventWithNotes.Notes(childComplexity), true
 
+	case "Grant.active":
+		if e.complexity.Grant.Active == nil {
+			break
+		}
+
+		return e.complexity.Grant.Active(childComplexity), true
+
 	case "Grant.award_date":
 		if e.complexity.Grant.AwardDate == nil {
 			break
@@ -954,13 +963,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grant.ID(childComplexity), true
-
-	case "Grant.active":
-		if e.complexity.Grant.Active == nil {
-			break
-		}
-
-		return e.complexity.Grant.Active(childComplexity), true
 
 	case "Grant.name":
 		if e.complexity.Grant.Name == nil {
@@ -1724,6 +1726,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UserLogs(childComplexity, args["user_id"].(string)), true
 
+	case "Query.userNotes":
+		if e.complexity.Query.UserNotes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userNotes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserNotes(childComplexity, args["user_id"].(string)), true
+
 	case "Query.userSchoolReports":
 		if e.complexity.Query.UserSchoolReports == nil {
 			break
@@ -1855,6 +1869,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportWithNotes.SchoolReport(childComplexity), true
 
+	case "User.active":
+		if e.complexity.User.Active == nil {
+			break
+		}
+
+		return e.complexity.User.Active(childComplexity), true
+
+	case "User.admin":
+		if e.complexity.User.Admin == nil {
+			break
+		}
+
+		return e.complexity.User.Admin(childComplexity), true
+
 	case "User.created_at":
 		if e.complexity.User.CreatedAt == nil {
 			break
@@ -1889,20 +1917,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
-
-	case "User.active":
-		if e.complexity.User.Active == nil {
-			break
-		}
-
-		return e.complexity.User.Active(childComplexity), true
-
-	case "User.admin":
-		if e.complexity.User.Admin == nil {
-			break
-		}
-
-		return e.complexity.User.Admin(childComplexity), true
 
 	case "User.last_name":
 		if e.complexity.User.LastName == nil {
@@ -2226,6 +2240,7 @@ type Query {
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
   userSchoolReports(user_id: ID!): [SchoolReport!]  
+  userNotes(user_id: ID!): [Note!]
 }
 
 input NewUser {
@@ -3223,6 +3238,21 @@ func (ec *executionContext) field_Query_userEvents_args(ctx context.Context, raw
 }
 
 func (ec *executionContext) field_Query_userLogs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["user_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userNotes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -12191,6 +12221,74 @@ func (ec *executionContext) fieldContext_Query_userSchoolReports(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_userNotes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userNotes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserNotes(rctx, fc.Args["user_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Note)
+	fc.Result = res
+	return ec.marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userNotes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "item_id":
+				return ec.fieldContext_Note_item_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Note_user_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "content":
+				return ec.fieldContext_Note_content(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userNotes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -18469,6 +18567,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userSchoolReports(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "userNotes":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userNotes(ctx, field)
 				return res
 			}
 
