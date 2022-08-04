@@ -238,6 +238,9 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 	contact.Notes = *newContact.Notes
 	contact.CreatedBy = userID
 	contact.Create()
+	if contact.ID == "" {
+		return &model.Contact{}, fmt.Errorf("Contact already exists")
+	}
 	return &model.Contact{
 		ID:        &contact.ID,
 		Name:      &contact.Name,

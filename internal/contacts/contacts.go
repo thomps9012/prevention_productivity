@@ -26,13 +26,20 @@ type Contact struct {
 
 func (c *Contact) Create() {
 	collection := database.Db.Collection("contacts")
-	c.ID = uuid.New().String()
-	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-	c.UpdatedAt = c.CreatedAt
-	c.Active = true
-	_, err := collection.InsertOne(context.TODO(), c)
-	if err != nil {
-		panic(err)
+	var contact Contact
+	filter := bson.D{{"name", c.Name}, {"email", c.Email}, {"phone", c.Phone}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&contact)
+	if err != nil{
+		c.ID = uuid.New().String()
+		c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+		c.UpdatedAt = c.CreatedAt
+		c.Active = true
+		_, err := collection.InsertOne(context.TODO(), c)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fmt.Errorf("contact already exists")
 	}
 }
 
