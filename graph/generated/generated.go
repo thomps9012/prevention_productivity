@@ -45,6 +45,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AllEventSummaries struct {
+		Coplanners   func(childComplexity int) int
 		Event        func(childComplexity int) int
 		EventSummary func(childComplexity int) int
 		NoteCount    func(childComplexity int) int
@@ -52,9 +53,10 @@ type ComplexityRoot struct {
 	}
 
 	AllEvents struct {
-		Event     func(childComplexity int) int
-		NoteCount func(childComplexity int) int
-		User      func(childComplexity int) int
+		Coplanners func(childComplexity int) int
+		Event      func(childComplexity int) int
+		NoteCount  func(childComplexity int) int
+		User       func(childComplexity int) int
 	}
 
 	AllLogs struct {
@@ -63,10 +65,18 @@ type ComplexityRoot struct {
 		User      func(childComplexity int) int
 	}
 
-	AllSchoolReports struct {
-		NoteCount    func(childComplexity int) int
-		SchoolReport func(childComplexity int) int
-		User         func(childComplexity int) int
+	AllSchoolReportDebriefs struct {
+		Cofacilitators      func(childComplexity int) int
+		NoteCount           func(childComplexity int) int
+		SchoolReportDebrief func(childComplexity int) int
+		User                func(childComplexity int) int
+	}
+
+	AllSchoolReportPlans struct {
+		Cofacilitators   func(childComplexity int) int
+		NoteCount        func(childComplexity int) int
+		SchoolReportPlan func(childComplexity int) int
+		User             func(childComplexity int) int
 	}
 
 	Contact struct {
@@ -95,6 +105,7 @@ type ComplexityRoot struct {
 		Budget                 func(childComplexity int) int
 		Caterer                func(childComplexity int) int
 		CleanUp                func(childComplexity int) int
+		Coplanners             func(childComplexity int) int
 		CreatedAt              func(childComplexity int) int
 		Description            func(childComplexity int) int
 		EducationalGoals       func(childComplexity int) int
@@ -129,6 +140,7 @@ type ComplexityRoot struct {
 	EventSummary struct {
 		AttendeeCount func(childComplexity int) int
 		Challenges    func(childComplexity int) int
+		Coplanners    func(childComplexity int) int
 		CreatedAt     func(childComplexity int) int
 		EventID       func(childComplexity int) int
 		ID            func(childComplexity int) int
@@ -167,16 +179,15 @@ type ComplexityRoot struct {
 	}
 
 	Log struct {
-		Actions      func(childComplexity int) int
-		CreatedAt    func(childComplexity int) int
-		FocusArea    func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Improvements func(childComplexity int) int
-		NextSteps    func(childComplexity int) int
-		Status       func(childComplexity int) int
-		Successes    func(childComplexity int) int
-		UpdatedAt    func(childComplexity int) int
-		UserID       func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		DailyActivity func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Improvements  func(childComplexity int) int
+		NextSteps     func(childComplexity int) int
+		Positives     func(childComplexity int) int
+		Status        func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UserID        func(childComplexity int) int
 	}
 
 	LogWithNotes struct {
@@ -185,40 +196,45 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ApproveEvent        func(childComplexity int, id string) int
-		ApproveEventSummary func(childComplexity int, id string) int
-		ApproveLog          func(childComplexity int, id string) int
-		ApproveSchoolReport func(childComplexity int, id string) int
-		CreateContact       func(childComplexity int, newContact model.NewContact) int
-		CreateEvent         func(childComplexity int, newEvent model.NewEvent) int
-		CreateEventSummary  func(childComplexity int, newEventSummary model.NewEventSummary) int
-		CreateGrant         func(childComplexity int, newGrant model.NewGrant) int
-		CreateLog           func(childComplexity int, newLog model.NewLog) int
-		CreateNote          func(childComplexity int, newNote model.NewNote) int
-		CreateSchoolReport  func(childComplexity int, newSchoolReport model.NewSchoolReport) int
-		CreateUser          func(childComplexity int, newUser model.NewUser) int
-		DeleteUser          func(childComplexity int, id string) int
-		Login               func(childComplexity int, login model.LoginInput) int
-		RefreshToken        func(childComplexity int, refreshToken model.RefreshTokenInput) int
-		RejectEvent         func(childComplexity int, id string) int
-		RejectEventSummary  func(childComplexity int, id string) int
-		RejectLog           func(childComplexity int, id string) int
-		RejectSchoolReport  func(childComplexity int, id string) int
-		RemoveContact       func(childComplexity int, id string) int
-		RemoveEvent         func(childComplexity int, id string) int
-		RemoveEventSummary  func(childComplexity int, id string) int
-		RemoveGrant         func(childComplexity int, id string) int
-		RemoveLog           func(childComplexity int, id string) int
-		RemoveNote          func(childComplexity int, id string) int
-		RemoveSchoolReport  func(childComplexity int, id string) int
-		UpdateContact       func(childComplexity int, id string, updateContact model.UpdateContact) int
-		UpdateEvent         func(childComplexity int, id string, updateEvent model.UpdateEvent) int
-		UpdateEventSummary  func(childComplexity int, id string, updateEventSummary model.UpdateEventSummary) int
-		UpdateGrant         func(childComplexity int, id string, updateGrant model.UpdateGrant) int
-		UpdateLog           func(childComplexity int, id string, updateLog model.UpdateLog) int
-		UpdateNote          func(childComplexity int, id string, updateNote model.UpdateNote) int
-		UpdateSchoolReport  func(childComplexity int, id string, updateSchoolReport model.UpdateSchoolReport) int
-		UpdateUser          func(childComplexity int, updateUser model.UpdateUser, id string) int
+		ApproveEvent               func(childComplexity int, id string) int
+		ApproveEventSummary        func(childComplexity int, id string) int
+		ApproveLog                 func(childComplexity int, id string) int
+		ApproveSchoolReportDebrief func(childComplexity int, id string) int
+		ApproveSchoolReportPlan    func(childComplexity int, id string) int
+		CreateContact              func(childComplexity int, newContact model.NewContact) int
+		CreateEvent                func(childComplexity int, newEvent model.NewEvent) int
+		CreateEventSummary         func(childComplexity int, newEventSummary model.NewEventSummary) int
+		CreateGrant                func(childComplexity int, newGrant model.NewGrant) int
+		CreateLog                  func(childComplexity int, newLog model.NewLog) int
+		CreateNote                 func(childComplexity int, newNote model.NewNote) int
+		CreateSchoolReportDebrief  func(childComplexity int, newSchoolReportDebrief model.NewSchoolReportDebrief) int
+		CreateSchoolReportPlan     func(childComplexity int, newSchoolReportPlan model.NewSchoolReportPlan) int
+		CreateUser                 func(childComplexity int, newUser model.NewUser) int
+		DeleteUser                 func(childComplexity int, id string) int
+		Login                      func(childComplexity int, login model.LoginInput) int
+		RefreshToken               func(childComplexity int, refreshToken model.RefreshTokenInput) int
+		RejectEvent                func(childComplexity int, id string) int
+		RejectEventSummary         func(childComplexity int, id string) int
+		RejectLog                  func(childComplexity int, id string) int
+		RejectSchoolReportDebrief  func(childComplexity int, id string) int
+		RejectSchoolReportPlan     func(childComplexity int, id string) int
+		RemoveContact              func(childComplexity int, id string) int
+		RemoveEvent                func(childComplexity int, id string) int
+		RemoveEventSummary         func(childComplexity int, id string) int
+		RemoveGrant                func(childComplexity int, id string) int
+		RemoveLog                  func(childComplexity int, id string) int
+		RemoveNote                 func(childComplexity int, id string) int
+		RemoveSchoolReportDebrief  func(childComplexity int, id string) int
+		RemoveSchoolReportPlan     func(childComplexity int, id string) int
+		UpdateContact              func(childComplexity int, id string, updateContact model.UpdateContact) int
+		UpdateEvent                func(childComplexity int, id string, updateEvent model.UpdateEvent) int
+		UpdateEventSummary         func(childComplexity int, id string, updateEventSummary model.UpdateEventSummary) int
+		UpdateGrant                func(childComplexity int, id string, updateGrant model.UpdateGrant) int
+		UpdateLog                  func(childComplexity int, id string, updateLog model.UpdateLog) int
+		UpdateNote                 func(childComplexity int, id string, updateNote model.UpdateNote) int
+		UpdateSchoolReportDebrief  func(childComplexity int, id string, updateSchoolReportDebrief model.UpdateSchoolReportDebrief) int
+		UpdateSchoolReportPlan     func(childComplexity int, id string, updateSchoolReportPlan model.UpdateSchoolReportPlan) int
+		UpdateUser                 func(childComplexity int, updateUser model.UpdateUser, id string) int
 	}
 
 	Note struct {
@@ -232,50 +248,67 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AllLogs            func(childComplexity int) int
-		ContactInfo        func(childComplexity int, id string) int
-		Contacts           func(childComplexity int) int
-		Event              func(childComplexity int, id string) int
-		EventSummaries     func(childComplexity int) int
-		EventSummary       func(childComplexity int, id string) int
-		Events             func(childComplexity int) int
-		Grant              func(childComplexity int, id string) int
-		Grants             func(childComplexity int) int
-		ItemNotes          func(childComplexity int, itemID string) int
-		Log                func(childComplexity int, id string) int
-		Me                 func(childComplexity int) int
-		Note               func(childComplexity int, id string) int
-		SchoolReport       func(childComplexity int, id string) int
-		SchoolReports      func(childComplexity int) int
-		User               func(childComplexity int, id string) int
-		UserEventSummaries func(childComplexity int, userID string) int
-		UserEvents         func(childComplexity int, userID string) int
-		UserLogs           func(childComplexity int, userID string) int
-		UserNotes          func(childComplexity int, userID string) int
-		UserSchoolReports  func(childComplexity int, userID string) int
-		Users              func(childComplexity int) int
+		AllLogs                  func(childComplexity int) int
+		ContactInfo              func(childComplexity int, id string) int
+		Contacts                 func(childComplexity int) int
+		Event                    func(childComplexity int, id string) int
+		EventSummaries           func(childComplexity int) int
+		EventSummary             func(childComplexity int, id string) int
+		Events                   func(childComplexity int) int
+		Grant                    func(childComplexity int, id string) int
+		Grants                   func(childComplexity int) int
+		ItemNotes                func(childComplexity int, itemID string) int
+		Log                      func(childComplexity int, id string) int
+		Me                       func(childComplexity int) int
+		Note                     func(childComplexity int, id string) int
+		SchoolReportDebrief      func(childComplexity int, id string) int
+		SchoolReportDebriefs     func(childComplexity int) int
+		SchoolReportPlan         func(childComplexity int, id string) int
+		SchoolReportPlans        func(childComplexity int) int
+		User                     func(childComplexity int, id string) int
+		UserEventSummaries       func(childComplexity int, userID string) int
+		UserEvents               func(childComplexity int, userID string) int
+		UserLogs                 func(childComplexity int, userID string) int
+		UserNotes                func(childComplexity int, userID string) int
+		UserSchoolReportDebriefs func(childComplexity int, userID string) int
+		UserSchoolReportPlans    func(childComplexity int, userID string) int
+		Users                    func(childComplexity int) int
 	}
 
-	SchoolReport struct {
-		Challenges   func(childComplexity int) int
-		CreatedAt    func(childComplexity int) int
-		Curriculum   func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Improvements func(childComplexity int) int
-		LessonPlan   func(childComplexity int) int
-		School       func(childComplexity int) int
-		Status       func(childComplexity int) int
-		StudentCount func(childComplexity int) int
-		StudentList  func(childComplexity int) int
-		Successes    func(childComplexity int) int
-		Topics       func(childComplexity int) int
-		UpdatedAt    func(childComplexity int) int
-		UserID       func(childComplexity int) int
+	SchoolReportDebrief struct {
+		ChallengesImprovements func(childComplexity int) int
+		CreatedAt              func(childComplexity int) int
+		Discussion             func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		LessonPlanID           func(childComplexity int) int
+		Positives              func(childComplexity int) int
+		Status                 func(childComplexity int) int
+		StudentCount           func(childComplexity int) int
+		StudentList            func(childComplexity int) int
+		UpdatedAt              func(childComplexity int) int
+		UserID                 func(childComplexity int) int
 	}
 
-	SchoolReportWithNotes struct {
-		Notes        func(childComplexity int) int
-		SchoolReport func(childComplexity int) int
+	SchoolReportDebriefWithNotes struct {
+		Notes               func(childComplexity int) int
+		SchoolReportDebrief func(childComplexity int) int
+	}
+
+	SchoolReportPlan struct {
+		Cofacilitators func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		Curriculum     func(childComplexity int) int
+		ID             func(childComplexity int) int
+		LessonTopics   func(childComplexity int) int
+		School         func(childComplexity int) int
+		Status         func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+	}
+
+	SchoolReportPlanWithNotes struct {
+		Notes            func(childComplexity int) int
+		SchoolReportPlan func(childComplexity int) int
 	}
 
 	User struct {
@@ -323,11 +356,16 @@ type MutationResolver interface {
 	RemoveEventSummary(ctx context.Context, id string) (*bool, error)
 	ApproveEventSummary(ctx context.Context, id string) (*bool, error)
 	RejectEventSummary(ctx context.Context, id string) (*bool, error)
-	CreateSchoolReport(ctx context.Context, newSchoolReport model.NewSchoolReport) (*model.SchoolReport, error)
-	UpdateSchoolReport(ctx context.Context, id string, updateSchoolReport model.UpdateSchoolReport) (*model.SchoolReport, error)
-	RemoveSchoolReport(ctx context.Context, id string) (*bool, error)
-	ApproveSchoolReport(ctx context.Context, id string) (*bool, error)
-	RejectSchoolReport(ctx context.Context, id string) (*bool, error)
+	CreateSchoolReportPlan(ctx context.Context, newSchoolReportPlan model.NewSchoolReportPlan) (*model.SchoolReportPlan, error)
+	UpdateSchoolReportPlan(ctx context.Context, id string, updateSchoolReportPlan model.UpdateSchoolReportPlan) (*model.SchoolReportPlan, error)
+	RemoveSchoolReportPlan(ctx context.Context, id string) (*bool, error)
+	ApproveSchoolReportPlan(ctx context.Context, id string) (*bool, error)
+	RejectSchoolReportPlan(ctx context.Context, id string) (*bool, error)
+	CreateSchoolReportDebrief(ctx context.Context, newSchoolReportDebrief model.NewSchoolReportDebrief) (*model.SchoolReportDebrief, error)
+	UpdateSchoolReportDebrief(ctx context.Context, id string, updateSchoolReportDebrief model.UpdateSchoolReportDebrief) (*model.SchoolReportDebrief, error)
+	RemoveSchoolReportDebrief(ctx context.Context, id string) (*bool, error)
+	ApproveSchoolReportDebrief(ctx context.Context, id string) (*bool, error)
+	RejectSchoolReportDebrief(ctx context.Context, id string) (*bool, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -340,17 +378,20 @@ type QueryResolver interface {
 	UserLogs(ctx context.Context, userID string) ([]*model.Log, error)
 	Event(ctx context.Context, id string) (*model.EventWithNotes, error)
 	EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error)
-	SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error)
+	SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error)
+	SchoolReportDebrief(ctx context.Context, id string) (*model.SchoolReportDebriefWithNotes, error)
 	Events(ctx context.Context) ([]*model.AllEvents, error)
 	EventSummaries(ctx context.Context) ([]*model.AllEventSummaries, error)
-	SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error)
+	SchoolReportPlans(ctx context.Context) ([]*model.AllSchoolReportPlans, error)
+	SchoolReportDebriefs(ctx context.Context) ([]*model.AllSchoolReportDebriefs, error)
 	Grants(ctx context.Context) ([]*model.Grant, error)
 	Grant(ctx context.Context, id string) (*model.Grant, error)
 	Contacts(ctx context.Context) ([]*model.Contact, error)
 	ContactInfo(ctx context.Context, id string) (*model.ContactInfo, error)
 	UserEvents(ctx context.Context, userID string) ([]*model.Event, error)
 	UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummary, error)
-	UserSchoolReports(ctx context.Context, userID string) ([]*model.SchoolReport, error)
+	UserSchoolReportPlans(ctx context.Context, userID string) ([]*model.SchoolReportPlan, error)
+	UserSchoolReportDebriefs(ctx context.Context, userID string) ([]*model.SchoolReportDebrief, error)
 	UserNotes(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
@@ -368,6 +409,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AllEventSummaries.coplanners":
+		if e.complexity.AllEventSummaries.Coplanners == nil {
+			break
+		}
+
+		return e.complexity.AllEventSummaries.Coplanners(childComplexity), true
 
 	case "AllEventSummaries.event":
 		if e.complexity.AllEventSummaries.Event == nil {
@@ -396,6 +444,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AllEventSummaries.User(childComplexity), true
+
+	case "AllEvents.coplanners":
+		if e.complexity.AllEvents.Coplanners == nil {
+			break
+		}
+
+		return e.complexity.AllEvents.Coplanners(childComplexity), true
 
 	case "AllEvents.event":
 		if e.complexity.AllEvents.Event == nil {
@@ -439,26 +494,61 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AllLogs.User(childComplexity), true
 
-	case "AllSchoolReports.noteCount":
-		if e.complexity.AllSchoolReports.NoteCount == nil {
+	case "AllSchoolReportDebriefs.cofacilitators":
+		if e.complexity.AllSchoolReportDebriefs.Cofacilitators == nil {
 			break
 		}
 
-		return e.complexity.AllSchoolReports.NoteCount(childComplexity), true
+		return e.complexity.AllSchoolReportDebriefs.Cofacilitators(childComplexity), true
 
-	case "AllSchoolReports.school_report":
-		if e.complexity.AllSchoolReports.SchoolReport == nil {
+	case "AllSchoolReportDebriefs.noteCount":
+		if e.complexity.AllSchoolReportDebriefs.NoteCount == nil {
 			break
 		}
 
-		return e.complexity.AllSchoolReports.SchoolReport(childComplexity), true
+		return e.complexity.AllSchoolReportDebriefs.NoteCount(childComplexity), true
 
-	case "AllSchoolReports.user":
-		if e.complexity.AllSchoolReports.User == nil {
+	case "AllSchoolReportDebriefs.school_report_debrief":
+		if e.complexity.AllSchoolReportDebriefs.SchoolReportDebrief == nil {
 			break
 		}
 
-		return e.complexity.AllSchoolReports.User(childComplexity), true
+		return e.complexity.AllSchoolReportDebriefs.SchoolReportDebrief(childComplexity), true
+
+	case "AllSchoolReportDebriefs.user":
+		if e.complexity.AllSchoolReportDebriefs.User == nil {
+			break
+		}
+
+		return e.complexity.AllSchoolReportDebriefs.User(childComplexity), true
+
+	case "AllSchoolReportPlans.cofacilitators":
+		if e.complexity.AllSchoolReportPlans.Cofacilitators == nil {
+			break
+		}
+
+		return e.complexity.AllSchoolReportPlans.Cofacilitators(childComplexity), true
+
+	case "AllSchoolReportPlans.noteCount":
+		if e.complexity.AllSchoolReportPlans.NoteCount == nil {
+			break
+		}
+
+		return e.complexity.AllSchoolReportPlans.NoteCount(childComplexity), true
+
+	case "AllSchoolReportPlans.school_report_plan":
+		if e.complexity.AllSchoolReportPlans.SchoolReportPlan == nil {
+			break
+		}
+
+		return e.complexity.AllSchoolReportPlans.SchoolReportPlan(childComplexity), true
+
+	case "AllSchoolReportPlans.user":
+		if e.complexity.AllSchoolReportPlans.User == nil {
+			break
+		}
+
+		return e.complexity.AllSchoolReportPlans.User(childComplexity), true
 
 	case "Contact.active":
 		if e.complexity.Contact.Active == nil {
@@ -592,6 +682,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Event.CleanUp(childComplexity), true
+
+	case "Event.coplanners":
+		if e.complexity.Event.Coplanners == nil {
+			break
+		}
+
+		return e.complexity.Event.Coplanners(childComplexity), true
 
 	case "Event.created_at":
 		if e.complexity.Event.CreatedAt == nil {
@@ -810,6 +907,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventSummary.Challenges(childComplexity), true
 
+	case "EventSummary.coplanners":
+		if e.complexity.EventSummary.Coplanners == nil {
+			break
+		}
+
+		return e.complexity.EventSummary.Coplanners(childComplexity), true
+
 	case "EventSummary.created_at":
 		if e.complexity.EventSummary.CreatedAt == nil {
 			break
@@ -992,13 +1096,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Grant.UpdatedAt(childComplexity), true
 
-	case "Log.actions":
-		if e.complexity.Log.Actions == nil {
-			break
-		}
-
-		return e.complexity.Log.Actions(childComplexity), true
-
 	case "Log.created_at":
 		if e.complexity.Log.CreatedAt == nil {
 			break
@@ -1006,12 +1103,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.CreatedAt(childComplexity), true
 
-	case "Log.focus_area":
-		if e.complexity.Log.FocusArea == nil {
+	case "Log.daily_activity":
+		if e.complexity.Log.DailyActivity == nil {
 			break
 		}
 
-		return e.complexity.Log.FocusArea(childComplexity), true
+		return e.complexity.Log.DailyActivity(childComplexity), true
 
 	case "Log.id":
 		if e.complexity.Log.ID == nil {
@@ -1034,19 +1131,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.NextSteps(childComplexity), true
 
+	case "Log.positives":
+		if e.complexity.Log.Positives == nil {
+			break
+		}
+
+		return e.complexity.Log.Positives(childComplexity), true
+
 	case "Log.status":
 		if e.complexity.Log.Status == nil {
 			break
 		}
 
 		return e.complexity.Log.Status(childComplexity), true
-
-	case "Log.successes":
-		if e.complexity.Log.Successes == nil {
-			break
-		}
-
-		return e.complexity.Log.Successes(childComplexity), true
 
 	case "Log.updated_at":
 		if e.complexity.Log.UpdatedAt == nil {
@@ -1112,17 +1209,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ApproveLog(childComplexity, args["id"].(string)), true
 
-	case "Mutation.approveSchoolReport":
-		if e.complexity.Mutation.ApproveSchoolReport == nil {
+	case "Mutation.approveSchoolReportDebrief":
+		if e.complexity.Mutation.ApproveSchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_approveSchoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_approveSchoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ApproveSchoolReport(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.ApproveSchoolReportDebrief(childComplexity, args["id"].(string)), true
+
+	case "Mutation.approveSchoolReportPlan":
+		if e.complexity.Mutation.ApproveSchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_approveSchoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApproveSchoolReportPlan(childComplexity, args["id"].(string)), true
 
 	case "Mutation.createContact":
 		if e.complexity.Mutation.CreateContact == nil {
@@ -1196,17 +1305,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateNote(childComplexity, args["newNote"].(model.NewNote)), true
 
-	case "Mutation.createSchoolReport":
-		if e.complexity.Mutation.CreateSchoolReport == nil {
+	case "Mutation.createSchoolReportDebrief":
+		if e.complexity.Mutation.CreateSchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createSchoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createSchoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSchoolReport(childComplexity, args["newSchoolReport"].(model.NewSchoolReport)), true
+		return e.complexity.Mutation.CreateSchoolReportDebrief(childComplexity, args["newSchoolReportDebrief"].(model.NewSchoolReportDebrief)), true
+
+	case "Mutation.createSchoolReportPlan":
+		if e.complexity.Mutation.CreateSchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSchoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSchoolReportPlan(childComplexity, args["newSchoolReportPlan"].(model.NewSchoolReportPlan)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -1292,17 +1413,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RejectLog(childComplexity, args["id"].(string)), true
 
-	case "Mutation.rejectSchoolReport":
-		if e.complexity.Mutation.RejectSchoolReport == nil {
+	case "Mutation.rejectSchoolReportDebrief":
+		if e.complexity.Mutation.RejectSchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_rejectSchoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_rejectSchoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RejectSchoolReport(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.RejectSchoolReportDebrief(childComplexity, args["id"].(string)), true
+
+	case "Mutation.rejectSchoolReportPlan":
+		if e.complexity.Mutation.RejectSchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_rejectSchoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RejectSchoolReportPlan(childComplexity, args["id"].(string)), true
 
 	case "Mutation.removeContact":
 		if e.complexity.Mutation.RemoveContact == nil {
@@ -1376,17 +1509,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RemoveNote(childComplexity, args["id"].(string)), true
 
-	case "Mutation.removeSchoolReport":
-		if e.complexity.Mutation.RemoveSchoolReport == nil {
+	case "Mutation.removeSchoolReportDebrief":
+		if e.complexity.Mutation.RemoveSchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_removeSchoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeSchoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveSchoolReport(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.RemoveSchoolReportDebrief(childComplexity, args["id"].(string)), true
+
+	case "Mutation.removeSchoolReportPlan":
+		if e.complexity.Mutation.RemoveSchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeSchoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveSchoolReportPlan(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateContact":
 		if e.complexity.Mutation.UpdateContact == nil {
@@ -1460,17 +1605,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateNote(childComplexity, args["id"].(string), args["updateNote"].(model.UpdateNote)), true
 
-	case "Mutation.updateSchoolReport":
-		if e.complexity.Mutation.UpdateSchoolReport == nil {
+	case "Mutation.updateSchoolReportDebrief":
+		if e.complexity.Mutation.UpdateSchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateSchoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateSchoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSchoolReport(childComplexity, args["id"].(string), args["updateSchoolReport"].(model.UpdateSchoolReport)), true
+		return e.complexity.Mutation.UpdateSchoolReportDebrief(childComplexity, args["id"].(string), args["updateSchoolReportDebrief"].(model.UpdateSchoolReportDebrief)), true
+
+	case "Mutation.updateSchoolReportPlan":
+		if e.complexity.Mutation.UpdateSchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSchoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSchoolReportPlan(childComplexity, args["id"].(string), args["updateSchoolReportPlan"].(model.UpdateSchoolReportPlan)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -1659,24 +1816,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Note(childComplexity, args["id"].(string)), true
 
-	case "Query.schoolReport":
-		if e.complexity.Query.SchoolReport == nil {
+	case "Query.schoolReportDebrief":
+		if e.complexity.Query.SchoolReportDebrief == nil {
 			break
 		}
 
-		args, err := ec.field_Query_schoolReport_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_schoolReportDebrief_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.SchoolReport(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.SchoolReportDebrief(childComplexity, args["id"].(string)), true
 
-	case "Query.schoolReports":
-		if e.complexity.Query.SchoolReports == nil {
+	case "Query.schoolReportDebriefs":
+		if e.complexity.Query.SchoolReportDebriefs == nil {
 			break
 		}
 
-		return e.complexity.Query.SchoolReports(childComplexity), true
+		return e.complexity.Query.SchoolReportDebriefs(childComplexity), true
+
+	case "Query.schoolReportPlan":
+		if e.complexity.Query.SchoolReportPlan == nil {
+			break
+		}
+
+		args, err := ec.field_Query_schoolReportPlan_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SchoolReportPlan(childComplexity, args["id"].(string)), true
+
+	case "Query.schoolReportPlans":
+		if e.complexity.Query.SchoolReportPlans == nil {
+			break
+		}
+
+		return e.complexity.Query.SchoolReportPlans(childComplexity), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -1738,17 +1914,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UserNotes(childComplexity, args["user_id"].(string)), true
 
-	case "Query.userSchoolReports":
-		if e.complexity.Query.UserSchoolReports == nil {
+	case "Query.userSchoolReportDebriefs":
+		if e.complexity.Query.UserSchoolReportDebriefs == nil {
 			break
 		}
 
-		args, err := ec.field_Query_userSchoolReports_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_userSchoolReportDebriefs_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.UserSchoolReports(childComplexity, args["user_id"].(string)), true
+		return e.complexity.Query.UserSchoolReportDebriefs(childComplexity, args["user_id"].(string)), true
+
+	case "Query.userSchoolReportPlans":
+		if e.complexity.Query.UserSchoolReportPlans == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userSchoolReportPlans_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserSchoolReportPlans(childComplexity, args["user_id"].(string)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -1757,117 +1945,173 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Users(childComplexity), true
 
-	case "SchoolReport.challenges":
-		if e.complexity.SchoolReport.Challenges == nil {
+	case "SchoolReportDebrief.challenges_improvements":
+		if e.complexity.SchoolReportDebrief.ChallengesImprovements == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Challenges(childComplexity), true
+		return e.complexity.SchoolReportDebrief.ChallengesImprovements(childComplexity), true
 
-	case "SchoolReport.created_at":
-		if e.complexity.SchoolReport.CreatedAt == nil {
+	case "SchoolReportDebrief.created_at":
+		if e.complexity.SchoolReportDebrief.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.CreatedAt(childComplexity), true
+		return e.complexity.SchoolReportDebrief.CreatedAt(childComplexity), true
 
-	case "SchoolReport.curriculum":
-		if e.complexity.SchoolReport.Curriculum == nil {
+	case "SchoolReportDebrief.discussion":
+		if e.complexity.SchoolReportDebrief.Discussion == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Curriculum(childComplexity), true
+		return e.complexity.SchoolReportDebrief.Discussion(childComplexity), true
 
-	case "SchoolReport.id":
-		if e.complexity.SchoolReport.ID == nil {
+	case "SchoolReportDebrief.id":
+		if e.complexity.SchoolReportDebrief.ID == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.ID(childComplexity), true
+		return e.complexity.SchoolReportDebrief.ID(childComplexity), true
 
-	case "SchoolReport.improvements":
-		if e.complexity.SchoolReport.Improvements == nil {
+	case "SchoolReportDebrief.lesson_plan_id":
+		if e.complexity.SchoolReportDebrief.LessonPlanID == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Improvements(childComplexity), true
+		return e.complexity.SchoolReportDebrief.LessonPlanID(childComplexity), true
 
-	case "SchoolReport.lesson_plan":
-		if e.complexity.SchoolReport.LessonPlan == nil {
+	case "SchoolReportDebrief.positives":
+		if e.complexity.SchoolReportDebrief.Positives == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.LessonPlan(childComplexity), true
+		return e.complexity.SchoolReportDebrief.Positives(childComplexity), true
 
-	case "SchoolReport.school":
-		if e.complexity.SchoolReport.School == nil {
+	case "SchoolReportDebrief.status":
+		if e.complexity.SchoolReportDebrief.Status == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.School(childComplexity), true
+		return e.complexity.SchoolReportDebrief.Status(childComplexity), true
 
-	case "SchoolReport.status":
-		if e.complexity.SchoolReport.Status == nil {
+	case "SchoolReportDebrief.student_count":
+		if e.complexity.SchoolReportDebrief.StudentCount == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Status(childComplexity), true
+		return e.complexity.SchoolReportDebrief.StudentCount(childComplexity), true
 
-	case "SchoolReport.student_count":
-		if e.complexity.SchoolReport.StudentCount == nil {
+	case "SchoolReportDebrief.student_list":
+		if e.complexity.SchoolReportDebrief.StudentList == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.StudentCount(childComplexity), true
+		return e.complexity.SchoolReportDebrief.StudentList(childComplexity), true
 
-	case "SchoolReport.student_list":
-		if e.complexity.SchoolReport.StudentList == nil {
+	case "SchoolReportDebrief.updated_at":
+		if e.complexity.SchoolReportDebrief.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.StudentList(childComplexity), true
+		return e.complexity.SchoolReportDebrief.UpdatedAt(childComplexity), true
 
-	case "SchoolReport.successes":
-		if e.complexity.SchoolReport.Successes == nil {
+	case "SchoolReportDebrief.user_id":
+		if e.complexity.SchoolReportDebrief.UserID == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Successes(childComplexity), true
+		return e.complexity.SchoolReportDebrief.UserID(childComplexity), true
 
-	case "SchoolReport.topics":
-		if e.complexity.SchoolReport.Topics == nil {
+	case "SchoolReportDebriefWithNotes.notes":
+		if e.complexity.SchoolReportDebriefWithNotes.Notes == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.Topics(childComplexity), true
+		return e.complexity.SchoolReportDebriefWithNotes.Notes(childComplexity), true
 
-	case "SchoolReport.updated_at":
-		if e.complexity.SchoolReport.UpdatedAt == nil {
+	case "SchoolReportDebriefWithNotes.school_report_debrief":
+		if e.complexity.SchoolReportDebriefWithNotes.SchoolReportDebrief == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.UpdatedAt(childComplexity), true
+		return e.complexity.SchoolReportDebriefWithNotes.SchoolReportDebrief(childComplexity), true
 
-	case "SchoolReport.user_id":
-		if e.complexity.SchoolReport.UserID == nil {
+	case "SchoolReportPlan.cofacilitators":
+		if e.complexity.SchoolReportPlan.Cofacilitators == nil {
 			break
 		}
 
-		return e.complexity.SchoolReport.UserID(childComplexity), true
+		return e.complexity.SchoolReportPlan.Cofacilitators(childComplexity), true
 
-	case "SchoolReportWithNotes.notes":
-		if e.complexity.SchoolReportWithNotes.Notes == nil {
+	case "SchoolReportPlan.created_at":
+		if e.complexity.SchoolReportPlan.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.SchoolReportWithNotes.Notes(childComplexity), true
+		return e.complexity.SchoolReportPlan.CreatedAt(childComplexity), true
 
-	case "SchoolReportWithNotes.school_report":
-		if e.complexity.SchoolReportWithNotes.SchoolReport == nil {
+	case "SchoolReportPlan.curriculum":
+		if e.complexity.SchoolReportPlan.Curriculum == nil {
 			break
 		}
 
-		return e.complexity.SchoolReportWithNotes.SchoolReport(childComplexity), true
+		return e.complexity.SchoolReportPlan.Curriculum(childComplexity), true
+
+	case "SchoolReportPlan.id":
+		if e.complexity.SchoolReportPlan.ID == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.ID(childComplexity), true
+
+	case "SchoolReportPlan.lesson_topics":
+		if e.complexity.SchoolReportPlan.LessonTopics == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.LessonTopics(childComplexity), true
+
+	case "SchoolReportPlan.school":
+		if e.complexity.SchoolReportPlan.School == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.School(childComplexity), true
+
+	case "SchoolReportPlan.status":
+		if e.complexity.SchoolReportPlan.Status == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.Status(childComplexity), true
+
+	case "SchoolReportPlan.updated_at":
+		if e.complexity.SchoolReportPlan.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.UpdatedAt(childComplexity), true
+
+	case "SchoolReportPlan.user_id":
+		if e.complexity.SchoolReportPlan.UserID == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.UserID(childComplexity), true
+
+	case "SchoolReportPlanWithNotes.notes":
+		if e.complexity.SchoolReportPlanWithNotes.Notes == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlanWithNotes.Notes(childComplexity), true
+
+	case "SchoolReportPlanWithNotes.school_report_plan":
+		if e.complexity.SchoolReportPlanWithNotes.SchoolReportPlan == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlanWithNotes.SchoolReportPlan(childComplexity), true
 
 	case "User.active":
 		if e.complexity.User.Active == nil {
@@ -1961,7 +2205,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewGrant,
 		ec.unmarshalInputNewLog,
 		ec.unmarshalInputNewNote,
-		ec.unmarshalInputNewSchoolReport,
+		ec.unmarshalInputNewSchoolReportDebrief,
+		ec.unmarshalInputNewSchoolReportPlan,
 		ec.unmarshalInputNewUser,
 		ec.unmarshalInputRefreshTokenInput,
 		ec.unmarshalInputUpdateContact,
@@ -1970,7 +2215,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateGrant,
 		ec.unmarshalInputUpdateLog,
 		ec.unmarshalInputUpdateNote,
-		ec.unmarshalInputUpdateSchoolReport,
+		ec.unmarshalInputUpdateSchoolReportDebrief,
+		ec.unmarshalInputUpdateSchoolReportPlan,
 		ec.unmarshalInputUpdateUser,
 	)
 	first := true
@@ -2033,7 +2279,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema.graphqls", Input: `type User {
-  id: ID
+  id: ID  
   first_name: String!
   last_name: String!
   email: String!
@@ -2090,9 +2336,8 @@ type Note {
 type Log {
   id: ID
   user_id: ID
-  focus_area: String!
-  actions: String!
-  successes: String!
+  daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
   status: String!
@@ -2103,6 +2348,7 @@ type Log {
 type Event {
   id: ID
   event_lead: ID
+  coplanners: [ID]
   title: String!
   description: String!
   start_date: String!
@@ -2126,7 +2372,7 @@ type Event {
   food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float!
   affiliated_organization: String
@@ -2142,7 +2388,8 @@ type EventSummary {
   id: ID!
   event_id: ID!
   user_id: ID!
-  attendee_count: Int!
+  coplanners: [ID]
+  attendee_count: Int
   challenges: String!
   successes: String!
   improvements: String!
@@ -2151,18 +2398,27 @@ type EventSummary {
   updated_at: String!
 }
 
-type SchoolReport {
+type SchoolReportPlan {
   id: ID
   user_id: ID
+  cofacilitators: [ID]
   curriculum: String!
-  lesson_plan: String!
+  lesson_topics: String!
   school: String!
-  topics: String!
-  student_count: Int!
-  student_list: [String!]!
-  challenges: String!
-  successes: String!
-  improvements: String!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
+type SchoolReportDebrief {
+  id: ID!
+  user_id: ID!
+  lesson_plan_id: ID!
+  student_count: Int
+  student_list: [String!]
+  challenges_improvements: String!
+  positives: String!
+  discussion: String!
   status: String!
   created_at: String!
   updated_at: String!
@@ -2183,8 +2439,12 @@ type EventSummaryWithNotes {
   notes: [Note]
 }
 
-type SchoolReportWithNotes {
-  school_report: SchoolReport!
+type SchoolReportPlanWithNotes {
+  school_report_plan: SchoolReportPlan!
+  notes: [Note]
+}
+type SchoolReportDebriefWithNotes {
+  school_report_debrief: SchoolReportDebrief!
   notes: [Note]
 }
 
@@ -2197,6 +2457,7 @@ type AllLogs {
 type AllEvents {
   event: Event!
   user: User
+  coplanners: [User]
   noteCount: Int
 }
 
@@ -2204,12 +2465,21 @@ type AllEventSummaries {
   event: Event!
   event_summary: EventSummary!
   user: User
+  coplanners: [User]
   noteCount: Int
 }
 
-type AllSchoolReports {
-  school_report: SchoolReport!
+type AllSchoolReportPlans {
+  school_report_plan: SchoolReportPlan!
   user: User
+  cofacilitators: [User]
+  noteCount: Int
+}
+
+type AllSchoolReportDebriefs {
+  school_report_debrief: SchoolReportDebrief!
+  user: User
+  cofacilitators: [User]
   noteCount: Int
 }
 
@@ -2229,17 +2499,20 @@ type Query {
   userLogs(user_id: ID!): [Log!]!
   event(id: ID!): EventWithNotes!
   eventSummary(id: ID!): EventSummaryWithNotes!
-  schoolReport(id: ID!): SchoolReportWithNotes!
+  schoolReportPlan(id: ID!): SchoolReportPlanWithNotes!
+  schoolReportDebrief(id: ID!): SchoolReportDebriefWithNotes!
   events: [AllEvents!]
   eventSummaries: [AllEventSummaries!]
-  schoolReports: [AllSchoolReports!]
+  schoolReportPlans: [AllSchoolReportPlans!]
+  schoolReportDebriefs: [AllSchoolReportDebriefs!]
   grants: [Grant!]
   grant(id: ID!): Grant!
   contacts: [Contact!]
   contactInfo(id: ID!): ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
-  userSchoolReports(user_id: ID!): [SchoolReport!]  
+  userSchoolReportPlans(user_id: ID!): [SchoolReportPlan!]  
+  userSchoolReportDebriefs(user_id: ID!): [SchoolReportDebrief!]  
   userNotes(user_id: ID!): [Note!]
 }
 
@@ -2280,23 +2553,22 @@ input RefreshTokenInput {
 }
 
 input NewLog {
-  focus_area: String!
-  actions: String!
-  successes: String!
+  daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
 }
 
 input UpdateLog {
-  focus_area: String!
-  actions: String!
-  successes: String!
+ daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
   status: String!
 }
 
 input NewEvent {
+   coplanners: [ID]
   title: String
   description: String
   start_date: String
@@ -2320,7 +2592,7 @@ input NewEvent {
   food_and_beverage: [String]
   caterer: String
   food_head_count: Int
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float
   affiliated_organization: String
@@ -2330,6 +2602,7 @@ input NewEvent {
 }
 
 input UpdateEvent {
+   coplanners: [ID]
   title: String
   description: String
   start_date: String
@@ -2353,7 +2626,7 @@ input UpdateEvent {
   food_and_beverage: [String]
   caterer: String
   food_head_count: Int
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float
   affiliated_organization: String
@@ -2365,42 +2638,52 @@ input UpdateEvent {
 
 input NewEventSummary {
   event_id: ID
+  coplanners: [ID]
   attendee_count: Int
-  challenges: String
-  successes: String
-  improvements: String
+  challenges: String!
+  successes: String!
+  improvements: String!
 }
 
 input UpdateEventSummary {
   attendee_count: Int
-  challenges: String
-  successes: String
-  improvements: String
+  coplanners: [ID]
+  challenges: String!
+  successes: String!
+  improvements: String!
   status: String
 }
 
-input NewSchoolReport {
-  curriculum: String
-  lesson_plan: String
-  school: String
-  topics: String
-  student_count: Int
-  student_list: [String!]
-  challenges: String
-  successes: String
-  improvements: String
+input NewSchoolReportPlan {
+  cofacilitators: [ID]
+  curriculum: String!
+  lesson_topics: String!
+  school: String!
 }
 
-input UpdateSchoolReport {
-  curriculum: String
-  lesson_plan: String
-  school: String
-  topics: String
+input UpdateSchoolReportPlan {
+  cofacilitators: [ID]
+  curriculum: String!
+  lesson_topics: String!
+  school: String!
+  status: String
+}
+
+input NewSchoolReportDebrief {
+  lesson_plan_id: ID!
   student_count: Int
   student_list: [String!]
-  challenges: String
-  successes: String
-  improvements: String
+  challenges_improvements: String!
+  positives: String!
+  discussion: String!
+}
+
+input UpdateSchoolReportDebrief {
+  lesson_plan_id: ID!
+  student_count: Int
+  student_list: [String!]
+  challenges_improvements: String!
+  positives: String!
   status: String
 }
 
@@ -2476,11 +2759,16 @@ type Mutation {
   removeEventSummary(id: ID!): Boolean
   approveEventSummary(id: ID!): Boolean
   rejectEventSummary(id: ID!): Boolean
-  createSchoolReport(newSchoolReport: NewSchoolReport!): SchoolReport
-  updateSchoolReport(id: ID!, updateSchoolReport: UpdateSchoolReport!): SchoolReport
-  removeSchoolReport(id: ID!): Boolean
-  approveSchoolReport(id: ID!): Boolean
-  rejectSchoolReport(id: ID!): Boolean
+  createSchoolReportPlan(newSchoolReportPlan: NewSchoolReportPlan!): SchoolReportPlan
+  updateSchoolReportPlan(id: ID!, updateSchoolReportPlan: UpdateSchoolReportPlan!): SchoolReportPlan
+  removeSchoolReportPlan(id: ID!): Boolean
+  approveSchoolReportPlan(id: ID!): Boolean
+  rejectSchoolReportPlan(id: ID!): Boolean
+  createSchoolReportDebrief(newSchoolReportDebrief: NewSchoolReportDebrief!): SchoolReportDebrief
+  updateSchoolReportDebrief(id: ID!, updateSchoolReportDebrief: UpdateSchoolReportDebrief!): SchoolReportDebrief
+  removeSchoolReportDebrief(id: ID!): Boolean
+  approveSchoolReportDebrief(id: ID!): Boolean
+  rejectSchoolReportDebrief(id: ID!): Boolean
 }
 `, BuiltIn: false},
 }
@@ -2535,7 +2823,22 @@ func (ec *executionContext) field_Mutation_approveLog_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_approveSchoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_approveSchoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_approveSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -2640,18 +2943,33 @@ func (ec *executionContext) field_Mutation_createNote_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createSchoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createSchoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewSchoolReport
-	if tmp, ok := rawArgs["newSchoolReport"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newSchoolReport"))
-		arg0, err = ec.unmarshalNNewSchoolReport2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReport(ctx, tmp)
+	var arg0 model.NewSchoolReportDebrief
+	if tmp, ok := rawArgs["newSchoolReportDebrief"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newSchoolReportDebrief"))
+		arg0, err = ec.unmarshalNNewSchoolReportDebrief2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReportDebrief(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["newSchoolReport"] = arg0
+	args["newSchoolReportDebrief"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewSchoolReportPlan
+	if tmp, ok := rawArgs["newSchoolReportPlan"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("newSchoolReportPlan"))
+		arg0, err = ec.unmarshalNNewSchoolReportPlan2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReportPlan(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["newSchoolReportPlan"] = arg0
 	return args, nil
 }
 
@@ -2760,7 +3078,22 @@ func (ec *executionContext) field_Mutation_rejectLog_args(ctx context.Context, r
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_rejectSchoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_rejectSchoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_rejectSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -2865,7 +3198,22 @@ func (ec *executionContext) field_Mutation_removeNote_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_removeSchoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_removeSchoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3024,7 +3372,7 @@ func (ec *executionContext) field_Mutation_updateNote_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateSchoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateSchoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3036,15 +3384,39 @@ func (ec *executionContext) field_Mutation_updateSchoolReport_args(ctx context.C
 		}
 	}
 	args["id"] = arg0
-	var arg1 model.UpdateSchoolReport
-	if tmp, ok := rawArgs["updateSchoolReport"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateSchoolReport"))
-		arg1, err = ec.unmarshalNUpdateSchoolReport2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReport(ctx, tmp)
+	var arg1 model.UpdateSchoolReportDebrief
+	if tmp, ok := rawArgs["updateSchoolReportDebrief"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateSchoolReportDebrief"))
+		arg1, err = ec.unmarshalNUpdateSchoolReportDebrief2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReportDebrief(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["updateSchoolReport"] = arg1
+	args["updateSchoolReportDebrief"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 model.UpdateSchoolReportPlan
+	if tmp, ok := rawArgs["updateSchoolReportPlan"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateSchoolReportPlan"))
+		arg1, err = ec.unmarshalNUpdateSchoolReportPlan2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReportPlan(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["updateSchoolReportPlan"] = arg1
 	return args, nil
 }
 
@@ -3192,7 +3564,22 @@ func (ec *executionContext) field_Query_note_args(ctx context.Context, rawArgs m
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_schoolReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_schoolReportDebrief_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_schoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3267,7 +3654,22 @@ func (ec *executionContext) field_Query_userNotes_args(ctx context.Context, rawA
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_userSchoolReports_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_userSchoolReportDebriefs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["user_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userSchoolReportPlans_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3378,6 +3780,8 @@ func (ec *executionContext) fieldContext_AllEventSummaries_event(ctx context.Con
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -3496,6 +3900,8 @@ func (ec *executionContext) fieldContext_AllEventSummaries_event_summary(ctx con
 				return ec.fieldContext_EventSummary_event_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_EventSummary_user_id(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_EventSummary_coplanners(ctx, field)
 			case "attendee_count":
 				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
 			case "challenges":
@@ -3546,6 +3952,71 @@ func (ec *executionContext) _AllEventSummaries_user(ctx context.Context, field g
 }
 
 func (ec *executionContext) fieldContext_AllEventSummaries_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllEventSummaries",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllEventSummaries_coplanners(ctx context.Context, field graphql.CollectedField, obj *model.AllEventSummaries) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllEventSummaries_coplanners(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coplanners, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllEventSummaries_coplanners(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AllEventSummaries",
 		Field:      field,
@@ -3666,6 +4137,8 @@ func (ec *executionContext) fieldContext_AllEvents_event(ctx context.Context, fi
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -3804,6 +4277,71 @@ func (ec *executionContext) fieldContext_AllEvents_user(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _AllEvents_coplanners(ctx context.Context, field graphql.CollectedField, obj *model.AllEvents) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllEvents_coplanners(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coplanners, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllEvents_coplanners(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllEvents",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AllEvents_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllEvents) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AllEvents_noteCount(ctx, field)
 	if err != nil {
@@ -3888,12 +4426,10 @@ func (ec *executionContext) fieldContext_AllLogs_log(ctx context.Context, field 
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
+			case "daily_activity":
+				return ec.fieldContext_Log_daily_activity(ctx, field)
+			case "positives":
+				return ec.fieldContext_Log_positives(ctx, field)
 			case "improvements":
 				return ec.fieldContext_Log_improvements(ctx, field)
 			case "next_steps":
@@ -4017,8 +4553,8 @@ func (ec *executionContext) fieldContext_AllLogs_noteCount(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _AllSchoolReports_school_report(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReports) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AllSchoolReports_school_report(ctx, field)
+func (ec *executionContext) _AllSchoolReportDebriefs_school_report_debrief(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportDebriefs_school_report_debrief(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4031,7 +4567,7 @@ func (ec *executionContext) _AllSchoolReports_school_report(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SchoolReport, nil
+		return obj.SchoolReportDebrief, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4043,56 +4579,50 @@ func (ec *executionContext) _AllSchoolReports_school_report(ctx context.Context,
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReport)
+	res := resTmp.(*model.SchoolReportDebrief)
 	fc.Result = res
-	return ec.marshalNSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx, field.Selections, res)
+	return ec.marshalNSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AllSchoolReports_school_report(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_school_report_debrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "AllSchoolReports",
+		Object:     "AllSchoolReportDebriefs",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SchoolReport_id(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
 			case "user_id":
-				return ec.fieldContext_SchoolReport_user_id(ctx, field)
-			case "curriculum":
-				return ec.fieldContext_SchoolReport_curriculum(ctx, field)
-			case "lesson_plan":
-				return ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
-			case "school":
-				return ec.fieldContext_SchoolReport_school(ctx, field)
-			case "topics":
-				return ec.fieldContext_SchoolReport_topics(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
+			case "lesson_plan_id":
+				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
 			case "student_count":
-				return ec.fieldContext_SchoolReport_student_count(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
 			case "student_list":
-				return ec.fieldContext_SchoolReport_student_list(ctx, field)
-			case "challenges":
-				return ec.fieldContext_SchoolReport_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_SchoolReport_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_SchoolReport_improvements(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
+			case "challenges_improvements":
+				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
+			case "positives":
+				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
+			case "discussion":
+				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
 			case "status":
-				return ec.fieldContext_SchoolReport_status(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SchoolReport_created_at(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SchoolReport_updated_at(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _AllSchoolReports_user(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReports) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AllSchoolReports_user(ctx, field)
+func (ec *executionContext) _AllSchoolReportDebriefs_user(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportDebriefs_user(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4119,9 +4649,9 @@ func (ec *executionContext) _AllSchoolReports_user(ctx context.Context, field gr
 	return ec.marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AllSchoolReports_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "AllSchoolReports",
+		Object:     "AllSchoolReportDebriefs",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -4156,8 +4686,73 @@ func (ec *executionContext) fieldContext_AllSchoolReports_user(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _AllSchoolReports_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReports) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AllSchoolReports_noteCount(ctx, field)
+func (ec *executionContext) _AllSchoolReportDebriefs_cofacilitators(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cofacilitators, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllSchoolReportDebriefs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllSchoolReportDebriefs_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportDebriefs_noteCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4184,9 +4779,244 @@ func (ec *executionContext) _AllSchoolReports_noteCount(ctx context.Context, fie
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AllSchoolReports_noteCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_noteCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "AllSchoolReports",
+		Object:     "AllSchoolReportDebriefs",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllSchoolReportPlans_school_report_plan(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportPlans) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportPlans_school_report_plan(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SchoolReportPlan, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SchoolReportPlan)
+	fc.Result = res
+	return ec.marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllSchoolReportPlans_school_report_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllSchoolReportPlans",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
+			case "curriculum":
+				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "lesson_topics":
+				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
+			case "school":
+				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
+			case "status":
+				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllSchoolReportPlans_user(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportPlans) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportPlans_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllSchoolReportPlans_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllSchoolReportPlans",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllSchoolReportPlans_cofacilitators(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportPlans) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportPlans_cofacilitators(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cofacilitators, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllSchoolReportPlans_cofacilitators(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllSchoolReportPlans",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_User_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_User_last_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "username":
+				return ec.fieldContext_User_username(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "admin":
+				return ec.fieldContext_User_admin(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "active":
+				return ec.fieldContext_User_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AllSchoolReportPlans_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportPlans) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AllSchoolReportPlans_noteCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoteCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AllSchoolReportPlans_noteCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AllSchoolReportPlans",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -4869,6 +5699,47 @@ func (ec *executionContext) _Event_event_lead(ctx context.Context, field graphql
 }
 
 func (ec *executionContext) fieldContext_Event_event_lead(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Event_coplanners(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_coplanners(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coplanners, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOID2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_coplanners(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -5915,7 +6786,7 @@ func (ec *executionContext) _Event_event_team(ctx context.Context, field graphql
 	}
 	res := resTmp.([]*string)
 	fc.Result = res
-	return ec.marshalOID2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_event_team(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5925,7 +6796,7 @@ func (ec *executionContext) fieldContext_Event_event_team(ctx context.Context, f
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6453,6 +7324,47 @@ func (ec *executionContext) fieldContext_EventSummary_user_id(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _EventSummary_coplanners(ctx context.Context, field graphql.CollectedField, obj *model.EventSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EventSummary_coplanners(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coplanners, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOID2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EventSummary_coplanners(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EventSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _EventSummary_attendee_count(ctx context.Context, field graphql.CollectedField, obj *model.EventSummary) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_EventSummary_attendee_count(ctx, field)
 	if err != nil {
@@ -6474,14 +7386,11 @@ func (ec *executionContext) _EventSummary_attendee_count(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummary_attendee_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6806,6 +7715,8 @@ func (ec *executionContext) fieldContext_EventSummaryWithNotes_event_summary(ctx
 				return ec.fieldContext_EventSummary_event_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_EventSummary_user_id(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_EventSummary_coplanners(ctx, field)
 			case "attendee_count":
 				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
 			case "challenges":
@@ -6927,6 +7838,8 @@ func (ec *executionContext) fieldContext_EventWithNotes_event(ctx context.Contex
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -7740,8 +8653,8 @@ func (ec *executionContext) fieldContext_Log_user_id(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Log_focus_area(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Log_focus_area(ctx, field)
+func (ec *executionContext) _Log_daily_activity(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_daily_activity(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -7754,7 +8667,7 @@ func (ec *executionContext) _Log_focus_area(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.FocusArea, nil
+		return obj.DailyActivity, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7771,7 +8684,7 @@ func (ec *executionContext) _Log_focus_area(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Log_focus_area(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Log_daily_activity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
@@ -7784,8 +8697,8 @@ func (ec *executionContext) fieldContext_Log_focus_area(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Log_actions(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Log_actions(ctx, field)
+func (ec *executionContext) _Log_positives(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_positives(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -7798,7 +8711,7 @@ func (ec *executionContext) _Log_actions(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Actions, nil
+		return obj.Positives, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7815,51 +8728,7 @@ func (ec *executionContext) _Log_actions(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Log_actions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Log_successes(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Log_successes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Successes, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Log_successes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Log_positives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
@@ -8135,12 +9004,10 @@ func (ec *executionContext) fieldContext_LogWithNotes_log(ctx context.Context, f
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
+			case "daily_activity":
+				return ec.fieldContext_Log_daily_activity(ctx, field)
+			case "positives":
+				return ec.fieldContext_Log_positives(ctx, field)
 			case "improvements":
 				return ec.fieldContext_Log_improvements(ctx, field)
 			case "next_steps":
@@ -9174,12 +10041,10 @@ func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context,
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
+			case "daily_activity":
+				return ec.fieldContext_Log_daily_activity(ctx, field)
+			case "positives":
+				return ec.fieldContext_Log_positives(ctx, field)
 			case "improvements":
 				return ec.fieldContext_Log_improvements(ctx, field)
 			case "next_steps":
@@ -9251,12 +10116,10 @@ func (ec *executionContext) fieldContext_Mutation_updateLog(ctx context.Context,
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
+			case "daily_activity":
+				return ec.fieldContext_Log_daily_activity(ctx, field)
+			case "positives":
+				return ec.fieldContext_Log_positives(ctx, field)
 			case "improvements":
 				return ec.fieldContext_Log_improvements(ctx, field)
 			case "next_steps":
@@ -9493,6 +10356,8 @@ func (ec *executionContext) fieldContext_Mutation_createEvent(ctx context.Contex
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -9620,6 +10485,8 @@ func (ec *executionContext) fieldContext_Mutation_updateEvent(ctx context.Contex
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -9902,6 +10769,8 @@ func (ec *executionContext) fieldContext_Mutation_createEventSummary(ctx context
 				return ec.fieldContext_EventSummary_event_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_EventSummary_user_id(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_EventSummary_coplanners(ctx, field)
 			case "attendee_count":
 				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
 			case "challenges":
@@ -9976,6 +10845,8 @@ func (ec *executionContext) fieldContext_Mutation_updateEventSummary(ctx context
 				return ec.fieldContext_EventSummary_event_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_EventSummary_user_id(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_EventSummary_coplanners(ctx, field)
 			case "attendee_count":
 				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
 			case "challenges":
@@ -10164,8 +11035,8 @@ func (ec *executionContext) fieldContext_Mutation_rejectEventSummary(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createSchoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createSchoolReport(ctx, field)
+func (ec *executionContext) _Mutation_createSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSchoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10178,7 +11049,7 @@ func (ec *executionContext) _Mutation_createSchoolReport(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSchoolReport(rctx, fc.Args["newSchoolReport"].(model.NewSchoolReport))
+		return ec.resolvers.Mutation().CreateSchoolReportPlan(rctx, fc.Args["newSchoolReportPlan"].(model.NewSchoolReportPlan))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10187,12 +11058,12 @@ func (ec *executionContext) _Mutation_createSchoolReport(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReport)
+	res := resTmp.(*model.SchoolReportPlan)
 	fc.Result = res
-	return ec.marshalOSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx, field.Selections, res)
+	return ec.marshalOSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createSchoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -10201,35 +11072,25 @@ func (ec *executionContext) fieldContext_Mutation_createSchoolReport(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SchoolReport_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
 			case "user_id":
-				return ec.fieldContext_SchoolReport_user_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
 			case "curriculum":
-				return ec.fieldContext_SchoolReport_curriculum(ctx, field)
-			case "lesson_plan":
-				return ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "lesson_topics":
+				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
 			case "school":
-				return ec.fieldContext_SchoolReport_school(ctx, field)
-			case "topics":
-				return ec.fieldContext_SchoolReport_topics(ctx, field)
-			case "student_count":
-				return ec.fieldContext_SchoolReport_student_count(ctx, field)
-			case "student_list":
-				return ec.fieldContext_SchoolReport_student_list(ctx, field)
-			case "challenges":
-				return ec.fieldContext_SchoolReport_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_SchoolReport_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_SchoolReport_improvements(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
 			case "status":
-				return ec.fieldContext_SchoolReport_status(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SchoolReport_created_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SchoolReport_updated_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
 		},
 	}
 	defer func() {
@@ -10239,15 +11100,15 @@ func (ec *executionContext) fieldContext_Mutation_createSchoolReport(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createSchoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createSchoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateSchoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateSchoolReport(ctx, field)
+func (ec *executionContext) _Mutation_updateSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateSchoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10260,7 +11121,7 @@ func (ec *executionContext) _Mutation_updateSchoolReport(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSchoolReport(rctx, fc.Args["id"].(string), fc.Args["updateSchoolReport"].(model.UpdateSchoolReport))
+		return ec.resolvers.Mutation().UpdateSchoolReportPlan(rctx, fc.Args["id"].(string), fc.Args["updateSchoolReportPlan"].(model.UpdateSchoolReportPlan))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10269,12 +11130,12 @@ func (ec *executionContext) _Mutation_updateSchoolReport(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReport)
+	res := resTmp.(*model.SchoolReportPlan)
 	fc.Result = res
-	return ec.marshalOSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx, field.Selections, res)
+	return ec.marshalOSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateSchoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -10283,35 +11144,25 @@ func (ec *executionContext) fieldContext_Mutation_updateSchoolReport(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SchoolReport_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
 			case "user_id":
-				return ec.fieldContext_SchoolReport_user_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
 			case "curriculum":
-				return ec.fieldContext_SchoolReport_curriculum(ctx, field)
-			case "lesson_plan":
-				return ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "lesson_topics":
+				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
 			case "school":
-				return ec.fieldContext_SchoolReport_school(ctx, field)
-			case "topics":
-				return ec.fieldContext_SchoolReport_topics(ctx, field)
-			case "student_count":
-				return ec.fieldContext_SchoolReport_student_count(ctx, field)
-			case "student_list":
-				return ec.fieldContext_SchoolReport_student_list(ctx, field)
-			case "challenges":
-				return ec.fieldContext_SchoolReport_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_SchoolReport_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_SchoolReport_improvements(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
 			case "status":
-				return ec.fieldContext_SchoolReport_status(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SchoolReport_created_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SchoolReport_updated_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
 		},
 	}
 	defer func() {
@@ -10321,15 +11172,15 @@ func (ec *executionContext) fieldContext_Mutation_updateSchoolReport(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateSchoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateSchoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeSchoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeSchoolReport(ctx, field)
+func (ec *executionContext) _Mutation_removeSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeSchoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10342,7 +11193,7 @@ func (ec *executionContext) _Mutation_removeSchoolReport(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveSchoolReport(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().RemoveSchoolReportPlan(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10356,7 +11207,7 @@ func (ec *executionContext) _Mutation_removeSchoolReport(ctx context.Context, fi
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeSchoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_removeSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -10373,15 +11224,15 @@ func (ec *executionContext) fieldContext_Mutation_removeSchoolReport(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeSchoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_removeSchoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_approveSchoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_approveSchoolReport(ctx, field)
+func (ec *executionContext) _Mutation_approveSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_approveSchoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10394,7 +11245,7 @@ func (ec *executionContext) _Mutation_approveSchoolReport(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ApproveSchoolReport(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().ApproveSchoolReportPlan(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10408,7 +11259,7 @@ func (ec *executionContext) _Mutation_approveSchoolReport(ctx context.Context, f
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_approveSchoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_approveSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -10425,15 +11276,15 @@ func (ec *executionContext) fieldContext_Mutation_approveSchoolReport(ctx contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_approveSchoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_approveSchoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_rejectSchoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_rejectSchoolReport(ctx, field)
+func (ec *executionContext) _Mutation_rejectSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_rejectSchoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10446,7 +11297,7 @@ func (ec *executionContext) _Mutation_rejectSchoolReport(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RejectSchoolReport(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().RejectSchoolReportPlan(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10460,7 +11311,7 @@ func (ec *executionContext) _Mutation_rejectSchoolReport(ctx context.Context, fi
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_rejectSchoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_rejectSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -10477,7 +11328,315 @@ func (ec *executionContext) fieldContext_Mutation_rejectSchoolReport(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_rejectSchoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_rejectSchoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSchoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSchoolReportDebrief(rctx, fc.Args["newSchoolReportDebrief"].(model.NewSchoolReportDebrief))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SchoolReportDebrief)
+	fc.Result = res
+	return ec.marshalOSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
+			case "lesson_plan_id":
+				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
+			case "student_count":
+				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
+			case "student_list":
+				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
+			case "challenges_improvements":
+				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
+			case "positives":
+				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
+			case "discussion":
+				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
+			case "status":
+				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createSchoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateSchoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSchoolReportDebrief(rctx, fc.Args["id"].(string), fc.Args["updateSchoolReportDebrief"].(model.UpdateSchoolReportDebrief))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SchoolReportDebrief)
+	fc.Result = res
+	return ec.marshalOSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
+			case "lesson_plan_id":
+				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
+			case "student_count":
+				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
+			case "student_list":
+				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
+			case "challenges_improvements":
+				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
+			case "positives":
+				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
+			case "discussion":
+				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
+			case "status":
+				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateSchoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeSchoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveSchoolReportDebrief(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeSchoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_approveSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_approveSchoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ApproveSchoolReportDebrief(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_approveSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_approveSchoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_rejectSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_rejectSchoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RejectSchoolReportDebrief(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_rejectSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_rejectSchoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11293,12 +12452,10 @@ func (ec *executionContext) fieldContext_Query_userLogs(ctx context.Context, fie
 				return ec.fieldContext_Log_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Log_user_id(ctx, field)
-			case "focus_area":
-				return ec.fieldContext_Log_focus_area(ctx, field)
-			case "actions":
-				return ec.fieldContext_Log_actions(ctx, field)
-			case "successes":
-				return ec.fieldContext_Log_successes(ctx, field)
+			case "daily_activity":
+				return ec.fieldContext_Log_daily_activity(ctx, field)
+			case "positives":
+				return ec.fieldContext_Log_positives(ctx, field)
 			case "improvements":
 				return ec.fieldContext_Log_improvements(ctx, field)
 			case "next_steps":
@@ -11449,8 +12606,8 @@ func (ec *executionContext) fieldContext_Query_eventSummary(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_schoolReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_schoolReport(ctx, field)
+func (ec *executionContext) _Query_schoolReportPlan(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_schoolReportPlan(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11463,7 +12620,7 @@ func (ec *executionContext) _Query_schoolReport(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SchoolReport(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().SchoolReportPlan(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11475,12 +12632,12 @@ func (ec *executionContext) _Query_schoolReport(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReportWithNotes)
+	res := resTmp.(*model.SchoolReportPlanWithNotes)
 	fc.Result = res
-	return ec.marshalNSchoolReportWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportWithNotes(ctx, field.Selections, res)
+	return ec.marshalNSchoolReportPlanWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanWithNotes(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_schoolReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_schoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -11488,12 +12645,12 @@ func (ec *executionContext) fieldContext_Query_schoolReport(ctx context.Context,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "school_report":
-				return ec.fieldContext_SchoolReportWithNotes_school_report(ctx, field)
+			case "school_report_plan":
+				return ec.fieldContext_SchoolReportPlanWithNotes_school_report_plan(ctx, field)
 			case "notes":
-				return ec.fieldContext_SchoolReportWithNotes_notes(ctx, field)
+				return ec.fieldContext_SchoolReportPlanWithNotes_notes(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReportWithNotes", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlanWithNotes", field.Name)
 		},
 	}
 	defer func() {
@@ -11503,7 +12660,68 @@ func (ec *executionContext) fieldContext_Query_schoolReport(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_schoolReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_schoolReportPlan_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_schoolReportDebrief(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_schoolReportDebrief(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SchoolReportDebrief(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SchoolReportDebriefWithNotes)
+	fc.Result = res
+	return ec.marshalNSchoolReportDebriefWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebriefWithNotes(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_schoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "school_report_debrief":
+				return ec.fieldContext_SchoolReportDebriefWithNotes_school_report_debrief(ctx, field)
+			case "notes":
+				return ec.fieldContext_SchoolReportDebriefWithNotes_notes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebriefWithNotes", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_schoolReportDebrief_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11550,6 +12768,8 @@ func (ec *executionContext) fieldContext_Query_events(ctx context.Context, field
 				return ec.fieldContext_AllEvents_event(ctx, field)
 			case "user":
 				return ec.fieldContext_AllEvents_user(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_AllEvents_coplanners(ctx, field)
 			case "noteCount":
 				return ec.fieldContext_AllEvents_noteCount(ctx, field)
 			}
@@ -11601,6 +12821,8 @@ func (ec *executionContext) fieldContext_Query_eventSummaries(ctx context.Contex
 				return ec.fieldContext_AllEventSummaries_event_summary(ctx, field)
 			case "user":
 				return ec.fieldContext_AllEventSummaries_user(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_AllEventSummaries_coplanners(ctx, field)
 			case "noteCount":
 				return ec.fieldContext_AllEventSummaries_noteCount(ctx, field)
 			}
@@ -11610,8 +12832,8 @@ func (ec *executionContext) fieldContext_Query_eventSummaries(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_schoolReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_schoolReports(ctx, field)
+func (ec *executionContext) _Query_schoolReportPlans(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_schoolReportPlans(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11624,7 +12846,7 @@ func (ec *executionContext) _Query_schoolReports(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SchoolReports(rctx)
+		return ec.resolvers.Query().SchoolReportPlans(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11633,12 +12855,12 @@ func (ec *executionContext) _Query_schoolReports(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.AllSchoolReports)
+	res := resTmp.([]*model.AllSchoolReportPlans)
 	fc.Result = res
-	return ec.marshalOAllSchoolReports2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportsᚄ(ctx, field.Selections, res)
+	return ec.marshalOAllSchoolReportPlans2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportPlansᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_schoolReports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_schoolReportPlans(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -11646,14 +12868,67 @@ func (ec *executionContext) fieldContext_Query_schoolReports(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "school_report":
-				return ec.fieldContext_AllSchoolReports_school_report(ctx, field)
+			case "school_report_plan":
+				return ec.fieldContext_AllSchoolReportPlans_school_report_plan(ctx, field)
 			case "user":
-				return ec.fieldContext_AllSchoolReports_user(ctx, field)
+				return ec.fieldContext_AllSchoolReportPlans_user(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_AllSchoolReportPlans_cofacilitators(ctx, field)
 			case "noteCount":
-				return ec.fieldContext_AllSchoolReports_noteCount(ctx, field)
+				return ec.fieldContext_AllSchoolReportPlans_noteCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type AllSchoolReports", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AllSchoolReportPlans", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_schoolReportDebriefs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_schoolReportDebriefs(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SchoolReportDebriefs(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AllSchoolReportDebriefs)
+	fc.Result = res
+	return ec.marshalOAllSchoolReportDebriefs2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportDebriefsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_schoolReportDebriefs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "school_report_debrief":
+				return ec.fieldContext_AllSchoolReportDebriefs_school_report_debrief(ctx, field)
+			case "user":
+				return ec.fieldContext_AllSchoolReportDebriefs_user(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx, field)
+			case "noteCount":
+				return ec.fieldContext_AllSchoolReportDebriefs_noteCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AllSchoolReportDebriefs", field.Name)
 		},
 	}
 	return fc, nil
@@ -11981,6 +13256,8 @@ func (ec *executionContext) fieldContext_Query_userEvents(ctx context.Context, f
 				return ec.fieldContext_Event_id(ctx, field)
 			case "event_lead":
 				return ec.fieldContext_Event_event_lead(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_Event_coplanners(ctx, field)
 			case "title":
 				return ec.fieldContext_Event_title(ctx, field)
 			case "description":
@@ -12107,6 +13384,8 @@ func (ec *executionContext) fieldContext_Query_userEventSummaries(ctx context.Co
 				return ec.fieldContext_EventSummary_event_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_EventSummary_user_id(ctx, field)
+			case "coplanners":
+				return ec.fieldContext_EventSummary_coplanners(ctx, field)
 			case "attendee_count":
 				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
 			case "challenges":
@@ -12139,8 +13418,8 @@ func (ec *executionContext) fieldContext_Query_userEventSummaries(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_userSchoolReports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_userSchoolReports(ctx, field)
+func (ec *executionContext) _Query_userSchoolReportPlans(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSchoolReportPlans(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12153,7 +13432,7 @@ func (ec *executionContext) _Query_userSchoolReports(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserSchoolReports(rctx, fc.Args["user_id"].(string))
+		return ec.resolvers.Query().UserSchoolReportPlans(rctx, fc.Args["user_id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12162,12 +13441,12 @@ func (ec *executionContext) _Query_userSchoolReports(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SchoolReport)
+	res := resTmp.([]*model.SchoolReportPlan)
 	fc.Result = res
-	return ec.marshalOSchoolReport2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportᚄ(ctx, field.Selections, res)
+	return ec.marshalOSchoolReportPlan2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_userSchoolReports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_userSchoolReportPlans(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -12176,35 +13455,25 @@ func (ec *executionContext) fieldContext_Query_userSchoolReports(ctx context.Con
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SchoolReport_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
 			case "user_id":
-				return ec.fieldContext_SchoolReport_user_id(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
 			case "curriculum":
-				return ec.fieldContext_SchoolReport_curriculum(ctx, field)
-			case "lesson_plan":
-				return ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "lesson_topics":
+				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
 			case "school":
-				return ec.fieldContext_SchoolReport_school(ctx, field)
-			case "topics":
-				return ec.fieldContext_SchoolReport_topics(ctx, field)
-			case "student_count":
-				return ec.fieldContext_SchoolReport_student_count(ctx, field)
-			case "student_list":
-				return ec.fieldContext_SchoolReport_student_list(ctx, field)
-			case "challenges":
-				return ec.fieldContext_SchoolReport_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_SchoolReport_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_SchoolReport_improvements(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
 			case "status":
-				return ec.fieldContext_SchoolReport_status(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SchoolReport_created_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SchoolReport_updated_at(ctx, field)
+				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
 		},
 	}
 	defer func() {
@@ -12214,7 +13483,83 @@ func (ec *executionContext) fieldContext_Query_userSchoolReports(ctx context.Con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_userSchoolReports_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_userSchoolReportPlans_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userSchoolReportDebriefs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSchoolReportDebriefs(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserSchoolReportDebriefs(rctx, fc.Args["user_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SchoolReportDebrief)
+	fc.Result = res
+	return ec.marshalOSchoolReportDebrief2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebriefᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userSchoolReportDebriefs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
+			case "lesson_plan_id":
+				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
+			case "student_count":
+				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
+			case "student_list":
+				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
+			case "challenges_improvements":
+				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
+			case "positives":
+				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
+			case "discussion":
+				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
+			case "status":
+				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userSchoolReportDebriefs_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -12418,8 +13763,8 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_id(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12439,16 +13784,19 @@ func (ec *executionContext) _SchoolReport_id(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12459,8 +13807,8 @@ func (ec *executionContext) fieldContext_SchoolReport_id(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_user_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_user_id(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_user_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12480,16 +13828,19 @@ func (ec *executionContext) _SchoolReport_user_id(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12500,8 +13851,8 @@ func (ec *executionContext) fieldContext_SchoolReport_user_id(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_curriculum(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_curriculum(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_lesson_plan_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12514,7 +13865,7 @@ func (ec *executionContext) _SchoolReport_curriculum(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Curriculum, nil
+		return obj.LessonPlanID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12528,156 +13879,24 @@ func (ec *executionContext) _SchoolReport_curriculum(ctx context.Context, field 
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_curriculum(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_lesson_plan_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_lesson_plan(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LessonPlan, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_SchoolReport_lesson_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _SchoolReport_school(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_school(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.School, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_SchoolReport_school(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _SchoolReport_topics(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_topics(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Topics, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_SchoolReport_topics(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _SchoolReport_student_count(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_student_count(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_student_count(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12697,19 +13916,16 @@ func (ec *executionContext) _SchoolReport_student_count(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_student_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_student_count(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12720,8 +13936,8 @@ func (ec *executionContext) fieldContext_SchoolReport_student_count(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_student_list(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_student_list(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_student_list(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12741,19 +13957,16 @@ func (ec *executionContext) _SchoolReport_student_list(ctx context.Context, fiel
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_student_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_student_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12764,8 +13977,8 @@ func (ec *executionContext) fieldContext_SchoolReport_student_list(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_challenges(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_challenges(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_challenges_improvements(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12778,7 +13991,7 @@ func (ec *executionContext) _SchoolReport_challenges(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Challenges, nil
+		return obj.ChallengesImprovements, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12795,9 +14008,9 @@ func (ec *executionContext) _SchoolReport_challenges(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_challenges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_challenges_improvements(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12808,8 +14021,8 @@ func (ec *executionContext) fieldContext_SchoolReport_challenges(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_successes(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_successes(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_positives(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12822,7 +14035,7 @@ func (ec *executionContext) _SchoolReport_successes(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Successes, nil
+		return obj.Positives, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12839,9 +14052,9 @@ func (ec *executionContext) _SchoolReport_successes(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_successes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_positives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12852,8 +14065,8 @@ func (ec *executionContext) fieldContext_SchoolReport_successes(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_improvements(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_improvements(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_discussion(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12866,7 +14079,7 @@ func (ec *executionContext) _SchoolReport_improvements(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Improvements, nil
+		return obj.Discussion, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12883,9 +14096,9 @@ func (ec *executionContext) _SchoolReport_improvements(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_improvements(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_discussion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12896,8 +14109,8 @@ func (ec *executionContext) fieldContext_SchoolReport_improvements(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_status(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_status(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_status(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_status(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12927,9 +14140,9 @@ func (ec *executionContext) _SchoolReport_status(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12940,8 +14153,8 @@ func (ec *executionContext) fieldContext_SchoolReport_status(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_created_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_created_at(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_created_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12971,9 +14184,9 @@ func (ec *executionContext) _SchoolReport_created_at(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12984,8 +14197,8 @@ func (ec *executionContext) fieldContext_SchoolReport_created_at(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReport_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReport) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReport_updated_at(ctx, field)
+func (ec *executionContext) _SchoolReportDebrief_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebrief) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13015,9 +14228,9 @@ func (ec *executionContext) _SchoolReport_updated_at(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReport_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebrief_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReport",
+		Object:     "SchoolReportDebrief",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -13028,8 +14241,8 @@ func (ec *executionContext) fieldContext_SchoolReport_updated_at(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReportWithNotes_school_report(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportWithNotes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReportWithNotes_school_report(ctx, field)
+func (ec *executionContext) _SchoolReportDebriefWithNotes_school_report_debrief(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebriefWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebriefWithNotes_school_report_debrief(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13042,7 +14255,7 @@ func (ec *executionContext) _SchoolReportWithNotes_school_report(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SchoolReport, nil
+		return obj.SchoolReportDebrief, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13054,56 +14267,50 @@ func (ec *executionContext) _SchoolReportWithNotes_school_report(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReport)
+	res := resTmp.(*model.SchoolReportDebrief)
 	fc.Result = res
-	return ec.marshalNSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx, field.Selections, res)
+	return ec.marshalNSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReportWithNotes_school_report(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_school_report_debrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReportWithNotes",
+		Object:     "SchoolReportDebriefWithNotes",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_SchoolReport_id(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
 			case "user_id":
-				return ec.fieldContext_SchoolReport_user_id(ctx, field)
-			case "curriculum":
-				return ec.fieldContext_SchoolReport_curriculum(ctx, field)
-			case "lesson_plan":
-				return ec.fieldContext_SchoolReport_lesson_plan(ctx, field)
-			case "school":
-				return ec.fieldContext_SchoolReport_school(ctx, field)
-			case "topics":
-				return ec.fieldContext_SchoolReport_topics(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
+			case "lesson_plan_id":
+				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
 			case "student_count":
-				return ec.fieldContext_SchoolReport_student_count(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
 			case "student_list":
-				return ec.fieldContext_SchoolReport_student_list(ctx, field)
-			case "challenges":
-				return ec.fieldContext_SchoolReport_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_SchoolReport_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_SchoolReport_improvements(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
+			case "challenges_improvements":
+				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
+			case "positives":
+				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
+			case "discussion":
+				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
 			case "status":
-				return ec.fieldContext_SchoolReport_status(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SchoolReport_created_at(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SchoolReport_updated_at(ctx, field)
+				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReportWithNotes_notes(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportWithNotes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReportWithNotes_notes(ctx, field)
+func (ec *executionContext) _SchoolReportDebriefWithNotes_notes(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportDebriefWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportDebriefWithNotes_notes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13130,9 +14337,517 @@ func (ec *executionContext) _SchoolReportWithNotes_notes(ctx context.Context, fi
 	return ec.marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReportWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SchoolReportWithNotes",
+		Object:     "SchoolReportDebriefWithNotes",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "item_id":
+				return ec.fieldContext_Note_item_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Note_user_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "content":
+				return ec.fieldContext_Note_content(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_user_id(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_cofacilitators(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cofacilitators, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*string)
+	fc.Result = res
+	return ec.marshalOID2ᚕᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_cofacilitators(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_curriculum(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Curriculum, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_curriculum(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_lesson_topics(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LessonTopics, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_lesson_topics(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_school(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_school(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.School, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_school(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_status(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_created_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlan_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlanWithNotes_school_report_plan(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_school_report_plan(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SchoolReportPlan, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SchoolReportPlan)
+	fc.Result = res
+	return ec.marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_school_report_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlanWithNotes",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
+			case "cofacilitators":
+				return ec.fieldContext_SchoolReportPlan_cofacilitators(ctx, field)
+			case "curriculum":
+				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "lesson_topics":
+				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
+			case "school":
+				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
+			case "status":
+				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlanWithNotes_notes(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_notes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Notes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Note)
+	fc.Result = res
+	return ec.marshalONote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlanWithNotes",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -15505,6 +17220,14 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 
 	for k, v := range asMap {
 		switch k {
+		case "coplanners":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coplanners"))
+			it.Coplanners, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "title":
 			var err error
 
@@ -15693,7 +17416,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event_team"))
-			it.EventTeam, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			it.EventTeam, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15768,6 +17491,14 @@ func (ec *executionContext) unmarshalInputNewEventSummary(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "coplanners":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coplanners"))
+			it.Coplanners, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "attendee_count":
 			var err error
 
@@ -15780,7 +17511,7 @@ func (ec *executionContext) unmarshalInputNewEventSummary(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges"))
-			it.Challenges, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Challenges, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15788,7 +17519,7 @@ func (ec *executionContext) unmarshalInputNewEventSummary(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Successes, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15796,7 +17527,7 @@ func (ec *executionContext) unmarshalInputNewEventSummary(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
-			it.Improvements, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Improvements, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15902,27 +17633,19 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 
 	for k, v := range asMap {
 		switch k {
-		case "focus_area":
+		case "daily_activity":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focus_area"))
-			it.FocusArea, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("daily_activity"))
+			it.DailyActivity, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "actions":
+		case "positives":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actions"))
-			it.Actions, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "successes":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("positives"))
+			it.Positives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15987,8 +17710,8 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewSchoolReport(ctx context.Context, obj interface{}) (model.NewSchoolReport, error) {
-	var it model.NewSchoolReport
+func (ec *executionContext) unmarshalInputNewSchoolReportDebrief(ctx context.Context, obj interface{}) (model.NewSchoolReportDebrief, error) {
+	var it model.NewSchoolReportDebrief
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -15996,35 +17719,11 @@ func (ec *executionContext) unmarshalInputNewSchoolReport(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "curriculum":
+		case "lesson_plan_id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("curriculum"))
-			it.Curriculum, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "lesson_plan":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_plan"))
-			it.LessonPlan, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "school":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school"))
-			it.School, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "topics":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			it.Topics, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_plan_id"))
+			it.LessonPlanID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16044,27 +17743,74 @@ func (ec *executionContext) unmarshalInputNewSchoolReport(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "challenges":
+		case "challenges_improvements":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges"))
-			it.Challenges, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges_improvements"))
+			it.ChallengesImprovements, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "successes":
+		case "positives":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("positives"))
+			it.Positives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "improvements":
+		case "discussion":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
-			it.Improvements, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discussion"))
+			it.Discussion, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputNewSchoolReportPlan(ctx context.Context, obj interface{}) (model.NewSchoolReportPlan, error) {
+	var it model.NewSchoolReportPlan
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "cofacilitators":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cofacilitators"))
+			it.Cofacilitators, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "curriculum":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("curriculum"))
+			it.Curriculum, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lesson_topics":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_topics"))
+			it.LessonTopics, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "school":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school"))
+			it.School, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16208,6 +17954,14 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 
 	for k, v := range asMap {
 		switch k {
+		case "coplanners":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coplanners"))
+			it.Coplanners, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "title":
 			var err error
 
@@ -16396,7 +18150,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event_team"))
-			it.EventTeam, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			it.EventTeam, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16479,11 +18233,19 @@ func (ec *executionContext) unmarshalInputUpdateEventSummary(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "coplanners":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coplanners"))
+			it.Coplanners, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "challenges":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges"))
-			it.Challenges, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Challenges, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16491,7 +18253,7 @@ func (ec *executionContext) unmarshalInputUpdateEventSummary(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Successes, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16499,7 +18261,7 @@ func (ec *executionContext) unmarshalInputUpdateEventSummary(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
-			it.Improvements, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Improvements, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16621,27 +18383,19 @@ func (ec *executionContext) unmarshalInputUpdateLog(ctx context.Context, obj int
 
 	for k, v := range asMap {
 		switch k {
-		case "focus_area":
+		case "daily_activity":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focus_area"))
-			it.FocusArea, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("daily_activity"))
+			it.DailyActivity, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "actions":
+		case "positives":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actions"))
-			it.Actions, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "successes":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("positives"))
+			it.Positives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16706,8 +18460,8 @@ func (ec *executionContext) unmarshalInputUpdateNote(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateSchoolReport(ctx context.Context, obj interface{}) (model.UpdateSchoolReport, error) {
-	var it model.UpdateSchoolReport
+func (ec *executionContext) unmarshalInputUpdateSchoolReportDebrief(ctx context.Context, obj interface{}) (model.UpdateSchoolReportDebrief, error) {
+	var it model.UpdateSchoolReportDebrief
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -16715,35 +18469,11 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReport(ctx context.Context
 
 	for k, v := range asMap {
 		switch k {
-		case "curriculum":
+		case "lesson_plan_id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("curriculum"))
-			it.Curriculum, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "lesson_plan":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_plan"))
-			it.LessonPlan, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "school":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school"))
-			it.School, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "topics":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			it.Topics, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_plan_id"))
+			it.LessonPlanID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16763,27 +18493,74 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReport(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "challenges":
+		case "challenges_improvements":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges"))
-			it.Challenges, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("challenges_improvements"))
+			it.ChallengesImprovements, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "successes":
+		case "positives":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("successes"))
-			it.Successes, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("positives"))
+			it.Positives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "improvements":
+		case "status":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("improvements"))
-			it.Improvements, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			it.Status, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateSchoolReportPlan(ctx context.Context, obj interface{}) (model.UpdateSchoolReportPlan, error) {
+	var it model.UpdateSchoolReportPlan
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "cofacilitators":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cofacilitators"))
+			it.Cofacilitators, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "curriculum":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("curriculum"))
+			it.Curriculum, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lesson_topics":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lesson_topics"))
+			it.LessonTopics, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "school":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school"))
+			it.School, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16900,6 +18677,10 @@ func (ec *executionContext) _AllEventSummaries(ctx context.Context, sel ast.Sele
 
 			out.Values[i] = ec._AllEventSummaries_user(ctx, field, obj)
 
+		case "coplanners":
+
+			out.Values[i] = ec._AllEventSummaries_coplanners(ctx, field, obj)
+
 		case "noteCount":
 
 			out.Values[i] = ec._AllEventSummaries_noteCount(ctx, field, obj)
@@ -16935,6 +18716,10 @@ func (ec *executionContext) _AllEvents(ctx context.Context, sel ast.SelectionSet
 		case "user":
 
 			out.Values[i] = ec._AllEvents_user(ctx, field, obj)
+
+		case "coplanners":
+
+			out.Values[i] = ec._AllEvents_coplanners(ctx, field, obj)
 
 		case "noteCount":
 
@@ -16987,30 +18772,74 @@ func (ec *executionContext) _AllLogs(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
-var allSchoolReportsImplementors = []string{"AllSchoolReports"}
+var allSchoolReportDebriefsImplementors = []string{"AllSchoolReportDebriefs"}
 
-func (ec *executionContext) _AllSchoolReports(ctx context.Context, sel ast.SelectionSet, obj *model.AllSchoolReports) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, allSchoolReportsImplementors)
+func (ec *executionContext) _AllSchoolReportDebriefs(ctx context.Context, sel ast.SelectionSet, obj *model.AllSchoolReportDebriefs) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, allSchoolReportDebriefsImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("AllSchoolReports")
-		case "school_report":
+			out.Values[i] = graphql.MarshalString("AllSchoolReportDebriefs")
+		case "school_report_debrief":
 
-			out.Values[i] = ec._AllSchoolReports_school_report(ctx, field, obj)
+			out.Values[i] = ec._AllSchoolReportDebriefs_school_report_debrief(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "user":
 
-			out.Values[i] = ec._AllSchoolReports_user(ctx, field, obj)
+			out.Values[i] = ec._AllSchoolReportDebriefs_user(ctx, field, obj)
+
+		case "cofacilitators":
+
+			out.Values[i] = ec._AllSchoolReportDebriefs_cofacilitators(ctx, field, obj)
 
 		case "noteCount":
 
-			out.Values[i] = ec._AllSchoolReports_noteCount(ctx, field, obj)
+			out.Values[i] = ec._AllSchoolReportDebriefs_noteCount(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var allSchoolReportPlansImplementors = []string{"AllSchoolReportPlans"}
+
+func (ec *executionContext) _AllSchoolReportPlans(ctx context.Context, sel ast.SelectionSet, obj *model.AllSchoolReportPlans) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, allSchoolReportPlansImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AllSchoolReportPlans")
+		case "school_report_plan":
+
+			out.Values[i] = ec._AllSchoolReportPlans_school_report_plan(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+
+			out.Values[i] = ec._AllSchoolReportPlans_user(ctx, field, obj)
+
+		case "cofacilitators":
+
+			out.Values[i] = ec._AllSchoolReportPlans_cofacilitators(ctx, field, obj)
+
+		case "noteCount":
+
+			out.Values[i] = ec._AllSchoolReportPlans_noteCount(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -17155,6 +18984,10 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 		case "event_lead":
 
 			out.Values[i] = ec._Event_event_lead(ctx, field, obj)
+
+		case "coplanners":
+
+			out.Values[i] = ec._Event_coplanners(ctx, field, obj)
 
 		case "title":
 
@@ -17417,13 +19250,14 @@ func (ec *executionContext) _EventSummary(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "coplanners":
+
+			out.Values[i] = ec._EventSummary_coplanners(ctx, field, obj)
+
 		case "attendee_count":
 
 			out.Values[i] = ec._EventSummary_attendee_count(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "challenges":
 
 			out.Values[i] = ec._EventSummary_challenges(ctx, field, obj)
@@ -17663,23 +19497,16 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 
 			out.Values[i] = ec._Log_user_id(ctx, field, obj)
 
-		case "focus_area":
+		case "daily_activity":
 
-			out.Values[i] = ec._Log_focus_area(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "actions":
-
-			out.Values[i] = ec._Log_actions(ctx, field, obj)
+			out.Values[i] = ec._Log_daily_activity(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "successes":
+		case "positives":
 
-			out.Values[i] = ec._Log_successes(ctx, field, obj)
+			out.Values[i] = ec._Log_positives(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18000,34 +19827,64 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_rejectEventSummary(ctx, field)
 			})
 
-		case "createSchoolReport":
+		case "createSchoolReportPlan":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createSchoolReport(ctx, field)
+				return ec._Mutation_createSchoolReportPlan(ctx, field)
 			})
 
-		case "updateSchoolReport":
+		case "updateSchoolReportPlan":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateSchoolReport(ctx, field)
+				return ec._Mutation_updateSchoolReportPlan(ctx, field)
 			})
 
-		case "removeSchoolReport":
+		case "removeSchoolReportPlan":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeSchoolReport(ctx, field)
+				return ec._Mutation_removeSchoolReportPlan(ctx, field)
 			})
 
-		case "approveSchoolReport":
+		case "approveSchoolReportPlan":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_approveSchoolReport(ctx, field)
+				return ec._Mutation_approveSchoolReportPlan(ctx, field)
 			})
 
-		case "rejectSchoolReport":
+		case "rejectSchoolReportPlan":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_rejectSchoolReport(ctx, field)
+				return ec._Mutation_rejectSchoolReportPlan(ctx, field)
+			})
+
+		case "createSchoolReportDebrief":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createSchoolReportDebrief(ctx, field)
+			})
+
+		case "updateSchoolReportDebrief":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateSchoolReportDebrief(ctx, field)
+			})
+
+		case "removeSchoolReportDebrief":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeSchoolReportDebrief(ctx, field)
+			})
+
+		case "approveSchoolReportDebrief":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_approveSchoolReportDebrief(ctx, field)
+			})
+
+		case "rejectSchoolReportDebrief":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_rejectSchoolReportDebrief(ctx, field)
 			})
 
 		default:
@@ -18348,7 +20205,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "schoolReport":
+		case "schoolReportPlan":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -18357,7 +20214,30 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_schoolReport(ctx, field)
+				res = ec._Query_schoolReportPlan(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "schoolReportDebrief":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_schoolReportDebrief(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -18411,7 +20291,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "schoolReports":
+		case "schoolReportPlans":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -18420,7 +20300,27 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_schoolReports(ctx, field)
+				res = ec._Query_schoolReportPlans(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "schoolReportDebriefs":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_schoolReportDebriefs(ctx, field)
 				return res
 			}
 
@@ -18557,7 +20457,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "userSchoolReports":
+		case "userSchoolReportPlans":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -18566,7 +20466,27 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_userSchoolReports(ctx, field)
+				res = ec._Query_userSchoolReportPlans(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "userSchoolReportDebriefs":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userSchoolReportDebriefs(ctx, field)
 				return res
 			}
 
@@ -18620,104 +20540,83 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var schoolReportImplementors = []string{"SchoolReport"}
+var schoolReportDebriefImplementors = []string{"SchoolReportDebrief"}
 
-func (ec *executionContext) _SchoolReport(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReport) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportImplementors)
+func (ec *executionContext) _SchoolReportDebrief(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReportDebrief) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportDebriefImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SchoolReport")
+			out.Values[i] = graphql.MarshalString("SchoolReportDebrief")
 		case "id":
 
-			out.Values[i] = ec._SchoolReport_id(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_id(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "user_id":
 
-			out.Values[i] = ec._SchoolReport_user_id(ctx, field, obj)
-
-		case "curriculum":
-
-			out.Values[i] = ec._SchoolReport_curriculum(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_user_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "lesson_plan":
+		case "lesson_plan_id":
 
-			out.Values[i] = ec._SchoolReport_lesson_plan(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "school":
-
-			out.Values[i] = ec._SchoolReport_school(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "topics":
-
-			out.Values[i] = ec._SchoolReport_topics(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_lesson_plan_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "student_count":
 
-			out.Values[i] = ec._SchoolReport_student_count(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_student_count(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "student_list":
 
-			out.Values[i] = ec._SchoolReport_student_list(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_student_list(ctx, field, obj)
+
+		case "challenges_improvements":
+
+			out.Values[i] = ec._SchoolReportDebrief_challenges_improvements(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "challenges":
+		case "positives":
 
-			out.Values[i] = ec._SchoolReport_challenges(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "successes":
-
-			out.Values[i] = ec._SchoolReport_successes(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_positives(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "improvements":
+		case "discussion":
 
-			out.Values[i] = ec._SchoolReport_improvements(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_discussion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "status":
 
-			out.Values[i] = ec._SchoolReport_status(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_status(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "created_at":
 
-			out.Values[i] = ec._SchoolReport_created_at(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_created_at(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "updated_at":
 
-			out.Values[i] = ec._SchoolReport_updated_at(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebrief_updated_at(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18733,26 +20632,133 @@ func (ec *executionContext) _SchoolReport(ctx context.Context, sel ast.Selection
 	return out
 }
 
-var schoolReportWithNotesImplementors = []string{"SchoolReportWithNotes"}
+var schoolReportDebriefWithNotesImplementors = []string{"SchoolReportDebriefWithNotes"}
 
-func (ec *executionContext) _SchoolReportWithNotes(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReportWithNotes) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportWithNotesImplementors)
+func (ec *executionContext) _SchoolReportDebriefWithNotes(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReportDebriefWithNotes) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportDebriefWithNotesImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SchoolReportWithNotes")
-		case "school_report":
+			out.Values[i] = graphql.MarshalString("SchoolReportDebriefWithNotes")
+		case "school_report_debrief":
 
-			out.Values[i] = ec._SchoolReportWithNotes_school_report(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebriefWithNotes_school_report_debrief(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "notes":
 
-			out.Values[i] = ec._SchoolReportWithNotes_notes(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportDebriefWithNotes_notes(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var schoolReportPlanImplementors = []string{"SchoolReportPlan"}
+
+func (ec *executionContext) _SchoolReportPlan(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReportPlan) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportPlanImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SchoolReportPlan")
+		case "id":
+
+			out.Values[i] = ec._SchoolReportPlan_id(ctx, field, obj)
+
+		case "user_id":
+
+			out.Values[i] = ec._SchoolReportPlan_user_id(ctx, field, obj)
+
+		case "cofacilitators":
+
+			out.Values[i] = ec._SchoolReportPlan_cofacilitators(ctx, field, obj)
+
+		case "curriculum":
+
+			out.Values[i] = ec._SchoolReportPlan_curriculum(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "lesson_topics":
+
+			out.Values[i] = ec._SchoolReportPlan_lesson_topics(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "school":
+
+			out.Values[i] = ec._SchoolReportPlan_school(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+
+			out.Values[i] = ec._SchoolReportPlan_status(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_at":
+
+			out.Values[i] = ec._SchoolReportPlan_created_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updated_at":
+
+			out.Values[i] = ec._SchoolReportPlan_updated_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var schoolReportPlanWithNotesImplementors = []string{"SchoolReportPlanWithNotes"}
+
+func (ec *executionContext) _SchoolReportPlanWithNotes(ctx context.Context, sel ast.SelectionSet, obj *model.SchoolReportPlanWithNotes) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, schoolReportPlanWithNotesImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SchoolReportPlanWithNotes")
+		case "school_report_plan":
+
+			out.Values[i] = ec._SchoolReportPlanWithNotes_school_report_plan(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "notes":
+
+			out.Values[i] = ec._SchoolReportPlanWithNotes_notes(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -19249,14 +21255,24 @@ func (ec *executionContext) marshalNAllLogs2ᚖthomps9012ᚋprevention_productiv
 	return ec._AllLogs(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAllSchoolReports2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReports(ctx context.Context, sel ast.SelectionSet, v *model.AllSchoolReports) graphql.Marshaler {
+func (ec *executionContext) marshalNAllSchoolReportDebriefs2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportDebriefs(ctx context.Context, sel ast.SelectionSet, v *model.AllSchoolReportDebriefs) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._AllSchoolReports(ctx, sel, v)
+	return ec._AllSchoolReportDebriefs(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAllSchoolReportPlans2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportPlans(ctx context.Context, sel ast.SelectionSet, v *model.AllSchoolReportPlans) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AllSchoolReportPlans(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
@@ -19516,8 +21532,13 @@ func (ec *executionContext) unmarshalNNewNote2thomps9012ᚋprevention_productivi
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewSchoolReport2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReport(ctx context.Context, v interface{}) (model.NewSchoolReport, error) {
-	res, err := ec.unmarshalInputNewSchoolReport(ctx, v)
+func (ec *executionContext) unmarshalNNewSchoolReportDebrief2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReportDebrief(ctx context.Context, v interface{}) (model.NewSchoolReportDebrief, error) {
+	res, err := ec.unmarshalInputNewSchoolReportDebrief(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewSchoolReportPlan2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNewSchoolReportPlan(ctx context.Context, v interface{}) (model.NewSchoolReportPlan, error) {
+	res, err := ec.unmarshalInputNewSchoolReportPlan(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -19545,28 +21566,52 @@ func (ec *executionContext) unmarshalNRefreshTokenInput2thomps9012ᚋprevention_
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReport) graphql.Marshaler {
+func (ec *executionContext) marshalNSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportDebrief) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SchoolReport(ctx, sel, v)
+	return ec._SchoolReportDebrief(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSchoolReportWithNotes2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportWithNotes(ctx context.Context, sel ast.SelectionSet, v model.SchoolReportWithNotes) graphql.Marshaler {
-	return ec._SchoolReportWithNotes(ctx, sel, &v)
+func (ec *executionContext) marshalNSchoolReportDebriefWithNotes2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebriefWithNotes(ctx context.Context, sel ast.SelectionSet, v model.SchoolReportDebriefWithNotes) graphql.Marshaler {
+	return ec._SchoolReportDebriefWithNotes(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSchoolReportWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportWithNotes(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportWithNotes) graphql.Marshaler {
+func (ec *executionContext) marshalNSchoolReportDebriefWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebriefWithNotes(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportDebriefWithNotes) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SchoolReportWithNotes(ctx, sel, v)
+	return ec._SchoolReportDebriefWithNotes(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportPlan) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SchoolReportPlan(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSchoolReportPlanWithNotes2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanWithNotes(ctx context.Context, sel ast.SelectionSet, v model.SchoolReportPlanWithNotes) graphql.Marshaler {
+	return ec._SchoolReportPlanWithNotes(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSchoolReportPlanWithNotes2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanWithNotes(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportPlanWithNotes) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SchoolReportPlanWithNotes(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -19646,8 +21691,13 @@ func (ec *executionContext) unmarshalNUpdateNote2thomps9012ᚋprevention_product
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateSchoolReport2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReport(ctx context.Context, v interface{}) (model.UpdateSchoolReport, error) {
-	res, err := ec.unmarshalInputUpdateSchoolReport(ctx, v)
+func (ec *executionContext) unmarshalNUpdateSchoolReportDebrief2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReportDebrief(ctx context.Context, v interface{}) (model.UpdateSchoolReportDebrief, error) {
+	res, err := ec.unmarshalInputUpdateSchoolReportDebrief(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateSchoolReportPlan2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateSchoolReportPlan(ctx context.Context, v interface{}) (model.UpdateSchoolReportPlan, error) {
+	res, err := ec.unmarshalInputUpdateSchoolReportPlan(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -20061,7 +22111,7 @@ func (ec *executionContext) marshalOAllEvents2ᚕᚖthomps9012ᚋprevention_prod
 	return ret
 }
 
-func (ec *executionContext) marshalOAllSchoolReports2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AllSchoolReports) graphql.Marshaler {
+func (ec *executionContext) marshalOAllSchoolReportDebriefs2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportDebriefsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AllSchoolReportDebriefs) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -20088,7 +22138,54 @@ func (ec *executionContext) marshalOAllSchoolReports2ᚕᚖthomps9012ᚋpreventi
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNAllSchoolReports2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReports(ctx, sel, v[i])
+			ret[i] = ec.marshalNAllSchoolReportDebriefs2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportDebriefs(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOAllSchoolReportPlans2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportPlansᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AllSchoolReportPlans) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAllSchoolReportPlans2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐAllSchoolReportPlans(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -20518,7 +22615,7 @@ func (ec *executionContext) marshalONote2ᚖthomps9012ᚋprevention_productivity
 	return ec._Note(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSchoolReport2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SchoolReport) graphql.Marshaler {
+func (ec *executionContext) marshalOSchoolReportDebrief2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebriefᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SchoolReportDebrief) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -20545,7 +22642,7 @@ func (ec *executionContext) marshalOSchoolReport2ᚕᚖthomps9012ᚋprevention_p
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx, sel, v[i])
+			ret[i] = ec.marshalNSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -20565,11 +22662,65 @@ func (ec *executionContext) marshalOSchoolReport2ᚕᚖthomps9012ᚋprevention_p
 	return ret
 }
 
-func (ec *executionContext) marshalOSchoolReport2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReport(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReport) graphql.Marshaler {
+func (ec *executionContext) marshalOSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportDebrief) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._SchoolReport(ctx, sel, v)
+	return ec._SchoolReportDebrief(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSchoolReportPlan2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SchoolReportPlan) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportPlan) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SchoolReportPlan(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
@@ -20656,6 +22807,47 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) marshalOUser2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {

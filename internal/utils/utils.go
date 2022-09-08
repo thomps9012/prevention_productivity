@@ -41,7 +41,6 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 		singleLog := &model.AllLogs{
 			Log: &model.Log{
 				ID:        log.ID,
-				FocusArea: log.FocusArea,
 				Status:    log.Status,
 				CreatedAt: log.CreatedAt,
 				UpdatedAt: log.UpdatedAt,
@@ -172,42 +171,42 @@ func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 	return allEventSummaries, nil
 }
 
-func GetSchoolReports(filter bson.D) ([]*model.AllSchoolReports, error) {
+func GetSchoolReportPlans(filter bson.D) ([]*model.AllSchoolReportPlans, error) {
 	// this function breaks if logs don't meet the model requirements
-	schoolReportsCollection := database.Db.Collection("school_reports")
+	schoolReportsCollection := database.Db.Collection("school_report_plans")
 	notesCollection := database.Db.Collection("notes")
 	userCollection := database.Db.Collection("users")
-	var allSchoolReports []*model.AllSchoolReports
+	var allSchoolReportPlans []*model.AllSchoolReportPlans
 
 	cursor, err := schoolReportsCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
 	for cursor.Next(context.TODO()) {
-		var schoolReport *model.SchoolReport
-		err := cursor.Decode(&schoolReport)
+		var schoolReportPlan *model.SchoolReportPlan
+		err := cursor.Decode(&schoolReportPlan)
 		if err != nil {
 			return nil, err
 		}
-		noteFilter := bson.D{{"item_id", schoolReport.ID}}
+		noteFilter := bson.D{{"item_id", schoolReportPlan.ID}}
 		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
 		if noteErr != nil {
 			return nil, err
 		}
 		intNoteCount := int(noteCount)
 		var user *model.User
-		userFilter := bson.D{{"_id", schoolReport.UserID}}
+		userFilter := bson.D{{"_id", schoolReportPlan.UserID}}
 		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
 		if err != nil {
 			return nil, err
 		}
-		singleSchoolReport := &model.AllSchoolReports{
-			SchoolReport: &model.SchoolReport{
-				ID:         schoolReport.ID,
-				Curriculum: schoolReport.Curriculum,
-				Status:     schoolReport.Status,
-				CreatedAt:  schoolReport.CreatedAt,
-				UpdatedAt:  schoolReport.UpdatedAt,
+		singleSchoolReportPlan := &model.AllSchoolReportPlans{
+			SchoolReportPlan: &model.SchoolReportPlan{
+				ID:         schoolReportPlan.ID,
+				Curriculum: schoolReportPlan.Curriculum,
+				Status:     schoolReportPlan.Status,
+				CreatedAt:  schoolReportPlan.CreatedAt,
+				UpdatedAt:  schoolReportPlan.UpdatedAt,
 			},
 			User: &model.User{
 				ID:        user.ID,
@@ -216,7 +215,55 @@ func GetSchoolReports(filter bson.D) ([]*model.AllSchoolReports, error) {
 			},
 			NoteCount: &intNoteCount,
 		}
-		allSchoolReports = append(allSchoolReports, singleSchoolReport)
+		allSchoolReportPlans = append(allSchoolReportPlans, singleSchoolReportPlan)
 	}
-	return allSchoolReports, nil
+	return allSchoolReportPlans, nil
+}
+func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, error) {
+	// this function breaks if logs don't meet the model requirements
+	schoolReportsCollection := database.Db.Collection("school_report_debriefs")
+	notesCollection := database.Db.Collection("notes")
+	userCollection := database.Db.Collection("users")
+	var allSchoolReportDebriefs []*model.AllSchoolReportDebriefs
+
+	cursor, err := schoolReportsCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var schoolReportDebrief *model.SchoolReportDebrief
+		err := cursor.Decode(&schoolReportDebrief)
+		if err != nil {
+			return nil, err
+		}
+		noteFilter := bson.D{{"item_id", schoolReportDebrief.ID}}
+		noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
+		if noteErr != nil {
+			return nil, err
+		}
+		intNoteCount := int(noteCount)
+		var user *model.User
+		userFilter := bson.D{{"_id", schoolReportDebrief.UserID}}
+		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		singleSchoolReportDebrief := &model.AllSchoolReportDebriefs{
+			SchoolReportDebrief: &model.SchoolReportDebrief{
+				ID: schoolReportDebrief.ID,
+				LessonPlanID: schoolReportDebrief.LessonPlanID,
+				Status:    schoolReportDebrief.Status,
+				CreatedAt: schoolReportDebrief.CreatedAt,
+				UpdatedAt: schoolReportDebrief.UpdatedAt,
+			},
+			User: &model.User{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			},
+			NoteCount: &intNoteCount,
+		}
+		allSchoolReportDebriefs = append(allSchoolReportDebriefs, singleSchoolReportDebrief)
+	}
+	return allSchoolReportDebriefs, nil
 }

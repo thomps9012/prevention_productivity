@@ -10,16 +10,15 @@ import (
 )
 
 type Log struct {
-	ID           string `json:"id" bson:"_id"`
-	UserID       string `json:"user_id" bson:"user_id"`
-	FocusArea    string `json:"focus_area" bson:"focus_area"`
-	Actions      string `json:"actions" bson:"actions"`
-	Successes    string `json:"successes" bson:"successes"`
-	Improvements string `json:"improvements" bson:"improvements"`
-	NextSteps    string `json:"next_steps" bson:"next_steps"`
-	Status       string `json:"status" bson:"status"`
-	CreatedAt    string `json:"created_at" bson:"created_at"`
-	UpdatedAt    string `json:"updated_at" bson:"updated_at"`
+	ID            string `json:"id" bson:"_id"`
+	UserID        string `json:"user_id"`
+	DailyActivity string  `json:"daily_activity"`
+	Positives     string  `json:"positives"`
+	Improvements  string  `json:"improvements"`
+	NextSteps     string  `json:"next_steps"`
+	Status        string  `json:"status"`
+	CreatedAt     string  `json:"created_at"`
+	UpdatedAt     string  `json:"updated_at"`
 }
 
 func (l *Log) Create() {
@@ -41,9 +40,8 @@ func (l *Log) Update(id string) {
 	println(l.UpdatedAt)
 	update := bson.D{
 		{"$set", bson.M{
-			"focus_area":   l.FocusArea,
-			"actions":      l.Actions,
-			"successes":    l.Successes,
+			"daily_activity":   l.DailyActivity,
+			"positives":      l.Positives,
 			"improvements": l.Improvements,
 			"next_steps":   l.NextSteps,
 			"status":       l.Status,

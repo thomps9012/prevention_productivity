@@ -1,5 +1,5 @@
 type User {
-  id: ID
+  id: ID  
   first_name: String!
   last_name: String!
   email: String!
@@ -56,9 +56,8 @@ type Note {
 type Log {
   id: ID
   user_id: ID
-  focus_area: String!
-  actions: String!
-  successes: String!
+  daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
   status: String!
@@ -69,6 +68,7 @@ type Log {
 type Event {
   id: ID
   event_lead: ID
+  coplanners: [ID]
   title: String!
   description: String!
   start_date: String!
@@ -92,7 +92,7 @@ type Event {
   food_and_beverage: [String!]!
   caterer: String!
   food_head_count: Int! 
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float!
   affiliated_organization: String
@@ -108,7 +108,8 @@ type EventSummary {
   id: ID!
   event_id: ID!
   user_id: ID!
-  attendee_count: Int!
+  coplanners: [ID]
+  attendee_count: Int
   challenges: String!
   successes: String!
   improvements: String!
@@ -117,18 +118,27 @@ type EventSummary {
   updated_at: String!
 }
 
-type SchoolReport {
+type SchoolReportPlan {
   id: ID
   user_id: ID
+  cofacilitators: [ID]
   curriculum: String!
-  lesson_plan: String!
+  lesson_topics: String!
   school: String!
-  topics: String!
-  student_count: Int!
-  student_list: [String!]!
-  challenges: String!
-  successes: String!
-  improvements: String!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
+type SchoolReportDebrief {
+  id: ID!
+  user_id: ID!
+  lesson_plan_id: ID!
+  student_count: Int
+  student_list: [String!]
+  challenges_improvements: String!
+  positives: String!
+  discussion: String!
   status: String!
   created_at: String!
   updated_at: String!
@@ -149,8 +159,12 @@ type EventSummaryWithNotes {
   notes: [Note]
 }
 
-type SchoolReportWithNotes {
-  school_report: SchoolReport!
+type SchoolReportPlanWithNotes {
+  school_report_plan: SchoolReportPlan!
+  notes: [Note]
+}
+type SchoolReportDebriefWithNotes {
+  school_report_debrief: SchoolReportDebrief!
   notes: [Note]
 }
 
@@ -163,6 +177,7 @@ type AllLogs {
 type AllEvents {
   event: Event!
   user: User
+  coplanners: [User]
   noteCount: Int
 }
 
@@ -170,12 +185,21 @@ type AllEventSummaries {
   event: Event!
   event_summary: EventSummary!
   user: User
+  coplanners: [User]
   noteCount: Int
 }
 
-type AllSchoolReports {
-  school_report: SchoolReport!
+type AllSchoolReportPlans {
+  school_report_plan: SchoolReportPlan!
   user: User
+  cofacilitators: [User]
+  noteCount: Int
+}
+
+type AllSchoolReportDebriefs {
+  school_report_debrief: SchoolReportDebrief!
+  user: User
+  cofacilitators: [User]
   noteCount: Int
 }
 
@@ -195,17 +219,20 @@ type Query {
   userLogs(user_id: ID!): [Log!]!
   event(id: ID!): EventWithNotes!
   eventSummary(id: ID!): EventSummaryWithNotes!
-  schoolReport(id: ID!): SchoolReportWithNotes!
+  schoolReportPlan(id: ID!): SchoolReportPlanWithNotes!
+  schoolReportDebrief(id: ID!): SchoolReportDebriefWithNotes!
   events: [AllEvents!]
   eventSummaries: [AllEventSummaries!]
-  schoolReports: [AllSchoolReports!]
+  schoolReportPlans: [AllSchoolReportPlans!]
+  schoolReportDebriefs: [AllSchoolReportDebriefs!]
   grants: [Grant!]
   grant(id: ID!): Grant!
   contacts: [Contact!]
   contactInfo(id: ID!): ContactInfo!
   userEvents(user_id: ID!): [Event!]
   userEventSummaries(user_id: ID!): [EventSummary!]
-  userSchoolReports(user_id: ID!): [SchoolReport!]  
+  userSchoolReportPlans(user_id: ID!): [SchoolReportPlan!]  
+  userSchoolReportDebriefs(user_id: ID!): [SchoolReportDebrief!]  
   userNotes(user_id: ID!): [Note!]
 }
 
@@ -246,23 +273,22 @@ input RefreshTokenInput {
 }
 
 input NewLog {
-  focus_area: String!
-  actions: String!
-  successes: String!
+  daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
 }
 
 input UpdateLog {
-  focus_area: String!
-  actions: String!
-  successes: String!
+ daily_activity: String!
+  positives: String!
   improvements: String!
   next_steps: String!
   status: String!
 }
 
 input NewEvent {
+   coplanners: [ID]
   title: String
   description: String
   start_date: String
@@ -286,7 +312,7 @@ input NewEvent {
   food_and_beverage: [String]
   caterer: String
   food_head_count: Int
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float
   affiliated_organization: String
@@ -296,6 +322,7 @@ input NewEvent {
 }
 
 input UpdateEvent {
+   coplanners: [ID]
   title: String
   description: String
   start_date: String
@@ -319,7 +346,7 @@ input UpdateEvent {
   food_and_beverage: [String]
   caterer: String
   food_head_count: Int
-  event_team: [ID]
+  event_team: [String]
   volunteer_list: [String]
   budget: Float
   affiliated_organization: String
@@ -331,42 +358,52 @@ input UpdateEvent {
 
 input NewEventSummary {
   event_id: ID
+  coplanners: [ID]
   attendee_count: Int
-  challenges: String
-  successes: String
-  improvements: String
+  challenges: String!
+  successes: String!
+  improvements: String!
 }
 
 input UpdateEventSummary {
   attendee_count: Int
-  challenges: String
-  successes: String
-  improvements: String
+  coplanners: [ID]
+  challenges: String!
+  successes: String!
+  improvements: String!
   status: String
 }
 
-input NewSchoolReport {
-  curriculum: String
-  lesson_plan: String
-  school: String
-  topics: String
-  student_count: Int
-  student_list: [String!]
-  challenges: String
-  successes: String
-  improvements: String
+input NewSchoolReportPlan {
+  cofacilitators: [ID]
+  curriculum: String!
+  lesson_topics: String!
+  school: String!
 }
 
-input UpdateSchoolReport {
-  curriculum: String
-  lesson_plan: String
-  school: String
-  topics: String
+input UpdateSchoolReportPlan {
+  cofacilitators: [ID]
+  curriculum: String!
+  lesson_topics: String!
+  school: String!
+  status: String
+}
+
+input NewSchoolReportDebrief {
+  lesson_plan_id: ID!
   student_count: Int
   student_list: [String!]
-  challenges: String
-  successes: String
-  improvements: String
+  challenges_improvements: String!
+  positives: String!
+  discussion: String!
+}
+
+input UpdateSchoolReportDebrief {
+  lesson_plan_id: ID!
+  student_count: Int
+  student_list: [String!]
+  challenges_improvements: String!
+  positives: String!
   status: String
 }
 
@@ -442,9 +479,14 @@ type Mutation {
   removeEventSummary(id: ID!): Boolean
   approveEventSummary(id: ID!): Boolean
   rejectEventSummary(id: ID!): Boolean
-  createSchoolReport(newSchoolReport: NewSchoolReport!): SchoolReport
-  updateSchoolReport(id: ID!, updateSchoolReport: UpdateSchoolReport!): SchoolReport
-  removeSchoolReport(id: ID!): Boolean
-  approveSchoolReport(id: ID!): Boolean
-  rejectSchoolReport(id: ID!): Boolean
+  createSchoolReportPlan(newSchoolReportPlan: NewSchoolReportPlan!): SchoolReportPlan
+  updateSchoolReportPlan(id: ID!, updateSchoolReportPlan: UpdateSchoolReportPlan!): SchoolReportPlan
+  removeSchoolReportPlan(id: ID!): Boolean
+  approveSchoolReportPlan(id: ID!): Boolean
+  rejectSchoolReportPlan(id: ID!): Boolean
+  createSchoolReportDebrief(newSchoolReportDebrief: NewSchoolReportDebrief!): SchoolReportDebrief
+  updateSchoolReportDebrief(id: ID!, updateSchoolReportDebrief: UpdateSchoolReportDebrief!): SchoolReportDebrief
+  removeSchoolReportDebrief(id: ID!): Boolean
+  approveSchoolReportDebrief(id: ID!): Boolean
+  rejectSchoolReportDebrief(id: ID!): Boolean
 }

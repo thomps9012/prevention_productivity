@@ -24,7 +24,7 @@ resolver:
   package: graph
 
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
-# struct_tag: json
+struct_tag: json
 
 # Optional: turn on to use []Thing instead of []*Thing
 # omit_slice_element_pointers: false
@@ -34,6 +34,7 @@ resolver:
 
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
+# use this for creation of own models / names / etc
 autobind:
 #  - "string string thomps9012/prevention_productivity/graph/model"
 

@@ -1,52 +1,52 @@
 package events
 
 import (
-	database "thomps9012/prevention_productivity/internal/db"
-	"go.mongodb.org/mongo-driver/bson"
 	"context"
+	database "thomps9012/prevention_productivity/internal/db"
 	"time"
+
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-
 type Event struct {
-	ID	   string `json:"id" bson:"_id"`
-	EventLead string `json:"event_lead" bson:"event_lead"`
-	Title string `json:"title" bson:"title"`
-	Description string `json:"description" bson:"description"`
-	StartDate              string        `json:"start_date" bson:"start_date"`
-	SetUp                  string        `json:"set_up" bson:"set_up"`
-	CleanUp                string        `json:"clean_up" bson:"clean_up"`
-	EndDate                string        `json:"end_date" bson:"end_date"`
-	GrantID                string        `json:"grant_id" bson:"grant_id"`
-	Public                 bool          `json:"public"`
-	Rsvp                   bool          `json:"rsvp"`
-	AnnualEvent            bool          `json:"annual_event" bson:"annual_event"`
-	NewEvent               bool          `json:"new_event" bson:"new_event"`
-	Volunteers             bool          `json:"volunteers"`
+	ID                     string    `json:"id" bson:"_id"`
+	EventLead              string    `json:"event_lead"`
+	Coplanners             []*string `json:"coplanners"`
+	Title                  string    `json:"title"`
+	Description            string    `json:"description"`
+	StartDate              string    `json:"start_date"`
+	SetUp                  string    `json:"set_up"`
+	CleanUp                string    `json:"clean_up"`
+	EndDate                string    `json:"end_date"`
+	GrantID                string    `json:"grant_id"`
+	Public                 bool      `json:"public"`
+	Rsvp                   bool      `json:"rsvp"`
+	AnnualEvent            bool      `json:"annual_event"`
+	NewEvent               bool      `json:"new_event"`
+	Volunteers             bool      `json:"volunteers"`
 	Agenda                 []*string `json:"agenda"`
-	TargetAudience         string        `json:"target_audience" bson:"target_audience"`
-	PartingGifts           []*string  `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial      []*string  `json:"marketing_material" bson:"marketing_material"`
-	Supplies               []*string  `json:"supplies"`
-	SpecialOrders          []*string  `json:"special_orders" bson:"special_orders"`
-	Performance            string        `json:"performance"`
-	Vendors                string        `json:"vendors"`
-	FoodAndBeverage        []*string  `json:"food_and_beverage" bson:"food_and_beverage"`
-	Caterer                string        `json:"caterer"`
-	FoodHeadCount          int           `json:"food_head_count" bson:"food_head_count"`
-	EventTeam              []*string     `json:"event_team" bson:"event_team"`
-	VolunteerList          []*string    `json:"volunteer_list" bson:"volunteer_list"`
-	Budget                 float64       `json:"budget"`
-	AffiliatedOrganization *string       `json:"affiliated_organization" bson:"affiliated_organization"`
-	EducationalGoals       []*string      `json:"educational_goals" bson:"educational_goals"`
-	EducationalOutcomes    []*string      `json:"educational_outcomes" bson:"educational_outcomes"`
-	GrantGoals             []*string      `json:"grant_goals" bson:"grant_goals"`
-	CreatedAt              string        `json:"created_at" bson:"created_at"`
-	UpdatedAt              string        `json:"updated_at" bson:"updated_at"`
-	Status 			   string        `json:"status" bson:"status"`
+	TargetAudience         string    `json:"target_audience"`
+	PartingGifts           []*string `json:"parting_gifts"`
+	MarketingMaterial      []*string `json:"marketing_material"`
+	Supplies               []*string `json:"supplies"`
+	SpecialOrders          []*string `json:"special_orders"`
+	Performance            string    `json:"performance"`
+	Vendors                string    `json:"vendors"`
+	FoodAndBeverage        []*string `json:"food_and_beverage"`
+	Caterer                string    `json:"caterer"`
+	FoodHeadCount          int       `json:"food_head_count"`
+	EventTeam              []*string `json:"event_team"`
+	VolunteerList          []*string `json:"volunteer_list"`
+	Budget                 float64   `json:"budget"`
+	AffiliatedOrganization *string   `json:"affiliated_organization"`
+	EducationalGoals       []*string `json:"educational_goals"`
+	EducationalOutcomes    []*string `json:"educational_outcomes"`
+	GrantGoals             []*string `json:"grant_goals"`
+	CreatedAt              string    `json:"created_at"`
+	UpdatedAt              string    `json:"updated_at"`
+	Status                 string    `json:"status"`
 }
-
 
 func (e *Event) Create() {
 	collection := database.Db.Collection("events")
