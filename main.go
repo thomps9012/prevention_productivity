@@ -30,28 +30,27 @@ func main() {
 	database.InitDB()
 	defer database.CloseDB()
 
-	router.Route("/graphql", func(router chi.Router){
+	router.Route("/graphql", func(router chi.Router) {
 		router.Use(auth.Middleware())
 
 		schema := generated.NewExecutableSchema(generated.Config{
-			Resolvers: &graph.Resolver{},
-		Directives: generated.DirectiveRoot{},
-		Complexity: generated.ComplexityRoot{},
+			Resolvers:  &graph.Resolver{},
+			Directives: generated.DirectiveRoot{},
+			Complexity: generated.ComplexityRoot{},
+		})
 
+		srv := handler.NewDefaultServer(schema)
+		srv.Use(extension.FixedComplexityLimit(200))
+		router.Handle("/", srv)
 	})
 
-	srv := handler.NewDefaultServer(schema)
-	srv.Use(extension.FixedComplexityLimit(200))
-	router.Handle("/", srv)
-})
-
-gqlPlayground := playground.Handler("GraphQL playground", "/graphql")
-router.Get("/", gqlPlayground)
-log.Printf("Listening on localhost:%s\n", port)
-log.Printf("Visit `http://localhost:%s/graphql` in your browser", port)
-// switch below on production
-originsOk := handlers.AllowedOrigins([]string{"*"})
-headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
-http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router))
+	gqlPlayground := playground.Handler("GraphQL playground", "/graphql")
+	router.Get("/", gqlPlayground)
+	log.Printf("Listening on localhost:%s\n", port)
+	log.Printf("Visit `http://localhost:%s/graphql` in your browser", port)
+	// switch below on production
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
+	http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }

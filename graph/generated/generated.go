@@ -66,14 +66,12 @@ type ComplexityRoot struct {
 	}
 
 	AllSchoolReportDebriefs struct {
-		Cofacilitators      func(childComplexity int) int
 		NoteCount           func(childComplexity int) int
 		SchoolReportDebrief func(childComplexity int) int
 		User                func(childComplexity int) int
 	}
 
 	AllSchoolReportPlans struct {
-		Cofacilitators   func(childComplexity int) int
 		NoteCount        func(childComplexity int) int
 		SchoolReportPlan func(childComplexity int) int
 		User             func(childComplexity int) int
@@ -494,13 +492,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AllLogs.User(childComplexity), true
 
-	case "AllSchoolReportDebriefs.cofacilitators":
-		if e.complexity.AllSchoolReportDebriefs.Cofacilitators == nil {
-			break
-		}
-
-		return e.complexity.AllSchoolReportDebriefs.Cofacilitators(childComplexity), true
-
 	case "AllSchoolReportDebriefs.noteCount":
 		if e.complexity.AllSchoolReportDebriefs.NoteCount == nil {
 			break
@@ -521,13 +512,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AllSchoolReportDebriefs.User(childComplexity), true
-
-	case "AllSchoolReportPlans.cofacilitators":
-		if e.complexity.AllSchoolReportPlans.Cofacilitators == nil {
-			break
-		}
-
-		return e.complexity.AllSchoolReportPlans.Cofacilitators(childComplexity), true
 
 	case "AllSchoolReportPlans.noteCount":
 		if e.complexity.AllSchoolReportPlans.NoteCount == nil {
@@ -2472,14 +2456,12 @@ type AllEventSummaries {
 type AllSchoolReportPlans {
   school_report_plan: SchoolReportPlan!
   user: User
-  cofacilitators: [User]
   noteCount: Int
 }
 
 type AllSchoolReportDebriefs {
   school_report_debrief: SchoolReportDebrief!
   user: User
-  cofacilitators: [User]
   noteCount: Int
 }
 
@@ -4687,71 +4669,6 @@ func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_user(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _AllSchoolReportDebriefs_cofacilitators(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cofacilitators, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AllSchoolReportDebriefs",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "username":
-				return ec.fieldContext_User_username(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "admin":
-				return ec.fieldContext_User_admin(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "active":
-				return ec.fieldContext_User_active(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _AllSchoolReportDebriefs_noteCount(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportDebriefs) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AllSchoolReportDebriefs_noteCount(ctx, field)
 	if err != nil {
@@ -4886,71 +4803,6 @@ func (ec *executionContext) _AllSchoolReportPlans_user(ctx context.Context, fiel
 }
 
 func (ec *executionContext) fieldContext_AllSchoolReportPlans_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AllSchoolReportPlans",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "first_name":
-				return ec.fieldContext_User_first_name(ctx, field)
-			case "last_name":
-				return ec.fieldContext_User_last_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "username":
-				return ec.fieldContext_User_username(ctx, field)
-			case "password":
-				return ec.fieldContext_User_password(ctx, field)
-			case "admin":
-				return ec.fieldContext_User_admin(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
-			case "active":
-				return ec.fieldContext_User_active(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AllSchoolReportPlans_cofacilitators(ctx context.Context, field graphql.CollectedField, obj *model.AllSchoolReportPlans) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AllSchoolReportPlans_cofacilitators(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cofacilitators, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AllSchoolReportPlans_cofacilitators(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AllSchoolReportPlans",
 		Field:      field,
@@ -12873,8 +12725,6 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlans(ctx context.Con
 				return ec.fieldContext_AllSchoolReportPlans_school_report_plan(ctx, field)
 			case "user":
 				return ec.fieldContext_AllSchoolReportPlans_user(ctx, field)
-			case "cofacilitators":
-				return ec.fieldContext_AllSchoolReportPlans_cofacilitators(ctx, field)
 			case "noteCount":
 				return ec.fieldContext_AllSchoolReportPlans_noteCount(ctx, field)
 			}
@@ -12924,8 +12774,6 @@ func (ec *executionContext) fieldContext_Query_schoolReportDebriefs(ctx context.
 				return ec.fieldContext_AllSchoolReportDebriefs_school_report_debrief(ctx, field)
 			case "user":
 				return ec.fieldContext_AllSchoolReportDebriefs_user(ctx, field)
-			case "cofacilitators":
-				return ec.fieldContext_AllSchoolReportDebriefs_cofacilitators(ctx, field)
 			case "noteCount":
 				return ec.fieldContext_AllSchoolReportDebriefs_noteCount(ctx, field)
 			}
@@ -18802,10 +18650,6 @@ func (ec *executionContext) _AllSchoolReportDebriefs(ctx context.Context, sel as
 
 			out.Values[i] = ec._AllSchoolReportDebriefs_user(ctx, field, obj)
 
-		case "cofacilitators":
-
-			out.Values[i] = ec._AllSchoolReportDebriefs_cofacilitators(ctx, field, obj)
-
 		case "noteCount":
 
 			out.Values[i] = ec._AllSchoolReportDebriefs_noteCount(ctx, field, obj)
@@ -18841,10 +18685,6 @@ func (ec *executionContext) _AllSchoolReportPlans(ctx context.Context, sel ast.S
 		case "user":
 
 			out.Values[i] = ec._AllSchoolReportPlans_user(ctx, field, obj)
-
-		case "cofacilitators":
-
-			out.Values[i] = ec._AllSchoolReportPlans_cofacilitators(ctx, field, obj)
 
 		case "noteCount":
 

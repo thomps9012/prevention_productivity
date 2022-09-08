@@ -25,15 +25,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
 func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser) (string, error) {
 	var user users.User
 	user.FirstName = newUser.FirstName
@@ -1308,7 +1299,14 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 		return nil, fmt.Errorf("Unauthorized")
 	}
 }
-
+func Contains(n int, match func(i int) bool) bool {
+	for i := 0; i < n; i++ {
+		if match(i) {
+			return true
+		}
+	}
+	return false
+}
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
@@ -1321,8 +1319,12 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 		return nil, err
 	}
 	eventLead := event.EventLead
-	eventCoplanners := event.Coplanners
-	if isAdmin || eventLead == &userID || contains(eventCoplanners, &userID) {
+	// eventCoplanners := event.Coplanners
+	// exists := Contains(len(eventCoplanners), func(i int) bool {
+	// 	return eventCoplanners[i] == &userID
+	// })
+	// if isAdmin || eventLead == &userID || exists {
+	if isAdmin || eventLead == &userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
@@ -1389,68 +1391,68 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 			Notes: notes,
 		}
 		return eventWithNotes, nil
-		} else {
-			return nil, fmt.Errorf("Unauthorized")
-		}
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
-	
+
 func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error) {
-		isAdmin := auth.ForAdmin(ctx)
-		userID := auth.ForUserID(ctx)
-		var eventSummaryWithNotes *model.EventSummaryWithNotes
-		var eventSummary *model.EventSummary
-		eventSummaryCollection := database.Db.Collection("event_summaries")
-		eventSummaryFilter := bson.D{{"_id", id}}
-		err := eventSummaryCollection.FindOne(context.TODO(), eventSummaryFilter).Decode(&eventSummary)
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var eventSummaryWithNotes *model.EventSummaryWithNotes
+	var eventSummary *model.EventSummary
+	eventSummaryCollection := database.Db.Collection("event_summaries")
+	eventSummaryFilter := bson.D{{"_id", id}}
+	err := eventSummaryCollection.FindOne(context.TODO(), eventSummaryFilter).Decode(&eventSummary)
+	if err != nil {
+		return nil, err
+	}
+	summaryAuthor := eventSummary.UserID
+	if isAdmin || summaryAuthor == userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
 		}
-		summaryAuthor := eventSummary.UserID
-		if isAdmin || summaryAuthor == userID {
-			var notes []*model.Note
-			noteCollection := database.Db.Collection("notes")
-			noteFilter := bson.D{{"item_id", id}}
-			findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
-			cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
 			if err != nil {
 				return nil, err
 			}
-			for cursor.Next(context.TODO()) {
-				var note *model.Note
-				err := cursor.Decode(&note)
-				if err != nil {
-					return nil, err
-				}
-				notes = append(notes, &model.Note{
-					ID:        note.ID,
-					UserID:    note.UserID,
-					ItemID:    note.ItemID,
-					Title:     note.Title,
-					Content:   note.Content,
-					CreatedAt: note.CreatedAt,
-					UpdatedAt: note.UpdatedAt,
-				})
-			}
-			eventSummaryWithNotes = &model.EventSummaryWithNotes{
-				EventSummary: &model.EventSummary{
-					ID:            eventSummary.ID,
-					UserID:        eventSummary.UserID,
-					EventID:       eventSummary.EventID,
-					Coplanners:    eventSummary.Coplanners,
-					AttendeeCount: eventSummary.AttendeeCount,
-					Challenges:    eventSummary.Challenges,
-					Successes:     eventSummary.Successes,
-					Improvements:  eventSummary.Improvements,
-					Status:        eventSummary.Status,
-					CreatedAt:     eventSummary.CreatedAt,
-					UpdatedAt:     eventSummary.UpdatedAt,
-				},
-				Notes: notes,
-			}
-			return eventSummaryWithNotes, nil
-		} else {
-			return nil, fmt.Errorf("Unauthorized")
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
 		}
+		eventSummaryWithNotes = &model.EventSummaryWithNotes{
+			EventSummary: &model.EventSummary{
+				ID:            eventSummary.ID,
+				UserID:        eventSummary.UserID,
+				EventID:       eventSummary.EventID,
+				Coplanners:    eventSummary.Coplanners,
+				AttendeeCount: eventSummary.AttendeeCount,
+				Challenges:    eventSummary.Challenges,
+				Successes:     eventSummary.Successes,
+				Improvements:  eventSummary.Improvements,
+				Status:        eventSummary.Status,
+				CreatedAt:     eventSummary.CreatedAt,
+				UpdatedAt:     eventSummary.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return eventSummaryWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error) {
@@ -1467,7 +1469,13 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	reportAuthor := schoolReportPlan.UserID
 	cofacilitators := schoolReportPlan.Cofacilitators
 	// add in conditional check for cofacilitators
-	if isAdmin || reportAuthor == &userID || contains(cofacilitators, &userID) {
+	fmt.Printf("cofacilitators %v", cofacilitators)
+	println(userID)
+	// exists := Contains(len(cofacilitators), func(i int) bool {
+	// 	return cofacilitators[i] == &userID
+	// })
+	// if isAdmin || reportAuthor == &userID || exists {
+	if isAdmin || reportAuthor == &userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
@@ -1494,15 +1502,15 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 		}
 		schoolReportPlanWithNotes = &model.SchoolReportPlanWithNotes{
 			SchoolReportPlan: &model.SchoolReportPlan{
-				ID:           schoolReportPlan.ID,
-				UserID:       schoolReportPlan.UserID,
-				Cofacilitators: schoolReportPlan.Cofacilitators
-				Curriculum:   schoolReportPlan.Curriculum,
-				School:       schoolReportPlan.School,
-				LessonTopics:       schoolReportPlan.LessonTopics,
-				Status:       schoolReportPlan.Status,
-				CreatedAt:    schoolReportPlan.CreatedAt,
-				UpdatedAt:    schoolReportPlan.UpdatedAt,
+				ID:             schoolReportPlan.ID,
+				UserID:         schoolReportPlan.UserID,
+				Cofacilitators: schoolReportPlan.Cofacilitators,
+				Curriculum:     schoolReportPlan.Curriculum,
+				School:         schoolReportPlan.School,
+				LessonTopics:   schoolReportPlan.LessonTopics,
+				Status:         schoolReportPlan.Status,
+				CreatedAt:      schoolReportPlan.CreatedAt,
+				UpdatedAt:      schoolReportPlan.UpdatedAt,
 			},
 			Notes: notes,
 		}
@@ -1524,7 +1532,7 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 		return nil, err
 	}
 	reportAuthor := schoolReportDebrief.UserID
-	if isAdmin || reportAuthor == &userID {
+	if isAdmin || reportAuthor == userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
@@ -1551,17 +1559,16 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 		}
 		schoolReportDebriefWithNotes = &model.SchoolReportDebriefWithNotes{
 			SchoolReportDebrief: &model.SchoolReportDebrief{
-				ID:           schoolReportDebrief.ID,
-				UserID:       schoolReportDebrief.UserID,
-				Cofacilitators: schoolReportDebrief.Cofacilitators
-				StudentCount: schoolReportDebrief.StudentCount,
-				StudentList: schoolReportDebrief.StudentList,
+				ID:                     schoolReportDebrief.ID,
+				UserID:                 schoolReportDebrief.UserID,
+				StudentCount:           schoolReportDebrief.StudentCount,
+				StudentList:            schoolReportDebrief.StudentList,
 				ChallengesImprovements: schoolReportDebrief.ChallengesImprovements,
-				Positives: schoolReportDebrief.Positives,
-				Discussion: schoolReportDebrief.Discussion,
-				Status:       schoolReportDebrief.Status,
-				CreatedAt:    schoolReportDebrief.CreatedAt,
-				UpdatedAt:    schoolReportDebrief.UpdatedAt,
+				Positives:              schoolReportDebrief.Positives,
+				Discussion:             schoolReportDebrief.Discussion,
+				Status:                 schoolReportDebrief.Status,
+				CreatedAt:              schoolReportDebrief.CreatedAt,
+				UpdatedAt:              schoolReportDebrief.UpdatedAt,
 			},
 			Notes: notes,
 		}
@@ -1575,12 +1582,11 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) 
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
 	if isAdmin {
-		filter := bson.D{}
+		filter := bson.M{}
 		return utils.GetEvents(filter)
-		} else if userID != "" {
+	} else if userID != "" {
 		// add in check for coplanners here
-		// filter := bson.D{{"event_lead", userID}}
-		filter := bson.D{{"event_lead", userID}, {"$or", bson.D{{"coplanners", userID}}}}
+		filter := bson.M{"$or": bson.A{bson.M{"coplanners": userID}, bson.M{"user_id": userID}}}
 		return utils.GetEvents(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1593,10 +1599,9 @@ func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSu
 	if isAdmin {
 		filter := bson.D{}
 		return utils.GetEventSummaries(filter)
-		} else if userID != "" {
+	} else if userID != "" {
 		// add in check for coplanners here
-		// filter := bson.D{{"user_id", userID}}
-		filter := bson.D{{"user_id", userID}, {"$or", bson.D{{"cofacilitators", userID}}}}
+		filter := bson.D{{"user_id", userID}}
 		return utils.GetEventSummaries(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1604,15 +1609,13 @@ func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSu
 }
 
 func (r *queryResolver) SchoolReportPlans(ctx context.Context) ([]*model.AllSchoolReportPlans, error) {
-	panic(fmt.Errorf("not implemented"))
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
 	if isAdmin {
-		filter := bson.D{}
+		filter := bson.M{}
 		return utils.GetSchoolReportPlans(filter)
-		} else if userID != "" {
-		// add in check for copfacilitators here
-		filter := bson.D{{"user_id", userID}, {"$or", bson.D{{"cofacilitators", userID}}}}
+	} else if userID != "" {
+		filter := bson.M{"$or": bson.A{bson.M{"cofacilitators": userID}, bson.M{"user_id": userID}}}
 		return utils.GetSchoolReportPlans(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1785,7 +1788,7 @@ func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model
 	var events []*model.Event
 	collection := database.Db.Collection("events")
 	// add in conditional search for coplanner ids
-	filter := bson.D{{"event_lead", userID}, {"$or", bson.D{{"coplanners", userID}}}}
+	filter := bson.D{{"$or", bson.A{bson.D{{"event_lead", userID}}, bson.D{{"coplanners", userID}}}}}
 	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
@@ -1831,12 +1834,12 @@ func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) (
 			return nil, err
 		}
 		events = append(events, &model.EventSummary{
-			ID:          event.ID,
-			EventID:       event.Title,
-			AttendeeCount: event.AttendeeCount
-			Status:      event.Status,
-			CreatedAt:   event.CreatedAt,
-			UpdatedAt:   event.UpdatedAt,
+			ID:            event.ID,
+			EventID:       event.EventID,
+			AttendeeCount: event.AttendeeCount,
+			Status:        event.Status,
+			CreatedAt:     event.CreatedAt,
+			UpdatedAt:     event.UpdatedAt,
 		})
 	}
 	return events, nil
@@ -1866,7 +1869,7 @@ func (r *queryResolver) UserSchoolReportPlans(ctx context.Context, userID string
 			UserID:       report.UserID,
 			Curriculum:   report.Curriculum,
 			School:       report.School,
-			LessonTopics: report.LessonTopics
+			LessonTopics: report.LessonTopics,
 			Status:       report.Status,
 			CreatedAt:    report.CreatedAt,
 			UpdatedAt:    report.UpdatedAt,

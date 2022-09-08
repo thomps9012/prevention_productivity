@@ -12,7 +12,8 @@ import (
 var Db *mongo.Database
 
 func InitDB() {
-	ATLAS_URI := "mongodb+srv://spars01:H0YXCAGHoUihHcSZ@cluster0.wuezj.mongodb.net/prevention_productivity?retryWrites=true&w=majority"
+	// change on deployment
+	ATLAS_URI := "mongodb+srv://spars01:H0YXCAGHoUihHcSZ@cluster0.wuezj.mongodb.net/prevention_productivity_test?retryWrites=true&w=majority"
 	// Set client options
 	if ATLAS_URI == "" {
 		ATLAS_URI = "mongodb://localhost:27017"
@@ -35,7 +36,8 @@ func InitDB() {
 
 	fmt.Println("Connected to MongoDB!")
 
-	Db = client.Database("prevention_productivity")
+	// change on deployment
+	Db = client.Database("TEST_prevention_productivity")
 }
 
 func CloseDB() {

@@ -11,14 +11,14 @@ import (
 
 type Log struct {
 	ID            string `json:"id" bson:"_id"`
-	UserID        string `json:"user_id"`
-	DailyActivity string  `json:"daily_activity"`
-	Positives     string  `json:"positives"`
-	Improvements  string  `json:"improvements"`
-	NextSteps     string  `json:"next_steps"`
-	Status        string  `json:"status"`
-	CreatedAt     string  `json:"created_at"`
-	UpdatedAt     string  `json:"updated_at"`
+	UserID        string `json:"user_id" bson:"user_id"`
+	DailyActivity string `json:"daily_activity" bson:"daily_activity"`
+	Positives     string `json:"positives"`
+	Improvements  string `json:"improvements"`
+	NextSteps     string `json:"next_steps" bson:"next_steps"`
+	Status        string `json:"status"`
+	CreatedAt     string `json:"created_at" bson:"created_at"`
+	UpdatedAt     string `json:"updated_at" bson:"updated_at"`
 }
 
 func (l *Log) Create() {
@@ -40,12 +40,12 @@ func (l *Log) Update(id string) {
 	println(l.UpdatedAt)
 	update := bson.D{
 		{"$set", bson.M{
-			"daily_activity":   l.DailyActivity,
+			"daily_activity": l.DailyActivity,
 			"positives":      l.Positives,
-			"improvements": l.Improvements,
-			"next_steps":   l.NextSteps,
-			"status":       l.Status,
-			"updated_at":   l.UpdatedAt,
+			"improvements":   l.Improvements,
+			"next_steps":     l.NextSteps,
+			"status":         l.Status,
+			"updated_at":     l.UpdatedAt,
 		}},
 	}
 	println(update)
