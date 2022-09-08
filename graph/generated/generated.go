@@ -2684,6 +2684,7 @@ input UpdateSchoolReportDebrief {
   student_list: [String!]
   challenges_improvements: String!
   positives: String!
+  discussion: String!
   status: String
 }
 
@@ -18506,6 +18507,14 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportDebrief(ctx context.
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("positives"))
 			it.Positives, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "discussion":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discussion"))
+			it.Discussion, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

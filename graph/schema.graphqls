@@ -404,6 +404,7 @@ input UpdateSchoolReportDebrief {
   student_list: [String!]
   challenges_improvements: String!
   positives: String!
+  discussion: String!
   status: String
 }
 

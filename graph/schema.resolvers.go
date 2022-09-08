@@ -1443,13 +1443,121 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 }
 
 func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error) {
-	// add in check for copfacilitators here
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var schoolReportPlanWithNotes *model.SchoolReportPlanWithNotes
+	var schoolReportPlan *model.SchoolReportPlan
+	schoolReportPlanCollection := database.Db.Collection("school_report_plans")
+	schoolReportPlanFilter := bson.D{{"_id", id}}
+	err := schoolReportPlanCollection.FindOne(context.TODO(), schoolReportPlanFilter).Decode(&schoolReportPlan)
+	if err != nil {
+		return nil, err
+	}
+	reportAuthor := schoolReportPlan.UserID
+	// add in conditional check for cofacilitators
+	if isAdmin || reportAuthor == &userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		schoolReportPlanWithNotes = &model.SchoolReportPlanWithNotes{
+			SchoolReportPlan: &model.SchoolReportPlan{
+				ID:           schoolReportPlan.ID,
+				UserID:       schoolReportPlan.UserID,
+				Cofacilitators: schoolReportPlan.Cofacilitators
+				Curriculum:   schoolReportPlan.Curriculum,
+				School:       schoolReportPlan.School,
+				LessonTopics:       schoolReportPlan.LessonTopics,
+				Status:       schoolReportPlan.Status,
+				CreatedAt:    schoolReportPlan.CreatedAt,
+				UpdatedAt:    schoolReportPlan.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return schoolReportPlanWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*model.SchoolReportDebriefWithNotes, error) {
 	// add in check for copfacilitators here
-	panic(fmt.Errorf("not implemented"))
+	isAdmin := auth.ForAdmin(ctx)
+	userID := auth.ForUserID(ctx)
+	var schoolReportDebriefWithNotes *model.SchoolReportDebriefWithNotes
+	var schoolReportDebrief *model.SchoolReportDebrief
+	schoolReportDebriefCollection := database.Db.Collection("school_report_debriefs")
+	schoolReportDebriefFilter := bson.D{{"_id", id}}
+	err := schoolReportDebriefCollection.FindOne(context.TODO(), schoolReportDebriefFilter).Decode(&schoolReportDebrief)
+	if err != nil {
+		return nil, err
+	}
+	reportAuthor := schoolReportDebrief.UserID
+	if isAdmin || reportAuthor == &userID {
+		var notes []*model.Note
+		noteCollection := database.Db.Collection("notes")
+		noteFilter := bson.D{{"item_id", id}}
+		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var note *model.Note
+			err := cursor.Decode(&note)
+			if err != nil {
+				return nil, err
+			}
+			notes = append(notes, &model.Note{
+				ID:        note.ID,
+				UserID:    note.UserID,
+				ItemID:    note.ItemID,
+				Title:     note.Title,
+				Content:   note.Content,
+				CreatedAt: note.CreatedAt,
+				UpdatedAt: note.UpdatedAt,
+			})
+		}
+		schoolReportDebriefWithNotes = &model.SchoolReportDebriefWithNotes{
+			SchoolReportDebrief: &model.SchoolReportDebrief{
+				ID:           schoolReportDebrief.ID,
+				UserID:       schoolReportDebrief.UserID,
+				Cofacilitators: schoolReportDebrief.Cofacilitators
+				StudentCount: schoolReportDebrief.StudentCount,
+				StudentList: schoolReportDebrief.StudentList,
+				ChallengesImprovements: schoolReportDebrief.ChallengesImprovements,
+				Positives: schoolReportDebrief.Positives,
+				Discussion: schoolReportDebrief.Discussion,
+				Status:       schoolReportDebrief.Status,
+				CreatedAt:    schoolReportDebrief.CreatedAt,
+				UpdatedAt:    schoolReportDebrief.UpdatedAt,
+			},
+			Notes: notes,
+		}
+		return schoolReportDebriefWithNotes, nil
+	} else {
+		return nil, fmt.Errorf("Unauthorized")
+	}
 }
 
 func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) {
@@ -1729,164 +1837,7 @@ type queryResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) UpdateSchoolReport(ctx context.Context, id string, updateSchoolReport model.UpdateSchoolReport) (*model.SchoolReport, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	userID := auth.ForUserID(ctx)
-	var schoolReport schoolReports.SchoolReport
-	collection := database.Db.Collection("school_reports")
-	filter := bson.D{{"_id", id}}
-	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
-	if err != nil {
-		return nil, err
-	}
-	if !isAdmin && schoolReport.UserID != &userID {
-		return nil, fmt.Errorf("Unauthorized")
-	}
-	schoolReport.Curriculum = *updateSchoolReport.Curriculum
-	schoolReport.LessonPlan = *updateSchoolReport.LessonPlan
-	schoolReport.School = *updateSchoolReport.School
-	schoolReport.Topics = *updateSchoolReport.Topics
-	schoolReport.StudentCount = *updateSchoolReport.StudentCount
-	schoolReport.StudentList = updateSchoolReport.StudentList
-	schoolReport.Challenges = *updateSchoolReport.Challenges
-	schoolReport.Successes = *updateSchoolReport.Successes
-	schoolReport.Improvements = *updateSchoolReport.Improvements
-	schoolReport.Update(id)
-	return &model.SchoolReport{
-		ID:           &schoolReport.ID,
-		UserID:       schoolReport.UserID,
-		Curriculum:   schoolReport.Curriculum,
-		LessonPlan:   schoolReport.LessonPlan,
-		School:       schoolReport.School,
-		Topics:       schoolReport.Topics,
-		StudentCount: schoolReport.StudentCount,
-		StudentList:  schoolReport.StudentList,
-		Challenges:   schoolReport.Challenges,
-		Successes:    schoolReport.Successes,
-		Improvements: schoolReport.Improvements,
-		CreatedAt:    schoolReport.CreatedAt,
-		UpdatedAt:    schoolReport.UpdatedAt,
-		Status:       schoolReport.Status,
-	}, nil
-}
-func (r *mutationResolver) RemoveSchoolReport(ctx context.Context, id string) (*bool, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	var result bool
-	if !isAdmin {
-		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
-	}
-	collection := database.Db.Collection("school_reports")
-	filter := bson.D{{"_id", id}}
-	var schoolReport schoolReports.SchoolReport
-	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
-	if err != nil {
-		result = false
-		return &result, err
-	}
-	schoolReport.Delete(id)
-	result = true
-	return &result, nil
-}
-func (r *mutationResolver) ApproveSchoolReport(ctx context.Context, id string) (*bool, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	var result bool
-	if !isAdmin {
-		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
-	}
-	collection := database.Db.Collection("school_reports")
-	filter := bson.D{{"_id", id}}
-	var schoolReport schoolReports.SchoolReport
-	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
-	if err != nil {
-		result = false
-		return &result, err
-	}
-	schoolReport.Approve(id)
-	result = true
-	return &result, nil
-}
-func (r *mutationResolver) RejectSchoolReport(ctx context.Context, id string) (*bool, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	var result bool
-	if !isAdmin {
-		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
-	}
-	collection := database.Db.Collection("school_reports")
-	filter := bson.D{{"_id", id}}
-	var schoolReport schoolReports.SchoolReport
-	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReport)
-	if err != nil {
-		result = false
-		return &result, err
-	}
-	schoolReport.Reject(id)
-	result = true
-	return &result, nil
-}
-func (r *queryResolver) SchoolReport(ctx context.Context, id string) (*model.SchoolReportWithNotes, error) {
-	isAdmin := auth.ForAdmin(ctx)
-	userID := auth.ForUserID(ctx)
-	var schoolReportWithNotes *model.SchoolReportWithNotes
-	var schoolReport *model.SchoolReport
-	schoolReportCollection := database.Db.Collection("school_reports")
-	schoolReportFilter := bson.D{{"_id", id}}
-	err := schoolReportCollection.FindOne(context.TODO(), schoolReportFilter).Decode(&schoolReport)
-	if err != nil {
-		return nil, err
-	}
-	reportAuthor := schoolReport.UserID
-	if isAdmin || reportAuthor == &userID {
-		var notes []*model.Note
-		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
-		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var note *model.Note
-			err := cursor.Decode(&note)
-			if err != nil {
-				return nil, err
-			}
-			notes = append(notes, &model.Note{
-				ID:        note.ID,
-				UserID:    note.UserID,
-				ItemID:    note.ItemID,
-				Title:     note.Title,
-				Content:   note.Content,
-				CreatedAt: note.CreatedAt,
-				UpdatedAt: note.UpdatedAt,
-			})
-		}
-		schoolReportWithNotes = &model.SchoolReportWithNotes{
-			SchoolReport: &model.SchoolReport{
-				ID:           schoolReport.ID,
-				UserID:       schoolReport.UserID,
-				Curriculum:   schoolReport.Curriculum,
-				LessonPlan:   schoolReport.LessonPlan,
-				School:       schoolReport.School,
-				Topics:       schoolReport.Topics,
-				StudentCount: schoolReport.StudentCount,
-				StudentList:  schoolReport.StudentList,
-				Challenges:   schoolReport.Challenges,
-				Successes:    schoolReport.Successes,
-				Improvements: schoolReport.Improvements,
-				Status:       schoolReport.Status,
-				CreatedAt:    schoolReport.CreatedAt,
-				UpdatedAt:    schoolReport.UpdatedAt,
-			},
-			Notes: notes,
-		}
-		return schoolReportWithNotes, nil
-	} else {
-		return nil, fmt.Errorf("Unauthorized")
-	}
-}
+
 func (r *queryResolver) SchoolReports(ctx context.Context) ([]*model.AllSchoolReports, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)

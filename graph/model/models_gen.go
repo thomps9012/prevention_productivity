@@ -391,6 +391,7 @@ type UpdateSchoolReportDebrief struct {
 	StudentList            []string `json:"student_list"`
 	ChallengesImprovements string   `json:"challenges_improvements"`
 	Positives              string   `json:"positives"`
+	Discussion             string   `json:"discussion"`
 	Status                 *string  `json:"status"`
 }
 
