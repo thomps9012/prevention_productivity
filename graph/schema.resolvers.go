@@ -25,15 +25,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func exists(userID string, stringArr []*string) (bool){
-	for _, v := range stringArr {
-		if userID == *v {
-			return true
-		}
-	}
-	return false
-}
-
 func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser) (string, error) {
 	var user users.User
 	user.FirstName = newUser.FirstName
@@ -160,7 +151,7 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 	}
 	var grant grants.Grant
 	grant.Name = *newGrant.Name
-	grant.CreatedBy = userID
+	grant.CreatedBy = &userID
 	grant.Description = *newGrant.Description
 	grant.Goals = newGrant.Goals
 	grant.Objectives = newGrant.Objectives
@@ -172,7 +163,7 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 	grant.Create()
 	return &model.Grant{
 		ID:          &grant.ID,
-		CreatedBy:   grant.CreatedBy,
+		CreatedBy:   *grant.CreatedBy,
 		Name:        grant.Name,
 		Description: grant.Description,
 		Goals:       grant.Goals,
@@ -493,7 +484,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	var event events.Event
-	event.EventLead = userID
+	event.EventLead = &userID
 	event.Coplanners = newEvent.Coplanners
 	event.Title = *newEvent.Title
 	event.Description = *newEvent.Description
@@ -528,7 +519,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 	event.Create()
 	return &model.Event{
 		ID:          &event.ID,
-		EventLead:   &event.EventLead,
+		EventLead:   event.EventLead,
 		GrantID:     event.GrantID,
 		Title:       event.Title,
 		Description: event.Description,
@@ -555,7 +546,7 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEve
 	}
 	println(userID)
 	println(event.EventLead)
-	if isAdmin || event.EventLead == userID {
+	if isAdmin || event.EventLead == &userID {
 		event.Title = *updateEvent.Title
 		event.Coplanners = updateEvent.Coplanners
 		event.Description = *updateEvent.Description
@@ -591,7 +582,7 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEve
 	}
 	return &model.Event{
 		ID:          &event.ID,
-		EventLead:   &event.EventLead,
+		EventLead:   event.EventLead,
 		Title:       event.Title,
 		Description: event.Description,
 		StartDate:   event.StartDate,
@@ -1309,7 +1300,6 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 	}
 }
 
-
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
@@ -1454,7 +1444,6 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 		return nil, fmt.Errorf("Unauthorized")
 	}
 }
-
 
 func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error) {
 	isAdmin := auth.ForAdmin(ctx)
@@ -1944,3 +1933,18 @@ func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func exists(userID string, stringArr []*string) bool {
+	for _, v := range stringArr {
+		if userID == *v {
+			return true
+		}
+	}
+	return false
+}

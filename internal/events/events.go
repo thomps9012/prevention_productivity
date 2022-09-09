@@ -11,7 +11,7 @@ import (
 
 type Event struct {
 	ID                     string    `json:"id" bson:"_id"`
-	EventLead              string    `json:"event_lead" bson:"event_lead"`
+	EventLead              *string   `json:"event_lead" bson:"event_lead"`
 	Coplanners             []*string `json:"coplanners"`
 	Title                  string    `json:"title"`
 	Description            string    `json:"description"`
