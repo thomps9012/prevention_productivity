@@ -25,6 +25,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func exists(userID string, stringArr []*string) (bool){
+	for _, v := range stringArr {
+		if userID == *v {
+			return true
+		}
+	}
+	return false
+}
+
 func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser) (string, error) {
 	var user users.User
 	user.FirstName = newUser.FirstName
@@ -658,7 +667,7 @@ func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSumma
 	if userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-	// possibly add in backend logic here for coplanner ids
+	// possibly add in backend logic here for coplanner ids and event lead id here
 	var eventSummary eventSummaries.EventSummary
 	eventSummary.EventID = *newEventSummary.EventID
 	eventSummary.UserID = userID
@@ -899,7 +908,7 @@ func (r *mutationResolver) CreateSchoolReportDebrief(ctx context.Context, newSch
 	if userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
-	// possibly add in backend logic here for cofacilitator ids
+	// possibly add in backend logic here for cofacilitator ids and lesson lead here
 	var schoolReportDebrief schoolReports.SchoolReportDebrief
 	schoolReportDebrief.LessonPlanID = newSchoolReportDebrief.LessonPlanID
 	schoolReportDebrief.StudentCount = *newSchoolReportDebrief.StudentCount
@@ -1299,14 +1308,8 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 		return nil, fmt.Errorf("Unauthorized")
 	}
 }
-func Contains(n int, match func(i int) bool) bool {
-	for i := 0; i < n; i++ {
-		if match(i) {
-			return true
-		}
-	}
-	return false
-}
+
+
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
@@ -1319,12 +1322,9 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 		return nil, err
 	}
 	eventLead := event.EventLead
-	// eventCoplanners := event.Coplanners
-	// exists := Contains(len(eventCoplanners), func(i int) bool {
-	// 	return eventCoplanners[i] == &userID
-	// })
-	// if isAdmin || eventLead == &userID || exists {
-	if isAdmin || eventLead == &userID {
+	eventCoplanners := event.Coplanners
+	isCoplanner := exists(userID, eventCoplanners)
+	if isAdmin || eventLead == &userID || isCoplanner {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
@@ -1455,6 +1455,7 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 	}
 }
 
+
 func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
@@ -1468,14 +1469,8 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	}
 	reportAuthor := schoolReportPlan.UserID
 	cofacilitators := schoolReportPlan.Cofacilitators
-	// add in conditional check for cofacilitators
-	fmt.Printf("cofacilitators %v", cofacilitators)
-	println(userID)
-	// exists := Contains(len(cofacilitators), func(i int) bool {
-	// 	return cofacilitators[i] == &userID
-	// })
-	// if isAdmin || reportAuthor == &userID || exists {
-	if isAdmin || reportAuthor == &userID {
+	isCofacilitator := exists(userID, cofacilitators)
+	if isAdmin || reportAuthor == &userID || isCofacilitator {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{"item_id", id}}
