@@ -1022,7 +1022,10 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
-	if IsAdmin {
+	UserID := auth.ForUserID(ctx)
+	if !IsAdmin || UserID == "" {
+		return nil, fmt.Errorf("Unauthorized")
+	} else if IsAdmin {
 		var users []*model.User
 		collection := database.Db.Collection("users")
 		cursor, err := collection.Find(context.TODO(), bson.D{})
@@ -1038,8 +1041,24 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 			users = append(users, user)
 		}
 		return users, nil
+	} else {
+		var users []*model.User
+		collection := database.Db.Collection("users")
+		projection := options.Find().SetProjection(bson.M{"id": 1, "first_name": 1, "last_name": 1, "active": 1})
+		cursor, err := collection.Find(context.TODO(), bson.D{}, projection)
+		if err != nil {
+			return nil, err
+		}
+		for cursor.Next(context.TODO()) {
+			var user *model.User
+			err := cursor.Decode(&user)
+			if err != nil {
+				return nil, err
+			}
+			users = append(users, user)
+		}
+		return users, nil
 	}
-	return nil, fmt.Errorf("Unauthorized")
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
@@ -1313,7 +1332,7 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 	}
 	eventLead := event.EventLead
 	eventCoplanners := event.Coplanners
-	isCoplanner := exists(userID, eventCoplanners)
+	isCoplanner := utils.Exists(userID, eventCoplanners)
 	if isAdmin || eventLead == &userID || isCoplanner {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
@@ -1458,7 +1477,7 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	}
 	reportAuthor := schoolReportPlan.UserID
 	cofacilitators := schoolReportPlan.Cofacilitators
-	isCofacilitator := exists(userID, cofacilitators)
+	isCofacilitator := utils.Exists(userID, cofacilitators)
 	if isAdmin || reportAuthor == &userID || isCofacilitator {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
@@ -1770,7 +1789,6 @@ func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model
 	}
 	var events []*model.Event
 	collection := database.Db.Collection("events")
-	// add in conditional search for coplanner ids
 	filter := bson.D{{"$or", bson.A{bson.D{{"event_lead", userID}}, bson.D{{"coplanners", userID}}}}}
 	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
@@ -1932,18 +1950,3 @@ func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func exists(userID string, stringArr []*string) bool {
-	for _, v := range stringArr {
-		if userID == *v {
-			return true
-		}
-	}
-	return false
-}

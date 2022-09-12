@@ -221,6 +221,7 @@ func GetSchoolReportPlans(filter bson.M) ([]*model.AllSchoolReportPlans, error) 
 	}
 	return allSchoolReportPlans, nil
 }
+
 func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, error) {
 	// this function breaks if logs don't meet the model requirements
 	schoolReportsCollection := database.Db.Collection("school_report_debriefs")
@@ -268,4 +269,13 @@ func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, e
 		allSchoolReportDebriefs = append(allSchoolReportDebriefs, singleSchoolReportDebrief)
 	}
 	return allSchoolReportDebriefs, nil
+}
+
+func Exists(userID string, stringArr []*string) bool {
+	for _, v := range stringArr {
+		if userID == *v {
+			return true
+		}
+	}
+	return false
 }
