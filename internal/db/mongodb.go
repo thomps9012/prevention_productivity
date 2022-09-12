@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,7 +14,7 @@ var Db *mongo.Database
 
 func InitDB() {
 	// change on deployment
-	ATLAS_URI := "mongodb+srv://spars01:H0YXCAGHoUihHcSZ@cluster0.wuezj.mongodb.net/prevention_productivity_test?retryWrites=true&w=majority"
+	ATLAS_URI := os.Getenv("ATLAS_URI")
 	// Set client options
 	if ATLAS_URI == "" {
 		ATLAS_URI = "mongodb://localhost:27017"
@@ -37,7 +38,8 @@ func InitDB() {
 	fmt.Println("Connected to MongoDB!")
 
 	// change on deployment
-	Db = client.Database("TEST_prevention_productivity")
+	dbName := os.Getenv("DB_NAME")
+	Db = client.Database(dbName)
 }
 
 func CloseDB() {
