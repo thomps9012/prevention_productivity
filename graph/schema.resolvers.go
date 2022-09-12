@@ -1569,8 +1569,7 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.AllEvents, error) 
 		filter := bson.M{}
 		return utils.GetEvents(filter)
 	} else if userID != "" {
-		// add in check for coplanners here
-		filter := bson.M{"$or": bson.A{bson.M{"coplanners": userID}, bson.M{"user_id": userID}}}
+		filter := bson.M{"$or": bson.A{bson.M{"coplanners": userID}, bson.M{"event_lead": userID}}}
 		return utils.GetEvents(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
