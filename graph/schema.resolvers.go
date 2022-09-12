@@ -1023,7 +1023,7 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	if !IsAdmin || UserID == "" {
+	if !IsAdmin && UserID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	} else if IsAdmin {
 		var users []*model.User
