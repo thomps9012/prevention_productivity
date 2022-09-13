@@ -49,7 +49,7 @@ func main() {
 	log.Printf("Listening on localhost:%s\n", port)
 	log.Printf("Visit `http://localhost:%s/graphql` in your browser", port)
 	// switch below on production
-	originsOk := handlers.AllowedOrigins([]string{"http://localhost:8080", "http://localhost:3000", "https://prevention-productivity.vercel.app"})
+	originsOk := handlers.AllowedOrigins([]string{"http://localhost:8080", "http://localhost:3000", "https://prevention-productivity.vercel.app", "https://prevention-test.vercel.app"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
 	http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router))
