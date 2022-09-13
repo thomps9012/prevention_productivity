@@ -254,6 +254,7 @@ func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, e
 		singleSchoolReportDebrief := &model.AllSchoolReportDebriefs{
 			SchoolReportDebrief: &model.SchoolReportDebrief{
 				ID:           schoolReportDebrief.ID,
+				UserID:       schoolReportDebrief.UserID,
 				LessonPlanID: schoolReportDebrief.LessonPlanID,
 				Status:       schoolReportDebrief.Status,
 				CreatedAt:    schoolReportDebrief.CreatedAt,
