@@ -1564,6 +1564,7 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 			SchoolReportDebrief: &model.SchoolReportDebrief{
 				ID:                     schoolReportDebrief.ID,
 				UserID:                 schoolReportDebrief.UserID,
+				LessonPlanID:           schoolReportDebrief.LessonPlanID,
 				StudentCount:           schoolReportDebrief.StudentCount,
 				StudentList:            schoolReportDebrief.StudentList,
 				ChallengesImprovements: schoolReportDebrief.ChallengesImprovements,
