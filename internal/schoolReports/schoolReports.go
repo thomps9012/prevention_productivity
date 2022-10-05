@@ -10,23 +10,23 @@ import (
 )
 
 type SchoolReportPlan struct {
-	ID             string   `json:"id" bson:"_id"`
-	UserID         *string  `json:"user_id" bson:"user_id"`
+	ID             string    `json:"id" bson:"_id"`
+	UserID         *string   `json:"user_id" bson:"user_id"`
 	Cofacilitators []*string `json:"cofacilitators" bson:"cofacilitators"`
-	Curriculum     string   `json:"curriculum"`
-	School         string   `json:"school"`
-	LessonTopics   string   `json:"lesson_topics"`
-	Status         string   `json:"status"`
-	CreatedAt      string   `json:"created_at" bson:"created_at"`
-	UpdatedAt      string   `json:"updated_at" bson:"updated_at"`
+	Curriculum     string    `json:"curriculum"`
+	School         string    `json:"school"`
+	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
+	Status         string    `json:"status"`
+	CreatedAt      string    `json:"created_at" bson:"created_at"`
+	UpdatedAt      string    `json:"updated_at" bson:"updated_at"`
 }
 type SchoolReportDebrief struct {
 	ID                     string   `json:"id" bson:"_id"`
 	UserID                 *string  `json:"user_id" bson:"user_id"`
-	LessonPlanID           string   `json:"lesson_plan_id"`
+	LessonPlanID           string   `json:"lesson_plan_id" bson:"lesson_plan_id"`
 	StudentCount           int      `json:"student_count" bson:"student_count"`
 	StudentList            []string `json:"student_list" bson:"student_list"`
-	ChallengesImprovements string   `json:"challenges_improvements"`
+	ChallengesImprovements string   `json:"challenges_improvements" bson:"challenges_improvements"`
 	Positives              string   `json:"positives"`
 	Discussion             string   `json:"discussion"`
 	Status                 string   `json:"status"`

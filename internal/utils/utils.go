@@ -58,7 +58,7 @@ func GetLogs(filter bson.D) ([]*model.AllLogs, error) {
 	return allLogs, nil
 }
 
-func GetEvents(filter bson.D) ([]*model.AllEvents, error) {
+func GetEvents(filter bson.M) ([]*model.AllEvents, error) {
 	// this function breaks if logs don't meet the model requirements
 	eventsCollection := database.Db.Collection("events")
 	notesCollection := database.Db.Collection("notes")
@@ -171,18 +171,20 @@ func GetEventSummaries(filter bson.D) ([]*model.AllEventSummaries, error) {
 	return allEventSummaries, nil
 }
 
-func GetSchoolReportPlans(filter bson.D) ([]*model.AllSchoolReportPlans, error) {
+func GetSchoolReportPlans(filter bson.M) ([]*model.AllSchoolReportPlans, error) {
 	// this function breaks if logs don't meet the model requirements
 	schoolReportsCollection := database.Db.Collection("school_report_plans")
 	notesCollection := database.Db.Collection("notes")
 	userCollection := database.Db.Collection("users")
 	var allSchoolReportPlans []*model.AllSchoolReportPlans
-
+	fmt.Printf("func filter %v", filter)
 	cursor, err := schoolReportsCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
+	println("hit1")
 	for cursor.Next(context.TODO()) {
+		println("hit2")
 		var schoolReportPlan *model.SchoolReportPlan
 		err := cursor.Decode(&schoolReportPlan)
 		if err != nil {
@@ -196,9 +198,9 @@ func GetSchoolReportPlans(filter bson.D) ([]*model.AllSchoolReportPlans, error) 
 		intNoteCount := int(noteCount)
 		var user *model.User
 		userFilter := bson.D{{"_id", schoolReportPlan.UserID}}
-		err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
-		if err != nil {
-			return nil, err
+		usererr := userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
+		if usererr != nil {
+			return nil, usererr
 		}
 		singleSchoolReportPlan := &model.AllSchoolReportPlans{
 			SchoolReportPlan: &model.SchoolReportPlan{
@@ -219,6 +221,7 @@ func GetSchoolReportPlans(filter bson.D) ([]*model.AllSchoolReportPlans, error) 
 	}
 	return allSchoolReportPlans, nil
 }
+
 func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, error) {
 	// this function breaks if logs don't meet the model requirements
 	schoolReportsCollection := database.Db.Collection("school_report_debriefs")
@@ -250,11 +253,12 @@ func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, e
 		}
 		singleSchoolReportDebrief := &model.AllSchoolReportDebriefs{
 			SchoolReportDebrief: &model.SchoolReportDebrief{
-				ID: schoolReportDebrief.ID,
+				ID:           schoolReportDebrief.ID,
+				UserID:       schoolReportDebrief.UserID,
 				LessonPlanID: schoolReportDebrief.LessonPlanID,
-				Status:    schoolReportDebrief.Status,
-				CreatedAt: schoolReportDebrief.CreatedAt,
-				UpdatedAt: schoolReportDebrief.UpdatedAt,
+				Status:       schoolReportDebrief.Status,
+				CreatedAt:    schoolReportDebrief.CreatedAt,
+				UpdatedAt:    schoolReportDebrief.UpdatedAt,
 			},
 			User: &model.User{
 				ID:        user.ID,
@@ -266,4 +270,13 @@ func GetSchoolReportDebriefs(filter bson.D) ([]*model.AllSchoolReportDebriefs, e
 		allSchoolReportDebriefs = append(allSchoolReportDebriefs, singleSchoolReportDebrief)
 	}
 	return allSchoolReportDebriefs, nil
+}
+
+func Exists(userID string, stringArr []*string) bool {
+	for _, v := range stringArr {
+		if userID == *v {
+			return true
+		}
+	}
+	return false
 }

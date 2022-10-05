@@ -192,14 +192,12 @@ type AllEventSummaries {
 type AllSchoolReportPlans {
   school_report_plan: SchoolReportPlan!
   user: User
-  cofacilitators: [User]
   noteCount: Int
 }
 
 type AllSchoolReportDebriefs {
   school_report_debrief: SchoolReportDebrief!
   user: User
-  cofacilitators: [User]
   noteCount: Int
 }
 
