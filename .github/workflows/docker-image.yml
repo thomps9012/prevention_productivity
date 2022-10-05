@@ -20,14 +20,12 @@ jobs:
       name: 'Configure Google Cloud Authentication'
       uses: 'google-github-actions/auth@v0.3.1'
       with:
-        create_credentials_file: 'true'
         workload_identity_provider: 'projects/742353511535/locations/global/workloadIdentityPools/nora/providers/github-action'
         service_account: 'thomps9012@counselorproductivity.iam.gserviceaccount.com'
 
     - id: 'gcloud'
       name: 'gCloud Service List'
       run: |-
-        gcloud auth login --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud services list --project='counselorproductivity'
     
     - name: 'Configures Gcloud Docker'
