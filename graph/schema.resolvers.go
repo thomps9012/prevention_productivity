@@ -51,7 +51,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var user users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
@@ -66,7 +66,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 		println("isAdmin", updateUser.Admin)
 		user.Admin = updateUser.Admin
 	}
-	count, err := collection.CountDocuments(context.TODO(), bson.D{{"email", updateUser.Email}})
+	count, err := collection.CountDocuments(context.TODO(), bson.D{{Key: "email", Value: updateUser.Email}})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -94,7 +94,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, err
 		return false, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var user users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
@@ -113,7 +113,7 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (s
 		return "Invalid email or password", fmt.Errorf("Invalid email or password")
 	}
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"email", login.Email}}
+	filter := bson.D{{Key: "email", Value: login.Email}}
 	var userDB users.User
 	err := collection.FindOne(context.TODO(), filter).Decode(&userDB)
 	println(userDB.Admin)
@@ -324,7 +324,7 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, updateNote
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("notes")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var note notes.Note
 	err := collection.FindOne(context.TODO(), filter).Decode(&note)
 	if err != nil {
@@ -355,7 +355,7 @@ func (r *mutationResolver) RemoveNote(ctx context.Context, id string) (bool, err
 		return false, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("notes")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var note notes.Note
 	err := collection.FindOne(context.TODO(), filter).Decode(&note)
 	if err != nil {
@@ -395,7 +395,7 @@ func (r *mutationResolver) CreateLog(ctx context.Context, newLog model.NewLog) (
 
 func (r *mutationResolver) UpdateLog(ctx context.Context, id string, updateLog model.UpdateLog) (*model.Log, error) {
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	userID := auth.ForUserID(ctx)
 	if userID == "" {
 		return nil, fmt.Errorf("Unauthorized")
@@ -431,7 +431,7 @@ func (r *mutationResolver) UpdateLog(ctx context.Context, id string, updateLog m
 
 func (r *mutationResolver) RemoveLog(ctx context.Context, id string) (bool, error) {
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	isAdmin := auth.ForAdmin(ctx)
 	if !isAdmin {
 		return false, fmt.Errorf("Unauthorized")
@@ -452,7 +452,7 @@ func (r *mutationResolver) ApproveLog(ctx context.Context, id string) (bool, err
 		return false, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var log logs.Log
 	err := collection.FindOne(context.TODO(), filter).Decode(&log)
 	if err != nil {
@@ -468,7 +468,7 @@ func (r *mutationResolver) RejectLog(ctx context.Context, id string) (bool, erro
 		return false, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var log logs.Log
 	err := collection.FindOne(context.TODO(), filter).Decode(&log)
 	if err != nil {
@@ -537,7 +537,7 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEve
 		return nil, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("events")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	println(id)
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
@@ -601,7 +601,7 @@ func (r *mutationResolver) RemoveEvent(ctx context.Context, id string) (*bool, e
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("events")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
 	if err != nil {
@@ -621,7 +621,7 @@ func (r *mutationResolver) ApproveEvent(ctx context.Context, id string) (*bool, 
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("events")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
 	if err != nil {
@@ -641,7 +641,7 @@ func (r *mutationResolver) RejectEvent(ctx context.Context, id string) (*bool, e
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("events")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
 	if err != nil {
@@ -688,7 +688,7 @@ func (r *mutationResolver) UpdateEventSummary(ctx context.Context, id string, up
 	userID := auth.ForUserID(ctx)
 	var eventSummary eventSummaries.EventSummary
 	collection := database.Db.Collection("event_summaries")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
 	if err != nil {
 		return nil, err
@@ -725,7 +725,7 @@ func (r *mutationResolver) RemoveEventSummary(ctx context.Context, id string) (*
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("event_summaries")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var eventSummary eventSummaries.EventSummary
 	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
 	if err != nil {
@@ -745,7 +745,7 @@ func (r *mutationResolver) ApproveEventSummary(ctx context.Context, id string) (
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("event_summaries")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var eventSummary eventSummaries.EventSummary
 	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
 	if err != nil {
@@ -765,7 +765,7 @@ func (r *mutationResolver) RejectEventSummary(ctx context.Context, id string) (*
 		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("event_summaries")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var eventSummary eventSummaries.EventSummary
 	err := collection.FindOne(context.TODO(), filter).Decode(&eventSummary)
 	if err != nil {
@@ -807,7 +807,7 @@ func (r *mutationResolver) UpdateSchoolReportPlan(ctx context.Context, id string
 	userID := auth.ForUserID(ctx)
 	var schoolReportPlan schoolReports.SchoolReportPlan
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportPlan)
 	if err != nil {
 		return nil, err
@@ -842,7 +842,7 @@ func (r *mutationResolver) RemoveSchoolReportPlan(ctx context.Context, id string
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportPlan schoolReports.SchoolReportPlan
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportPlan)
 	if err != nil {
@@ -862,7 +862,7 @@ func (r *mutationResolver) ApproveSchoolReportPlan(ctx context.Context, id strin
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportPlan schoolReports.SchoolReportPlan
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportPlan)
 	if err != nil {
@@ -882,7 +882,7 @@ func (r *mutationResolver) RejectSchoolReportPlan(ctx context.Context, id string
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportPlan schoolReports.SchoolReportPlan
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportPlan)
 	if err != nil {
@@ -929,7 +929,7 @@ func (r *mutationResolver) UpdateSchoolReportDebrief(ctx context.Context, id str
 	userID := auth.ForUserID(ctx)
 	var schoolReportPlan schoolReports.SchoolReportPlan
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportPlan)
 	if err != nil {
 		return nil, err
@@ -968,7 +968,7 @@ func (r *mutationResolver) RemoveSchoolReportDebrief(ctx context.Context, id str
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportDebrief schoolReports.SchoolReportDebrief
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportDebrief)
 	if err != nil {
@@ -988,7 +988,7 @@ func (r *mutationResolver) ApproveSchoolReportDebrief(ctx context.Context, id st
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportDebrief schoolReports.SchoolReportDebrief
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportDebrief)
 	if err != nil {
@@ -1008,7 +1008,7 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 		return &result, fmt.Errorf("Unauthorizaed")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	var schoolReportDebrief schoolReports.SchoolReportDebrief
 	err := collection.FindOne(context.TODO(), filter).Decode(&schoolReportDebrief)
 	if err != nil {
@@ -1067,7 +1067,7 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	if IsAdmin || UserID != "" {
 		var user *model.User
 		collection := database.Db.Collection("users")
-		filter := bson.D{{"_id", UserID}}
+		filter := bson.D{{Key: "_id", Value: UserID}}
 		err := collection.FindOne(context.TODO(), filter).Decode(&user)
 		if err != nil {
 			return nil, err
@@ -1084,7 +1084,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 	if IsAdmin || UserID == id {
 		var user *model.User
 		collection := database.Db.Collection("users")
-		filter := bson.D{{"_id", id}}
+		filter := bson.D{{Key: "_id", Value: id}}
 		err := collection.FindOne(context.TODO(), filter).Decode(&user)
 		if err != nil {
 			return nil, err
@@ -1112,8 +1112,8 @@ func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.
 	if IsAdmin || UserID != "" {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", itemID}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: itemID}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1145,7 +1145,7 @@ func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error
 	UserID := auth.ForUserID(ctx)
 	var note *model.Note
 	noteCollection := database.Db.Collection("notes")
-	noteFilter := bson.D{{"_id", id}}
+	noteFilter := bson.D{{Key: "_id", Value: id}}
 	err := noteCollection.FindOne(context.TODO(), noteFilter).Decode(&note)
 	if err != nil {
 		return nil, err
@@ -1171,7 +1171,7 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	var LogWithNotes *model.LogWithNotes
 	log := logs.Log{}
 	logCollection := database.Db.Collection("logs")
-	logFilter := bson.D{{"_id", id}}
+	logFilter := bson.D{{Key: "_id", Value: id}}
 	err := logCollection.FindOne(context.TODO(), logFilter).Decode(&log)
 	if err != nil {
 		return nil, err
@@ -1181,8 +1181,8 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	if IsAdmin || logUserID == UserID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: id}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1233,7 +1233,7 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 		logsCollection := database.Db.Collection("logs")
 		notesCollection := database.Db.Collection("notes")
 		userCollection := database.Db.Collection("users")
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := logsCollection.Find(context.TODO(), filter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1246,14 +1246,14 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 			if err != nil {
 				return nil, err
 			}
-			noteFilter := bson.D{{"item_id", log.ID}}
+			noteFilter := bson.D{{Key: "item_id", Value: log.ID}}
 			noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
 			if noteErr != nil {
 				return nil, err
 			}
 			intNoteCount := int(noteCount)
 			var user *model.User
-			userFilter := bson.D{{"_id", log.UserID}}
+			userFilter := bson.D{{Key: "_id", Value: log.UserID}}
 			err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
 			if err != nil {
 				return nil, err
@@ -1277,7 +1277,7 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 		println("return")
 		return allLogs, nil
 	} else if UserID != "" {
-		filter := bson.D{{"user_id", UserID}}
+		filter := bson.D{{Key: "user_id", Value: UserID}}
 		return utils.GetLogs(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1289,8 +1289,8 @@ func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.L
 	if IsAdmin {
 		var logs []*model.Log
 		collection := database.Db.Collection("logs")
-		filter := bson.D{{"user_id", userID}}
-		findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+		filter := bson.D{{Key: "user_id", Value: userID}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 		cursor, err := collection.Find(context.TODO(), filter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1325,7 +1325,7 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 	var eventWithNotes *model.EventWithNotes
 	var event *model.Event
 	eventCollection := database.Db.Collection("events")
-	eventFilter := bson.D{{"_id", id}}
+	eventFilter := bson.D{{Key: "_id", Value: id}}
 	err := eventCollection.FindOne(context.TODO(), eventFilter).Decode(&event)
 	if err != nil {
 		return nil, err
@@ -1336,8 +1336,8 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 	if isAdmin || eventLead == &userID || isCoplanner {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: id}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1411,7 +1411,7 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 	var eventSummaryWithNotes *model.EventSummaryWithNotes
 	var eventSummary *model.EventSummary
 	eventSummaryCollection := database.Db.Collection("event_summaries")
-	eventSummaryFilter := bson.D{{"_id", id}}
+	eventSummaryFilter := bson.D{{Key: "_id", Value: id}}
 	err := eventSummaryCollection.FindOne(context.TODO(), eventSummaryFilter).Decode(&eventSummary)
 	if err != nil {
 		return nil, err
@@ -1420,8 +1420,8 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 	if isAdmin || summaryAuthor == userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: id}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1470,7 +1470,7 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	var schoolReportPlanWithNotes *model.SchoolReportPlanWithNotes
 	var schoolReportPlan *model.SchoolReportPlan
 	schoolReportPlanCollection := database.Db.Collection("school_report_plans")
-	schoolReportPlanFilter := bson.D{{"_id", id}}
+	schoolReportPlanFilter := bson.D{{Key: "_id", Value: id}}
 	err := schoolReportPlanCollection.FindOne(context.TODO(), schoolReportPlanFilter).Decode(&schoolReportPlan)
 	if err != nil {
 		return nil, err
@@ -1481,8 +1481,8 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	if isAdmin || reportAuthor == &userID || isCofacilitator {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: id}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1529,7 +1529,7 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 	var schoolReportDebriefWithNotes *model.SchoolReportDebriefWithNotes
 	var schoolReportDebrief *model.SchoolReportDebrief
 	schoolReportDebriefCollection := database.Db.Collection("school_report_debriefs")
-	schoolReportDebriefFilter := bson.D{{"_id", id}}
+	schoolReportDebriefFilter := bson.D{{Key: "_id", Value: id}}
 	err := schoolReportDebriefCollection.FindOne(context.TODO(), schoolReportDebriefFilter).Decode(&schoolReportDebrief)
 	if err != nil {
 		return nil, err
@@ -1538,8 +1538,8 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 	if isAdmin || reportAuthor == userID {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{"item_id", id}}
-		findOptions := options.Find().SetSort(bson.D{{"created_at", -1}})
+		noteFilter := bson.D{{Key: "item_id", Value: id}}
+		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
 		if err != nil {
 			return nil, err
@@ -1604,7 +1604,7 @@ func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.AllEventSu
 		return utils.GetEventSummaries(filter)
 	} else if userID != "" {
 		// add in check for coplanners here
-		filter := bson.D{{"user_id", userID}}
+		filter := bson.D{{Key: "user_id", Value: userID}}
 		return utils.GetEventSummaries(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1632,7 +1632,7 @@ func (r *queryResolver) SchoolReportDebriefs(ctx context.Context) ([]*model.AllS
 		filter := bson.D{}
 		return utils.GetSchoolReportDebriefs(filter)
 	} else if userID != "" {
-		filter := bson.D{{"user_id", userID}}
+		filter := bson.D{{Key: "user_id", Value: userID}}
 		return utils.GetSchoolReportDebriefs(filter)
 	} else {
 		return nil, fmt.Errorf("Unauthorized")
@@ -1685,7 +1685,7 @@ func (r *queryResolver) Grant(ctx context.Context, id string) (*model.Grant, err
 	}
 	var grant *model.Grant
 	collection := database.Db.Collection("grants")
-	err := collection.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&grant)
+	err := collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&grant)
 	if err != nil {
 		return nil, err
 	}
@@ -1701,7 +1701,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.Contact, error) 
 	var contacts []*model.Contact
 	collection := database.Db.Collection("contacts")
 	if !isAdmin {
-		filter := bson.D{{"$or", bson.A{bson.D{{"type", "Student"}}, bson.D{{"type", "Parent"}}}}}
+		filter := bson.D{{Key: "$or", Value: bson.A{bson.D{{Key: "type", Value: "Student"}}, bson.D{{Key: "type", Value: "Parent"}}}}}
 		cursor, err := collection.Find(context.TODO(), filter)
 		if err != nil {
 			return nil, err
@@ -1765,11 +1765,11 @@ func (r *queryResolver) ContactInfo(ctx context.Context, id string) (*model.Cont
 	var contactInfo *model.ContactInfo
 	var contact *model.Contact
 	var user *model.User
-	err := contactsColl.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&contact)
+	err := contactsColl.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&contact)
 	if err != nil {
 		return nil, err
 	}
-	err = usersColl.FindOne(context.TODO(), bson.D{{"_id", contact.CreatedBy}}).Decode(&user)
+	err = usersColl.FindOne(context.TODO(), bson.D{{Key: "_id", Value: contact.CreatedBy}}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -1790,8 +1790,8 @@ func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model
 	}
 	var events []*model.Event
 	collection := database.Db.Collection("events")
-	filter := bson.D{{"$or", bson.A{bson.D{{"event_lead", userID}}, bson.D{{"coplanners", userID}}}}}
-	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	filter := bson.D{{Key: "$or", Value: bson.A{bson.D{{Key: "event_lead", Value: userID}}, bson.D{{Key: "coplanners", Value: userID}}}}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
@@ -1823,8 +1823,8 @@ func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) (
 	}
 	var events []*model.EventSummary
 	collection := database.Db.Collection("event_summaries")
-	filter := bson.D{{"user_id", userID}}
-	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	filter := bson.D{{Key: "user_id", Value: userID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
@@ -1854,8 +1854,8 @@ func (r *queryResolver) UserSchoolReportPlans(ctx context.Context, userID string
 	}
 	var reports []*model.SchoolReportPlan
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"user_id", userID}}
-	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	filter := bson.D{{Key: "user_id", Value: userID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
@@ -1887,8 +1887,8 @@ func (r *queryResolver) UserSchoolReportDebriefs(ctx context.Context, userID str
 	}
 	var reports []*model.SchoolReportDebrief
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{"user_id", userID}}
-	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	filter := bson.D{{Key: "user_id", Value: userID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
@@ -1919,8 +1919,8 @@ func (r *queryResolver) UserNotes(ctx context.Context, userID string) ([]*model.
 	}
 	var notes []*model.Note
 	collection := database.Db.Collection("notes")
-	filter := bson.D{{"user_id", userID}}
-	findOptions := options.Find().SetSort(bson.D{{"updated_at", -1}}).SetLimit(10)
+	filter := bson.D{{Key: "user_id", Value: userID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
 	cursor, err := collection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
