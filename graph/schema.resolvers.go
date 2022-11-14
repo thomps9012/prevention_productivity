@@ -1230,6 +1230,7 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	if IsAdmin {
 		filter := bson.D{}
 		// this times out
+		// solution 1
 		logsCollection := database.Db.Collection("logs")
 		notesCollection := database.Db.Collection("notes")
 		userCollection := database.Db.Collection("users")
