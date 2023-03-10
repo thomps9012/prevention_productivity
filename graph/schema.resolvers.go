@@ -1479,7 +1479,13 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	reportAuthor := schoolReportPlan.UserID
 	cofacilitators := schoolReportPlan.Cofacilitators
 	isCofacilitator := utils.Exists(userID, cofacilitators)
-	if isAdmin || reportAuthor == &userID || isCofacilitator {
+	fmt.Printf("\ntesting report author%v\n", *reportAuthor)
+	fmt.Printf("\ntesting user id%v\n", userID)
+	fmt.Printf("\ntesting report author == user id%v\n", *reportAuthor == userID)
+	fmt.Printf("\ntesting is cofacilitator%v\n", isCofacilitator)
+	fmt.Printf("\ntesting is admin%v\n", isAdmin)
+	fmt.Printf("\ntesting condition%v\n", isAdmin || *reportAuthor == userID || isCofacilitator)
+	if isAdmin || *reportAuthor == userID || isCofacilitator {
 		var notes []*model.Note
 		noteCollection := database.Db.Collection("notes")
 		noteFilter := bson.D{{Key: "item_id", Value: id}}
