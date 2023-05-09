@@ -2,12 +2,13 @@ package users
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,35 +25,37 @@ type User struct {
 	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
 }
 
-func (u *User) Create() {
+func (u *User) Create() (*User, error) {
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"email", u.Email}}
-	var user User
-	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	filter := bson.D{{Key: "email", Value: u.Email}}
+	count, err := collection.CountDocuments(context.TODO(), filter)
 	if err != nil {
-		u.ID = uuid.New().String()
-		u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-		u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-		u.Active = true
-		u.Admin = false
-		hashed, hashErr := HashPassword(u.Password)
-		u.Password = hashed
-		if hashErr != nil {
-			fmt.Println(hashErr)
-		}
-		_, err := collection.InsertOne(context.TODO(), u)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		fmt.Errorf("user already exists")
+		return nil, err
 	}
+	if count > 0 {
+		return nil, errors.New("account already associated with that email")
+	}
+	u.ID = uuid.New().String()
+	u.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	u.Active = true
+	u.Admin = false
+	hashed, hashErr := HashPassword(u.Password)
+	u.Password = hashed
+	if hashErr != nil {
+		return nil, hashErr
+	}
+	_, err = collection.InsertOne(context.TODO(), u)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 func (u *User) Authenticate() bool {
 	collection := database.Db.Collection("users")
 	var user User
-	filter := bson.D{{"email", u.Email}}
+	filter := bson.D{{Key: "email", Value: u.Email}}
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
 		return false
@@ -77,41 +80,47 @@ func CheckPasswordHash(hash, password string) bool {
 	return err == nil
 }
 
-func (u *User) Update(id string) {
+func (u *User) Update(id string) (*User, error) {
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	u.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+	var update bson.D
 	if len(u.Password) <= 0 {
-		println("not updating pw")
-		fmt.Printf("%v\n", u)
-		result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt, "active": u.Active, "admin": u.Admin}}})
-		if err != nil {
-			panic(err)
-		}
-		println(result.ModifiedCount)
+		update = bson.D{{Key: "$set", Value: bson.M{"first_name": u.FirstName, "last_name": u.LastName, "email": u.Email, "updated_at": u.UpdatedAt, "active": u.Active, "admin": u.Admin}}}
 	} else {
-
 		hashed, hashErr := HashPassword(u.Password)
-		u.Password = hashed
-		println("update pw", u.Password)
-		fmt.Printf("%v\n", u)
 		if hashErr != nil {
-			fmt.Println(hashErr)
+			return nil, hashErr
 		}
-		result, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
-		if err != nil {
-			panic(err)
-		}
-		println(result.ModifiedCount)
+		u.Password = hashed
+		update = bson.D{{Key: "$set", Value: u}}
 	}
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&u)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
-func (u *User) Delete() {
+func (u *User) Delete() (*User, error) {
 	collection := database.Db.Collection("users")
-	filter := bson.D{{"email", u.Email}}
+	filter := bson.D{{Key: "email", Value: u.Email}}
 	u.Active = false
-	_, err := collection.UpdateOne(context.TODO(), filter, bson.D{{"$set", u}})
-	if err != nil {
-		panic(err)
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
 	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, bson.D{{Key: "$set", Value: u}}, &opts).Decode(&u)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }

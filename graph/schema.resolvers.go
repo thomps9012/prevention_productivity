@@ -46,8 +46,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, newUser model.NewUser
 func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.User, error) {
 	isAdmin := auth.ForAdmin(ctx)
 	userID := auth.ForUserID(ctx)
-	println("userid", id)
-	println("editorID", userID)
 	if !isAdmin && id != userID {
 		return nil, fmt.Errorf("Unauthorized")
 	}
@@ -64,7 +62,6 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.Upda
 	user.Password = updateUser.Password
 	user.Active = updateUser.Active
 	if isAdmin {
-		println("isAdmin", updateUser.Admin)
 		user.Admin = updateUser.Admin
 	}
 	count, err := collection.CountDocuments(context.TODO(), bson.D{{Key: "email", Value: updateUser.Email}})
@@ -539,14 +536,11 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, updateEve
 	}
 	collection := database.Db.Collection("events")
 	filter := bson.D{{Key: "_id", Value: id}}
-	println(id)
 	var event events.Event
 	err := collection.FindOne(context.TODO(), filter).Decode(&event)
 	if err != nil {
 		return nil, err
 	}
-	println(userID)
-	println(event.EventLead)
 	if isAdmin || event.EventLead == &userID {
 		event.Title = *updateEvent.Title
 		event.Coplanners = updateEvent.Coplanners
