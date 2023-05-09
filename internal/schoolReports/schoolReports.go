@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type SchoolReportPlan struct {
@@ -34,7 +35,7 @@ type SchoolReportDebrief struct {
 	UpdatedAt              string   `json:"updated_at" bson:"updated_at"`
 }
 
-func (e *SchoolReportPlan) Create() {
+func (e *SchoolReportPlan) Create() (*SchoolReportPlan, error) {
 	collection := database.Db.Collection("school_report_plans")
 	e.ID = uuid.New().String()
 	e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
@@ -42,83 +43,82 @@ func (e *SchoolReportPlan) Create() {
 	e.Status = "pending"
 	_, err := collection.InsertOne(context.TODO(), e)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	return e, nil
 }
 
-func (e *SchoolReportPlan) Update(id string) {
+func (e *SchoolReportPlan) Update(id string) (*SchoolReportPlan, error) {
 	collection := database.Db.Collection("school_report_plans")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"curriculum", e.Curriculum},
-			{"school", e.School},
-			{"lesson_topics", e.LessonTopics},
-			{"cofacilitators", e.Cofacilitators},
-			{"status", e.Status},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "curriculum", Value: e.Curriculum},
+			{Key: "school", Value: e.School},
+			{Key: "lesson_topics", Value: e.LessonTopics},
+			{Key: "cofacilitators", Value: e.Cofacilitators},
+			{Key: "status", Value: e.Status},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&e)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return e, nil
 }
 
-func (e *SchoolReportPlan) Delete(id string) {
+func (e *SchoolReportPlan) Delete(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.DeletedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.DeletedCount == 1, nil
 }
 
-func (e *SchoolReportPlan) Approve(id string) {
+func (e *SchoolReportPlan) Approve(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_plans")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "approved"},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "approved"},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.ModifiedCount == 1, nil
 }
 
-func (e *SchoolReportPlan) Reject(id string) {
+func (e *SchoolReportPlan) Reject(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_plans")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "rejected"},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "rejected"},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.ModifiedCount == 1, nil
 }
-func (e *SchoolReportDebrief) Create() {
+func (e *SchoolReportDebrief) Create() (*SchoolReportDebrief, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	e.ID = uuid.New().String()
 	e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
@@ -126,80 +126,79 @@ func (e *SchoolReportDebrief) Create() {
 	e.Status = "pending"
 	_, err := collection.InsertOne(context.TODO(), e)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	return e, nil
 }
 
-func (e *SchoolReportDebrief) Update(id string) {
+func (e *SchoolReportDebrief) Update(id string) (*SchoolReportDebrief, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"student_count", e.StudentCount},
-			{"student_list", e.StudentList},
-			{"discussion", e.Discussion},
-			{"positives", e.Positives},
-			{"challenges_improvements", e.ChallengesImprovements},
-			{"status", e.Status},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "student_count", Value: e.StudentCount},
+			{Key: "student_list", Value: e.StudentList},
+			{Key: "discussion", Value: e.Discussion},
+			{Key: "positives", Value: e.Positives},
+			{Key: "challenges_improvements", Value: e.ChallengesImprovements},
+			{Key: "status", Value: e.Status},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&e)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return e, nil
 }
 
-func (e *SchoolReportDebrief) Delete(id string) {
+func (e *SchoolReportDebrief) Delete(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.DeletedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.DeletedCount == 1, nil
 }
 
-func (e *SchoolReportDebrief) Approve(id string) {
+func (e *SchoolReportDebrief) Approve(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "approved"},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "approved"},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.ModifiedCount == 1, nil
 }
 
-func (e *SchoolReportDebrief) Reject(id string) {
+func (e *SchoolReportDebrief) Reject(id string) (bool, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	e.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "rejected"},
-			{"updated_at", e.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "rejected"},
+			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No Report Found")
-	}
+	return result.ModifiedCount == 1, nil
 }
