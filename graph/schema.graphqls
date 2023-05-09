@@ -170,7 +170,7 @@ type SchoolReportDebriefWithNotes {
 
 type AllLogs {
   log: Log!
-  user: User
+  user: [User]
   noteCount: Int
 }
 

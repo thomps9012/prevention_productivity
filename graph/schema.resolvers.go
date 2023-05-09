@@ -22,6 +22,7 @@ import (
 	"thomps9012/prevention_productivity/internal/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -839,7 +840,7 @@ func (r *mutationResolver) RemoveSchoolReportPlan(ctx context.Context, id string
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_plans")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -859,7 +860,7 @@ func (r *mutationResolver) ApproveSchoolReportPlan(ctx context.Context, id strin
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_plans")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -879,7 +880,7 @@ func (r *mutationResolver) RejectSchoolReportPlan(ctx context.Context, id string
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_plans")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -965,7 +966,7 @@ func (r *mutationResolver) RemoveSchoolReportDebrief(ctx context.Context, id str
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -985,7 +986,7 @@ func (r *mutationResolver) ApproveSchoolReportDebrief(ctx context.Context, id st
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -1005,7 +1006,7 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 	var result bool
 	if !isAdmin {
 		result = false
-		return &result, fmt.Errorf("Unauthorizaed")
+		return &result, fmt.Errorf("Unauthorized")
 	}
 	collection := database.Db.Collection("school_report_debriefs")
 	filter := bson.D{{Key: "_id", Value: id}}
@@ -1025,119 +1026,77 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	UserID := auth.ForUserID(ctx)
 	if !IsAdmin && UserID == "" {
 		return nil, fmt.Errorf("Unauthorized")
-	} else if IsAdmin {
-		var users []*model.User
-		collection := database.Db.Collection("users")
-		cursor, err := collection.Find(context.TODO(), bson.D{})
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var user *model.User
-			err := cursor.Decode(&user)
-			if err != nil {
-				return nil, err
-			}
-			users = append(users, user)
-		}
-		return users, nil
-	} else {
-		var users []*model.User
-		collection := database.Db.Collection("users")
-		projection := options.Find().SetProjection(bson.M{"id": 1, "first_name": 1, "last_name": 1, "active": 1})
-		cursor, err := collection.Find(context.TODO(), bson.D{}, projection)
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var user *model.User
-			err := cursor.Decode(&user)
-			if err != nil {
-				return nil, err
-			}
-			users = append(users, user)
-		}
-		return users, nil
 	}
+	var users []*model.User
+	collection := database.Db.Collection("users")
+	var projection *options.FindOptions
+	if IsAdmin {
+		projection = options.Find().SetProjection(bson.D{{}})
+	} else {
+		projection = options.Find().SetProjection(bson.M{"id": 1, "first_name": 1, "last_name": 1, "active": 1})
+	}
+	cursor, err := collection.Find(context.TODO(), bson.D{}, projection)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	if IsAdmin || UserID != "" {
-		var user *model.User
-		collection := database.Db.Collection("users")
-		filter := bson.D{{Key: "_id", Value: UserID}}
-		err := collection.FindOne(context.TODO(), filter).Decode(&user)
-		if err != nil {
-			return nil, err
-		}
-		return user, nil
-	} else {
+	if !IsAdmin && UserID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	var user *model.User
+	collection := database.Db.Collection("users")
+	filter := bson.D{{Key: "_id", Value: UserID}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	if IsAdmin || UserID == id {
-		var user *model.User
-		collection := database.Db.Collection("users")
-		filter := bson.D{{Key: "_id", Value: id}}
-		err := collection.FindOne(context.TODO(), filter).Decode(&user)
-		if err != nil {
-			return nil, err
-		}
-		return &model.User{
-			ID:        user.ID,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Email:     user.Email,
-			Username:  user.Username,
-			Admin:     user.Admin,
-			Active:    user.Active,
-			UpdatedAt: user.UpdatedAt,
-			CreatedAt: user.CreatedAt,
-			DeletedAt: user.DeletedAt,
-		}, nil
-	} else {
+	if !IsAdmin && UserID != id {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	var user *model.User
+	collection := database.Db.Collection("users")
+	filter := bson.D{{Key: "_id", Value: id}}
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.Note, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	if IsAdmin || UserID != "" {
-		var notes []*model.Note
-		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{Key: "item_id", Value: itemID}}
-		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
-		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var note *model.Note
-			err := cursor.Decode(&note)
-			if err != nil {
-				return nil, err
-			}
-			notes = append(notes, &model.Note{
-				ID:        note.ID,
-				UserID:    note.UserID,
-				ItemID:    note.ItemID,
-				Title:     note.Title,
-				Content:   note.Content,
-				CreatedAt: note.CreatedAt,
-				UpdatedAt: note.UpdatedAt,
-			})
-		}
-		return notes, nil
-	} else {
+	if !IsAdmin && UserID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	var notes []*model.Note
+	noteCollection := database.Db.Collection("notes")
+	noteFilter := bson.D{{Key: "item_id", Value: itemID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
+	cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &notes)
+	if err != nil {
+		return nil, err
+	}
+	return notes, nil
 }
 
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error) {
@@ -1150,174 +1109,85 @@ func (r *queryResolver) Note(ctx context.Context, id string) (*model.Note, error
 	if err != nil {
 		return nil, err
 	}
-	if isAdmin || *note.UserID == UserID {
-		return &model.Note{
-			ID:        note.ID,
-			UserID:    note.UserID,
-			ItemID:    note.ItemID,
-			Title:     note.Title,
-			Content:   note.Content,
-			CreatedAt: note.CreatedAt,
-			UpdatedAt: note.UpdatedAt,
-		}, nil
-	} else {
+	if !isAdmin && *note.UserID != UserID {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	return note, nil
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
 	var LogWithNotes *model.LogWithNotes
-	log := logs.Log{}
 	logCollection := database.Db.Collection("logs")
 	logFilter := bson.D{{Key: "_id", Value: id}}
-	err := logCollection.FindOne(context.TODO(), logFilter).Decode(&log)
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	pipeline := mongo.Pipeline{logFilter, notes_stage}
+	cursor, err := logCollection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
 	}
-	logUserID := log.UserID
-	println(log.UpdatedAt)
-	if IsAdmin || logUserID == UserID {
-		var notes []*model.Note
-		noteCollection := database.Db.Collection("notes")
-		noteFilter := bson.D{{Key: "item_id", Value: id}}
-		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
-		cursor, err := noteCollection.Find(context.TODO(), noteFilter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var note *model.Note
-			err := cursor.Decode(&note)
-			if err != nil {
-				return nil, err
-			}
-			notes = append(notes, &model.Note{
-				ID:        note.ID,
-				UserID:    note.UserID,
-				ItemID:    note.ItemID,
-				Title:     note.Title,
-				Content:   note.Content,
-				CreatedAt: note.CreatedAt,
-				UpdatedAt: note.UpdatedAt,
-			})
-		}
-		LogWithNotes = &model.LogWithNotes{
-			Log: &model.Log{
-				ID:            &log.ID,
-				UserID:        &log.UserID,
-				DailyActivity: log.DailyActivity,
-				Positives:     log.Positives,
-				Improvements:  log.Improvements,
-				NextSteps:     log.NextSteps,
-				Status:        log.Status,
-				CreatedAt:     log.CreatedAt,
-				UpdatedAt:     log.UpdatedAt,
-			},
-			Notes: notes,
-		}
-		return LogWithNotes, nil
-	} else {
+	err = cursor.All(context.TODO(), &LogWithNotes)
+	if err != nil {
+		return nil, err
+	}
+	if *LogWithNotes.Log.UserID != UserID && !IsAdmin {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	return LogWithNotes, nil
 }
 
 func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.AllLogs, error) {
 	IsAdmin := auth.ForAdmin(ctx)
 	UserID := auth.ForUserID(ctx)
-	println("hit")
-	if IsAdmin {
-		filter := bson.D{}
-		// this times out
-		// solution 1
-		logsCollection := database.Db.Collection("logs")
-		notesCollection := database.Db.Collection("notes")
-		userCollection := database.Db.Collection("users")
-		findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
-		cursor, err := logsCollection.Find(context.TODO(), filter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		var allLogs []*model.AllLogs
-		for cursor.Next(context.TODO()) {
-			println("logs found")
-			var log *model.Log
-			err := cursor.Decode(&log)
-			if err != nil {
-				return nil, err
-			}
-			noteFilter := bson.D{{Key: "item_id", Value: log.ID}}
-			noteCount, noteErr := notesCollection.CountDocuments(context.TODO(), noteFilter)
-			if noteErr != nil {
-				return nil, err
-			}
-			intNoteCount := int(noteCount)
-			var user *model.User
-			userFilter := bson.D{{Key: "_id", Value: log.UserID}}
-			err = userCollection.FindOne(context.TODO(), userFilter).Decode(&user)
-			if err != nil {
-				return nil, err
-			}
-			singleLog := &model.AllLogs{
-				Log: &model.Log{
-					ID:        log.ID,
-					Status:    log.Status,
-					CreatedAt: log.CreatedAt,
-					UpdatedAt: log.UpdatedAt,
-				},
-				User: &model.User{
-					ID:        user.ID,
-					FirstName: user.FirstName,
-					LastName:  user.LastName,
-				},
-				NoteCount: &intNoteCount,
-			}
-			allLogs = append(allLogs, singleLog)
-		}
-		println("return")
-		return allLogs, nil
-	} else if UserID != "" {
-		filter := bson.D{{Key: "user_id", Value: UserID}}
-		return utils.GetLogs(filter)
-	} else {
+	if UserID == "" {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	var filter bson.D
+	if IsAdmin {
+		filter = bson.D{{}}
+	} else {
+		filter = bson.D{{Key: "user_id", Value: UserID}}
+	}
+	logsCollection := database.Db.Collection("logs")
+	sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "user"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage}
+	cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
+	if err != nil {
+		return nil, err
+	}
+	var allLogs []*model.AllLogs
+	err = cursor.All(context.TODO(), &allLogs)
+	if err != nil {
+		return nil, err
+	}
+	return allLogs, nil
 }
 
 func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.Log, error) {
 	IsAdmin := auth.ForAdmin(ctx)
-	if IsAdmin {
-		var logs []*model.Log
-		collection := database.Db.Collection("logs")
-		filter := bson.D{{Key: "user_id", Value: userID}}
-		findOptions := options.Find().SetSort(bson.D{{Key: "updated_at", Value: -1}}).SetLimit(10)
-		cursor, err := collection.Find(context.TODO(), filter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		for cursor.Next(context.TODO()) {
-			var log *model.Log
-			err := cursor.Decode(&log)
-			if err != nil {
-				return nil, err
-			}
-			logs = append(logs, &model.Log{
-				ID:            log.ID,
-				UserID:        log.UserID,
-				DailyActivity: log.DailyActivity,
-				Positives:     log.Positives,
-				Improvements:  log.Improvements,
-				NextSteps:     log.NextSteps,
-				Status:        log.Status,
-				CreatedAt:     log.CreatedAt,
-				UpdatedAt:     log.UpdatedAt,
-			})
-		}
-		return logs, nil
-	} else {
+	if !IsAdmin {
 		return nil, fmt.Errorf("Unauthorized")
 	}
+	var logs []*model.Log
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{Key: "user_id", Value: userID}}
+	findOptions := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}).SetLimit(10)
+	cursor, err := collection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &logs)
+	if err != nil {
+		return nil, err
+	}
+	return logs, nil
 }
 
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {

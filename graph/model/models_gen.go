@@ -19,7 +19,7 @@ type AllEvents struct {
 
 type AllLogs struct {
 	Log       *Log  `json:"log"`
-	User      *User `json:"user"`
+	User      []*User `json:"user"`
 	NoteCount *int  `json:"noteCount"`
 }
 
