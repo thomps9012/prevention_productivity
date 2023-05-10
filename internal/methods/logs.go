@@ -1,0 +1,113 @@
+package methods
+
+import (
+	"context"
+	"errors"
+	database "thomps9012/prevention_productivity/internal/db"
+	"thomps9012/prevention_productivity/internal/models"
+	"time"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+func FindLogDetail(log_id string) (*models.LogWithNotes, error) {
+	return nil, errors.New("method unimplemented")
+}
+func FindAllLogs(filter bson.D) ([]*models.LogOverview, error) {
+	return nil, errors.New("method unimplemented")
+}
+func FindUserLogs(user_id string) ([]*models.LogOverview, error) {
+	return nil, errors.New("method unimplemented")
+}
+
+func CreateNewLog(new_log models.NewLog, log_author string) (*models.LogRes, error) {
+	collection := database.Db.Collection("logs")
+	log := models.Log{
+		ID:            uuid.New().String(),
+		UserID:        log_author,
+		DailyActivity: new_log.DailyActivity,
+		Positives:     new_log.Positives,
+		Improvements:  new_log.Improvements,
+		NextSteps:     new_log.NextSteps,
+		Status:        "pending",
+		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:     bson.TypeNull.String(),
+	}
+	var author_info models.UserOverview
+	err := collection.FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&author_info)
+	if err != nil {
+		return nil, err
+	}
+	res, err := collection.InsertOne(context.TODO(), log)
+	if err != nil {
+		return nil, err
+	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to create productivity log")
+	}
+	return &models.LogRes{
+		ID:        log.ID,
+		LogAuthor: &author_info,
+		Status:    log.Status,
+		CreatedAt: log.CreatedAt,
+	}, nil
+}
+func UpdateLog(update models.UpdateLog) (*models.Log, error) {
+	collection := database.Db.Collection("logs")
+	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	filter := bson.D{{Key: "_id", Value: update.ID}}
+	update_args := bson.D{
+		{Key: "$set", Value: bson.M{
+			"daily_activity": update.DailyActivity,
+			"positives":      update.Positives,
+			"improvements":   update.Improvements,
+			"next_steps":     update.NextSteps,
+			"status":         update.Status,
+			"updated_at":     updated_at,
+		}},
+	}
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	var l models.Log
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&l)
+	if err != nil {
+		return nil, err
+	}
+	return &l, nil
+}
+func ApproveLog(log_id string) (bool, error) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{Key: "_id", Value: log_id}}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "approved"},
+			{Key: "updated_at", Value: time.Now().Format("2006-01-02 15:04:05")},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return false, err
+	}
+	return result.ModifiedCount == 1, nil
+}
+func RejectLog(log_id string) (bool, error) {
+	collection := database.Db.Collection("logs")
+	filter := bson.D{{Key: "_id", Value: log_id}}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "rejected"},
+			{Key: "updated_at", Value: time.Now().Format("2006-01-02 15:04:05")},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return false, err
+	}
+	return result.ModifiedCount == 1, nil
+}

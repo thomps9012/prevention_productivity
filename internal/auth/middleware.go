@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"net/http"
-	"thomps9012/prevention_productivity/internal/jwt"
 )
 
 var userCtxKey = &contextKey{"user"}
@@ -30,7 +29,7 @@ func Middleware() func(http.Handler) http.Handler {
 
 			//validate jwt token
 			tokenStr := header
-			token, err := jwt.ParseToken(tokenStr)
+			token, err := ParseToken(tokenStr)
 			if err != nil {
 				http.Error(w, "Invalid token", http.StatusForbidden)
 				return
