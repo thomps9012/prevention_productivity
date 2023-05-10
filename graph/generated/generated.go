@@ -345,9 +345,12 @@ type ComplexityRoot struct {
 		CreateSchoolReportDebrief  func(childComplexity int, newSchoolReportDebrief model.NewSchoolReportDebrief) int
 		CreateSchoolReportPlan     func(childComplexity int, newSchoolReportPlan model.NewSchoolReportPlan) int
 		CreateUser                 func(childComplexity int, newUser model.NewUser) int
+		DeleteContact              func(childComplexity int, id string) int
 		DeleteEvent                func(childComplexity int, id string) int
 		DeleteEventSummary         func(childComplexity int, id string) int
+		DeleteGrant                func(childComplexity int, id string) int
 		DeleteLog                  func(childComplexity int, id string) int
+		DeleteNote                 func(childComplexity int, id string) int
 		DeleteSchoolReportDebrief  func(childComplexity int, id string) int
 		DeleteSchoolReportPlan     func(childComplexity int, id string) int
 		DeleteUser                 func(childComplexity int, id string) int
@@ -357,9 +360,6 @@ type ComplexityRoot struct {
 		RejectLog                  func(childComplexity int, id string) int
 		RejectSchoolReportDebrief  func(childComplexity int, id string) int
 		RejectSchoolReportPlan     func(childComplexity int, id string) int
-		RemoveContact              func(childComplexity int, id string) int
-		RemoveGrant                func(childComplexity int, id string) int
-		RemoveNote                 func(childComplexity int, id string) int
 		UpdateContact              func(childComplexity int, id string, updateContact model.UpdateContact) int
 		UpdateEvent                func(childComplexity int, id string, updateEvent model.UpdateEvent) int
 		UpdateEventSummary         func(childComplexity int, id string, updateEventSummary model.UpdateEventSummary) int
@@ -554,36 +554,36 @@ type MutationResolver interface {
 	DeleteUser(ctx context.Context, id string) (*model.UserUpdateRes, error)
 	CreateGrant(ctx context.Context, newGrant model.NewGrant) (*model.GrantDetail, error)
 	UpdateGrant(ctx context.Context, id string, updateGrant model.UpdateGrant) (*model.Grant, error)
-	RemoveGrant(ctx context.Context, id string) (*model.Grant, error)
+	DeleteGrant(ctx context.Context, id string) (bool, error)
 	CreateContact(ctx context.Context, newContact model.NewContact) (*model.ContactDetail, error)
 	UpdateContact(ctx context.Context, id string, updateContact model.UpdateContact) (*model.Contact, error)
-	RemoveContact(ctx context.Context, id string) (*model.Contact, error)
+	DeleteContact(ctx context.Context, id string) (bool, error)
 	CreateNote(ctx context.Context, newNote model.NewNote) (*model.NoteDetail, error)
 	UpdateNote(ctx context.Context, id string, updateNote model.UpdateNote) (*model.Note, error)
-	RemoveNote(ctx context.Context, id string) (*model.Note, error)
+	DeleteNote(ctx context.Context, id string) (bool, error)
 	CreateLog(ctx context.Context, newLog model.NewLog) (*model.LogRes, error)
 	UpdateLog(ctx context.Context, id string, updateLog model.UpdateLog) (*model.Log, error)
-	DeleteLog(ctx context.Context, id string) (*model.Log, error)
+	DeleteLog(ctx context.Context, id string) (bool, error)
 	ApproveLog(ctx context.Context, id string) (bool, error)
 	RejectLog(ctx context.Context, id string) (bool, error)
 	CreateEvent(ctx context.Context, newEvent model.NewEvent) (*model.EventRes, error)
 	UpdateEvent(ctx context.Context, id string, updateEvent model.UpdateEvent) (*model.Event, error)
-	DeleteEvent(ctx context.Context, id string) (*model.Event, error)
+	DeleteEvent(ctx context.Context, id string) (bool, error)
 	ApproveEvent(ctx context.Context, id string) (bool, error)
 	RejectEvent(ctx context.Context, id string) (bool, error)
 	CreateEventSummary(ctx context.Context, newEventSummary model.NewEventSummary) (*model.EventSummaryRes, error)
 	UpdateEventSummary(ctx context.Context, id string, updateEventSummary model.UpdateEventSummary) (*model.EventSummary, error)
-	DeleteEventSummary(ctx context.Context, id string) (*model.EventSummary, error)
+	DeleteEventSummary(ctx context.Context, id string) (bool, error)
 	ApproveEventSummary(ctx context.Context, id string) (bool, error)
 	RejectEventSummary(ctx context.Context, id string) (bool, error)
 	CreateSchoolReportPlan(ctx context.Context, newSchoolReportPlan model.NewSchoolReportPlan) (*model.SchoolReportPlanRes, error)
 	UpdateSchoolReportPlan(ctx context.Context, id string, updateSchoolReportPlan model.UpdateSchoolReportPlan) (*model.SchoolReportPlan, error)
-	DeleteSchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlan, error)
+	DeleteSchoolReportPlan(ctx context.Context, id string) (bool, error)
 	ApproveSchoolReportPlan(ctx context.Context, id string) (bool, error)
 	RejectSchoolReportPlan(ctx context.Context, id string) (bool, error)
 	CreateSchoolReportDebrief(ctx context.Context, newSchoolReportDebrief model.NewSchoolReportDebrief) (*model.SchoolReportDebriefRes, error)
 	UpdateSchoolReportDebrief(ctx context.Context, id string, updateSchoolReportDebrief model.UpdateSchoolReportDebrief) (*model.SchoolReportDebrief, error)
-	DeleteSchoolReportDebrief(ctx context.Context, id string) (*model.SchoolReportDebrief, error)
+	DeleteSchoolReportDebrief(ctx context.Context, id string) (bool, error)
 	ApproveSchoolReportDebrief(ctx context.Context, id string) (bool, error)
 	RejectSchoolReportDebrief(ctx context.Context, id string) (bool, error)
 }
@@ -592,7 +592,7 @@ type QueryResolver interface {
 	Me(ctx context.Context) (*model.User, error)
 	User(ctx context.Context, id string) (*model.User, error)
 	ItemNotes(ctx context.Context, itemID string) ([]*model.NoteDetail, error)
-	Note(ctx context.Context, id string) (*model.Note, error)
+	Note(ctx context.Context, id string) (*model.NoteDetail, error)
 	UserNotes(ctx context.Context, userID string) ([]*model.Note, error)
 	Log(ctx context.Context, id string) (*model.LogWithNotes, error)
 	AllLogs(ctx context.Context) ([]*model.LogOverview, error)
@@ -2360,6 +2360,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["newUser"].(model.NewUser)), true
 
+	case "Mutation.deleteContact":
+		if e.complexity.Mutation.DeleteContact == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteContact_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteContact(childComplexity, args["id"].(string)), true
+
 	case "Mutation.deleteEvent":
 		if e.complexity.Mutation.DeleteEvent == nil {
 			break
@@ -2384,6 +2396,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteEventSummary(childComplexity, args["id"].(string)), true
 
+	case "Mutation.deleteGrant":
+		if e.complexity.Mutation.DeleteGrant == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGrant_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGrant(childComplexity, args["id"].(string)), true
+
 	case "Mutation.deleteLog":
 		if e.complexity.Mutation.DeleteLog == nil {
 			break
@@ -2395,6 +2419,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteLog(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteNote":
+		if e.complexity.Mutation.DeleteNote == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteNote_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteNote(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteSchoolReportDebrief":
 		if e.complexity.Mutation.DeleteSchoolReportDebrief == nil {
@@ -2503,42 +2539,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RejectSchoolReportPlan(childComplexity, args["id"].(string)), true
-
-	case "Mutation.removeContact":
-		if e.complexity.Mutation.RemoveContact == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeContact_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveContact(childComplexity, args["id"].(string)), true
-
-	case "Mutation.removeGrant":
-		if e.complexity.Mutation.RemoveGrant == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeGrant_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveGrant(childComplexity, args["id"].(string)), true
-
-	case "Mutation.removeNote":
-		if e.complexity.Mutation.RemoveNote == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeNote_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveNote(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateContact":
 		if e.complexity.Mutation.UpdateContact == nil {
@@ -4102,7 +4102,7 @@ type Query {
   me: User!
   user(id: ID!): User!
   itemNotes(item_id: ID!): [NoteDetail!]!
-  note(id: ID!): Note!
+  note(id: ID!): NoteDetail!
   userNotes(user_id: ID!): [Note!]!
   log(id: ID!): LogWithNotes!
   allLogs: [LogOverview!]!
@@ -4266,6 +4266,7 @@ input UpdateEventSummary {
 }
 
 input NewSchoolReportPlan {
+  date: String!
   co_facilitators: [ID]!
   curriculum: String!
   school: String!
@@ -4409,23 +4410,23 @@ type Mutation {
   login(login: LoginInput!): LoginRes!
   updateUser(updateUser: UpdateUser!, id: ID!): UserUpdateRes!
   deleteUser(id: ID!): UserUpdateRes!
-  createGrant(newGrant: NewGrant!): GrantDetail
-  updateGrant(id: ID!, updateGrant: UpdateGrant!): Grant
-  removeGrant(id: ID!): Grant
-  createContact(newContact: NewContact!): ContactDetail
-  updateContact(id: ID!, updateContact: UpdateContact!): Contact
-  removeContact(id: ID!): Contact
+  createGrant(newGrant: NewGrant!): GrantDetail!
+  updateGrant(id: ID!, updateGrant: UpdateGrant!): Grant!
+  deleteGrant(id: ID!): Boolean!
+  createContact(newContact: NewContact!): ContactDetail!
+  updateContact(id: ID!, updateContact: UpdateContact!): Contact!
+  deleteContact(id: ID!): Boolean!
   createNote(newNote: NewNote!): NoteDetail!
   updateNote(id: ID!, updateNote: UpdateNote!): Note!
-  removeNote(id: ID!): Note!
+  deleteNote(id: ID!): Boolean!
   createLog(newLog: NewLog!): LogRes!
   updateLog(id: ID!, updateLog: UpdateLog!): Log!
-  deleteLog(id: ID!): Log!
+  deleteLog(id: ID!): Boolean!
   approveLog(id: ID!): Boolean!
   rejectLog(id: ID!): Boolean!
   createEvent(newEvent: NewEvent!): EventRes!
   updateEvent(id: ID!, updateEvent: UpdateEvent!): Event!
-  deleteEvent(id: ID!): Event!
+  deleteEvent(id: ID!): Boolean!
   approveEvent(id: ID!): Boolean!
   rejectEvent(id: ID!): Boolean!
   createEventSummary(newEventSummary: NewEventSummary!): EventSummaryRes!
@@ -4433,7 +4434,7 @@ type Mutation {
     id: ID!
     updateEventSummary: UpdateEventSummary!
   ): EventSummary!
-  deleteEventSummary(id: ID!): EventSummary!
+  deleteEventSummary(id: ID!): Boolean!
   approveEventSummary(id: ID!): Boolean!
   rejectEventSummary(id: ID!): Boolean!
   createSchoolReportPlan(
@@ -4443,7 +4444,7 @@ type Mutation {
     id: ID!
     updateSchoolReportPlan: UpdateSchoolReportPlan!
   ): SchoolReportPlan!
-  deleteSchoolReportPlan(id: ID!): SchoolReportPlan!
+  deleteSchoolReportPlan(id: ID!): Boolean!
   approveSchoolReportPlan(id: ID!): Boolean!
   rejectSchoolReportPlan(id: ID!): Boolean!
   createSchoolReportDebrief(
@@ -4453,7 +4454,7 @@ type Mutation {
     id: ID!
     updateSchoolReportDebrief: UpdateSchoolReportDebrief!
   ): SchoolReportDebrief!
-  deleteSchoolReportDebrief(id: ID!): SchoolReportDebrief!
+  deleteSchoolReportDebrief(id: ID!): Boolean!
   approveSchoolReportDebrief(id: ID!): Boolean!
   rejectSchoolReportDebrief(id: ID!): Boolean!
 }
@@ -4675,6 +4676,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteContact_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteEventSummary_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4705,7 +4721,37 @@ func (ec *executionContext) field_Mutation_deleteEvent_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteGrant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -4841,51 +4887,6 @@ func (ec *executionContext) field_Mutation_rejectSchoolReportDebrief_args(ctx co
 }
 
 func (ec *executionContext) field_Mutation_rejectSchoolReportPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeContact_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeGrant_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -15662,11 +15663,14 @@ func (ec *executionContext) _Mutation_createGrant(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.GrantDetail)
 	fc.Result = res
-	return ec.marshalOGrantDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDetail(ctx, field.Selections, res)
+	return ec.marshalNGrantDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDetail(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createGrant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15744,11 +15748,14 @@ func (ec *executionContext) _Mutation_updateGrant(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Grant)
 	fc.Result = res
-	return ec.marshalOGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx, field.Selections, res)
+	return ec.marshalNGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateGrant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15805,8 +15812,8 @@ func (ec *executionContext) fieldContext_Mutation_updateGrant(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeGrant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeGrant(ctx, field)
+func (ec *executionContext) _Mutation_deleteGrant(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteGrant(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15819,58 +15826,31 @@ func (ec *executionContext) _Mutation_removeGrant(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveGrant(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteGrant(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Grant)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeGrant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteGrant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Grant_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Grant_name(ctx, field)
-			case "description":
-				return ec.fieldContext_Grant_description(ctx, field)
-			case "goals":
-				return ec.fieldContext_Grant_goals(ctx, field)
-			case "objectives":
-				return ec.fieldContext_Grant_objectives(ctx, field)
-			case "start_date":
-				return ec.fieldContext_Grant_start_date(ctx, field)
-			case "award_date":
-				return ec.fieldContext_Grant_award_date(ctx, field)
-			case "end_date":
-				return ec.fieldContext_Grant_end_date(ctx, field)
-			case "award_number":
-				return ec.fieldContext_Grant_award_number(ctx, field)
-			case "budget":
-				return ec.fieldContext_Grant_budget(ctx, field)
-			case "active":
-				return ec.fieldContext_Grant_active(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Grant_created_by(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Grant_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Grant_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Grant", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -15880,7 +15860,7 @@ func (ec *executionContext) fieldContext_Mutation_removeGrant(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeGrant_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteGrant_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -15908,11 +15888,14 @@ func (ec *executionContext) _Mutation_createContact(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.ContactDetail)
 	fc.Result = res
-	return ec.marshalOContactDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactDetail(ctx, field.Selections, res)
+	return ec.marshalNContactDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactDetail(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15984,11 +15967,14 @@ func (ec *executionContext) _Mutation_updateContact(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Contact)
 	fc.Result = res
-	return ec.marshalOContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
+	return ec.marshalNContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16039,8 +16025,8 @@ func (ec *executionContext) fieldContext_Mutation_updateContact(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeContact(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeContact(ctx, field)
+func (ec *executionContext) _Mutation_deleteContact(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteContact(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16053,52 +16039,31 @@ func (ec *executionContext) _Mutation_removeContact(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveContact(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteContact(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Contact)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Contact_id(ctx, field)
-			case "type":
-				return ec.fieldContext_Contact_type(ctx, field)
-			case "name":
-				return ec.fieldContext_Contact_name(ctx, field)
-			case "email":
-				return ec.fieldContext_Contact_email(ctx, field)
-			case "phone":
-				return ec.fieldContext_Contact_phone(ctx, field)
-			case "notes":
-				return ec.fieldContext_Contact_notes(ctx, field)
-			case "active":
-				return ec.fieldContext_Contact_active(ctx, field)
-			case "created_by":
-				return ec.fieldContext_Contact_created_by(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Contact_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Contact_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Contact_deleted_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Contact", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -16108,7 +16073,7 @@ func (ec *executionContext) fieldContext_Mutation_removeContact(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeContact_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteContact_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -16257,8 +16222,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeNote(ctx, field)
+func (ec *executionContext) _Mutation_deleteNote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteNote(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16271,7 +16236,7 @@ func (ec *executionContext) _Mutation_removeNote(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveNote(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteNote(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16283,35 +16248,19 @@ func (ec *executionContext) _Mutation_removeNote(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Note)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteNote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
-			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -16321,7 +16270,7 @@ func (ec *executionContext) fieldContext_Mutation_removeNote(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteNote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -16494,9 +16443,9 @@ func (ec *executionContext) _Mutation_deleteLog(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Log)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNLog2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteLog(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16506,27 +16455,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteLog(ctx context.Context,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Log_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Log_user_id(ctx, field)
-			case "daily_activity":
-				return ec.fieldContext_Log_daily_activity(ctx, field)
-			case "positives":
-				return ec.fieldContext_Log_positives(ctx, field)
-			case "improvements":
-				return ec.fieldContext_Log_improvements(ctx, field)
-			case "next_steps":
-				return ec.fieldContext_Log_next_steps(ctx, field)
-			case "status":
-				return ec.fieldContext_Log_status(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Log_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Log_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Log", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -16877,9 +16806,9 @@ func (ec *executionContext) _Mutation_deleteEvent(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Event)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNEvent2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEvent(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteEvent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16889,81 +16818,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteEvent(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Event_id(ctx, field)
-			case "event_lead":
-				return ec.fieldContext_Event_event_lead(ctx, field)
-			case "co_planners":
-				return ec.fieldContext_Event_co_planners(ctx, field)
-			case "title":
-				return ec.fieldContext_Event_title(ctx, field)
-			case "description":
-				return ec.fieldContext_Event_description(ctx, field)
-			case "start_date":
-				return ec.fieldContext_Event_start_date(ctx, field)
-			case "set_up":
-				return ec.fieldContext_Event_set_up(ctx, field)
-			case "clean_up":
-				return ec.fieldContext_Event_clean_up(ctx, field)
-			case "end_date":
-				return ec.fieldContext_Event_end_date(ctx, field)
-			case "grant_id":
-				return ec.fieldContext_Event_grant_id(ctx, field)
-			case "public_event":
-				return ec.fieldContext_Event_public_event(ctx, field)
-			case "rsvp_required":
-				return ec.fieldContext_Event_rsvp_required(ctx, field)
-			case "annual_event":
-				return ec.fieldContext_Event_annual_event(ctx, field)
-			case "new_event":
-				return ec.fieldContext_Event_new_event(ctx, field)
-			case "volunteers_needed":
-				return ec.fieldContext_Event_volunteers_needed(ctx, field)
-			case "agenda":
-				return ec.fieldContext_Event_agenda(ctx, field)
-			case "target_audience":
-				return ec.fieldContext_Event_target_audience(ctx, field)
-			case "parting_gifts":
-				return ec.fieldContext_Event_parting_gifts(ctx, field)
-			case "marketing_material":
-				return ec.fieldContext_Event_marketing_material(ctx, field)
-			case "supplies":
-				return ec.fieldContext_Event_supplies(ctx, field)
-			case "special_orders":
-				return ec.fieldContext_Event_special_orders(ctx, field)
-			case "performance":
-				return ec.fieldContext_Event_performance(ctx, field)
-			case "vendors":
-				return ec.fieldContext_Event_vendors(ctx, field)
-			case "food_and_beverage":
-				return ec.fieldContext_Event_food_and_beverage(ctx, field)
-			case "caterer":
-				return ec.fieldContext_Event_caterer(ctx, field)
-			case "food_head_count":
-				return ec.fieldContext_Event_food_head_count(ctx, field)
-			case "event_team":
-				return ec.fieldContext_Event_event_team(ctx, field)
-			case "volunteer_list":
-				return ec.fieldContext_Event_volunteer_list(ctx, field)
-			case "budget":
-				return ec.fieldContext_Event_budget(ctx, field)
-			case "affiliated_organizations":
-				return ec.fieldContext_Event_affiliated_organizations(ctx, field)
-			case "educational_goals":
-				return ec.fieldContext_Event_educational_goals(ctx, field)
-			case "educational_outcomes":
-				return ec.fieldContext_Event_educational_outcomes(ctx, field)
-			case "grant_goals":
-				return ec.fieldContext_Event_grant_goals(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Event_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Event_updated_at(ctx, field)
-			case "status":
-				return ec.fieldContext_Event_status(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -17262,9 +17117,9 @@ func (ec *executionContext) _Mutation_deleteEventSummary(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.EventSummary)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNEventSummary2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventSummary(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteEventSummary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17274,31 +17129,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteEventSummary(ctx context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_EventSummary_id(ctx, field)
-			case "event_id":
-				return ec.fieldContext_EventSummary_event_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_EventSummary_user_id(ctx, field)
-			case "co_planners":
-				return ec.fieldContext_EventSummary_co_planners(ctx, field)
-			case "attendee_count":
-				return ec.fieldContext_EventSummary_attendee_count(ctx, field)
-			case "challenges":
-				return ec.fieldContext_EventSummary_challenges(ctx, field)
-			case "successes":
-				return ec.fieldContext_EventSummary_successes(ctx, field)
-			case "improvements":
-				return ec.fieldContext_EventSummary_improvements(ctx, field)
-			case "status":
-				return ec.fieldContext_EventSummary_status(ctx, field)
-			case "created_at":
-				return ec.fieldContext_EventSummary_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_EventSummary_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type EventSummary", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -17597,9 +17428,9 @@ func (ec *executionContext) _Mutation_deleteSchoolReportPlan(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReportPlan)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlan(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteSchoolReportPlan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17609,29 +17440,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteSchoolReportPlan(ctx con
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SchoolReportPlan_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_SchoolReportPlan_user_id(ctx, field)
-			case "date":
-				return ec.fieldContext_SchoolReportPlan_date(ctx, field)
-			case "co_facilitators":
-				return ec.fieldContext_SchoolReportPlan_co_facilitators(ctx, field)
-			case "curriculum":
-				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
-			case "school":
-				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
-			case "lesson_topics":
-				return ec.fieldContext_SchoolReportPlan_lesson_topics(ctx, field)
-			case "status":
-				return ec.fieldContext_SchoolReportPlan_status(ctx, field)
-			case "created_at":
-				return ec.fieldContext_SchoolReportPlan_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_SchoolReportPlan_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlan", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -17930,9 +17739,9 @@ func (ec *executionContext) _Mutation_deleteSchoolReportDebrief(ctx context.Cont
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SchoolReportDebrief)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNSchoolReportDebrief2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportDebrief(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteSchoolReportDebrief(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17942,31 +17751,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteSchoolReportDebrief(ctx 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SchoolReportDebrief_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_SchoolReportDebrief_user_id(ctx, field)
-			case "lesson_plan_id":
-				return ec.fieldContext_SchoolReportDebrief_lesson_plan_id(ctx, field)
-			case "student_count":
-				return ec.fieldContext_SchoolReportDebrief_student_count(ctx, field)
-			case "student_list":
-				return ec.fieldContext_SchoolReportDebrief_student_list(ctx, field)
-			case "challenges_improvements":
-				return ec.fieldContext_SchoolReportDebrief_challenges_improvements(ctx, field)
-			case "positives":
-				return ec.fieldContext_SchoolReportDebrief_positives(ctx, field)
-			case "discussion":
-				return ec.fieldContext_SchoolReportDebrief_discussion(ctx, field)
-			case "status":
-				return ec.fieldContext_SchoolReportDebrief_status(ctx, field)
-			case "created_at":
-				return ec.fieldContext_SchoolReportDebrief_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_SchoolReportDebrief_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SchoolReportDebrief", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -19029,9 +18814,9 @@ func (ec *executionContext) _Query_note(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Note)
+	res := resTmp.(*model.NoteDetail)
 	fc.Result = res
-	return ec.marshalNNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+	return ec.marshalNNoteDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteDetail(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_note(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -19043,21 +18828,21 @@ func (ec *executionContext) fieldContext_Query_note(ctx context.Context, field g
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_NoteDetail_id(ctx, field)
+			case "item_info":
+				return ec.fieldContext_NoteDetail_item_info(ctx, field)
+			case "author":
+				return ec.fieldContext_NoteDetail_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_NoteDetail_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_NoteDetail_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
+				return ec.fieldContext_NoteDetail_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_NoteDetail_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type NoteDetail", field.Name)
 		},
 	}
 	defer func() {
@@ -27182,6 +26967,14 @@ func (ec *executionContext) unmarshalInputNewSchoolReportPlan(ctx context.Contex
 
 	for k, v := range asMap {
 		switch k {
+		case "date":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			it.Date, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "co_facilitators":
 			var err error
 
@@ -30133,36 +29926,54 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createGrant(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateGrant":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateGrant(ctx, field)
 			})
 
-		case "removeGrant":
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteGrant":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeGrant(ctx, field)
+				return ec._Mutation_deleteGrant(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createContact":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createContact(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateContact":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateContact(ctx, field)
 			})
 
-		case "removeContact":
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteContact":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeContact(ctx, field)
+				return ec._Mutation_deleteContact(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createNote":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -30181,10 +29992,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "removeNote":
+		case "deleteNote":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeNote(ctx, field)
+				return ec._Mutation_deleteNote(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -32415,6 +32226,20 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNContact2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v model.Contact) graphql.Marshaler {
+	return ec._Contact(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v *model.Contact) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Contact(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNContactDetail2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactDetail(ctx context.Context, sel ast.SelectionSet, v model.ContactDetail) graphql.Marshaler {
 	return ec._ContactDetail(ctx, sel, &v)
 }
@@ -32736,6 +32561,20 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) marshalNGrant2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx context.Context, sel ast.SelectionSet, v model.Grant) graphql.Marshaler {
+	return ec._Grant(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx context.Context, sel ast.SelectionSet, v *model.Grant) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Grant(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGrantDetail2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDetail(ctx context.Context, sel ast.SelectionSet, v model.GrantDetail) graphql.Marshaler {
@@ -33955,39 +33794,11 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOContact2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContact(ctx context.Context, sel ast.SelectionSet, v *model.Contact) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Contact(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOContactDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactDetail(ctx context.Context, sel ast.SelectionSet, v *model.ContactDetail) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ContactDetail(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx context.Context, sel ast.SelectionSet, v *model.EventDescription) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._EventDescription(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOGrant2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrant(ctx context.Context, sel ast.SelectionSet, v *model.Grant) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Grant(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOGrantDetail2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDetail(ctx context.Context, sel ast.SelectionSet, v *model.GrantDetail) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._GrantDetail(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {

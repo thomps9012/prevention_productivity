@@ -379,6 +379,7 @@ type NewSchoolReportDebrief struct {
 }
 
 type NewSchoolReportPlan struct {
+	Date           string    `json:"date"`
 	CoFacilitators []*string `json:"co_facilitators"`
 	Curriculum     string    `json:"curriculum"`
 	School         string    `json:"school"`

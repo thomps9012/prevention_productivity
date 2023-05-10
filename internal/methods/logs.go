@@ -13,9 +13,66 @@ import (
 )
 
 func FindLogDetail(log_id string) (*models.LogWithNotes, error) {
+	// IsAdmin := auth.ForAdmin(ctx)
+	// UserID := auth.ForUserID(ctx)
+	// var LogWithNotes *model.LogWithNotes
+	// logCollection := database.Db.Collection("logs")
+	// logFilter := bson.D{{Key: "_id", Value: id}}
+	// user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+	// 	// add unwinding
+	// 	Key: "pipeline", Value: bson.A{
+	// 		bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+	// 	},
+	// }}}}
+	// notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	// // add projection
+	// pipeline := mongo.Pipeline{logFilter, notes_stage, user_stage}
+	// cursor, err := logCollection.Aggregate(context.TODO(), pipeline)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// err = cursor.All(context.TODO(), &LogWithNotes)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if *LogWithNotes.Log.UserID != UserID && !IsAdmin {
+	// 	return nil, fmt.Errorf("Unauthorized")
+	// }
+	// return LogWithNotes, nil
 	return nil, errors.New("method unimplemented")
 }
 func FindAllLogs(filter bson.D) ([]*models.LogOverview, error) {
+	// IsAdmin := auth.ForAdmin(ctx)
+	// UserID := auth.ForUserID(ctx)
+	// if UserID == "" {
+	// 	return nil, fmt.Errorf("Unauthorized")
+	// }
+	// var filter bson.D
+	// if IsAdmin {
+	// 	filter = bson.D{{}}
+	// } else {
+	// 	filter = bson.D{{Key: "user_id", Value: UserID}}
+	// }
+	// logsCollection := database.Db.Collection("logs")
+	// sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
+	// user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+	// 	Key: "pipeline", Value: bson.A{
+	// 		bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+	// 	},
+	// }}}}
+	// note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	// // add in projection
+	// log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage}
+	// cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// var allLogs []*model.AllLogs
+	// err = cursor.All(context.TODO(), &allLogs)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return allLogs, nil
 	return nil, errors.New("method unimplemented")
 }
 func FindUserLogs(user_id string) ([]*models.LogOverview, error) {
