@@ -2,18 +2,20 @@ package grants
 
 import (
 	"context"
+	"errors"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Grant struct {
 	ID          string    `json:"id" bson:"_id"`
 	Name        string    `json:"name" bson:"name"`
 	Description string    `json:"description" bson:"description"`
-	Goals       []*string `json:"goals"	bson:"goals"`
+	Goals       []*string `json:"goals" bson:"goals"`
 	Objectives  []*string `json:"objectives" bson:"objectives"`
 	StartDate   string    `json:"start_date" bson:"start_date"`
 	AwardDate   string    `json:"award_date" bson:"award_date"`
@@ -26,7 +28,7 @@ type Grant struct {
 	Active      bool
 }
 
-func (g *Grant) Create() {
+func (g *Grant) Create() (*Grant, error) {
 	collection := database.Db.Collection("grants")
 	g.ID = uuid.New().String()
 	if g.EndDate > time.Now().Format("01-02-2006 15:04:05") {
@@ -36,49 +38,61 @@ func (g *Grant) Create() {
 	}
 	g.CreatedAt = time.Now().Format("01-02-2006 15:04:05")
 	g.UpdatedAt = g.CreatedAt
-	_, err := collection.InsertOne(context.TODO(), g)
+	res, err := collection.InsertOne(context.TODO(), g)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to create grant")
+	}
+	return g, nil
 }
 
-func (g *Grant) Update(id string) {
+func (g *Grant) Update(id string) (*Grant, error) {
 	collection := database.Db.Collection("grants")
 	g.UpdatedAt = time.Now().Format("01-02-2006 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	if g.EndDate > time.Now().Format("01-02-2006 15:04:05") {
 		g.Active = true
 	} else {
 		g.Active = false
 	}
 	update := bson.D{
-		{"$set", bson.D{
-			{"name", g.Name},
-			{"description", g.Description},
-			{"goals", g.Goals},
-			{"objectives", g.Objectives},
-			{"start_date", g.StartDate},
-			{"award_date", g.AwardDate},
-			{"end_date", g.EndDate},
-			{"award_number", g.AwardNumber},
-			{"budget", g.Budget},
-			{"updated_at", g.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "name", Value: g.Name},
+			{Key: "description", Value: g.Description},
+			{Key: "goals", Value: g.Goals},
+			{Key: "objectives", Value: g.Objectives},
+			{Key: "start_date", Value: g.StartDate},
+			{Key: "award_date", Value: g.AwardDate},
+			{Key: "end_date", Value: g.EndDate},
+			{Key: "award_number", Value: g.AwardNumber},
+			{Key: "budget", Value: g.Budget},
+			{Key: "updated_at", Value: g.UpdatedAt},
 		}},
 	}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		Upsert:         &upsert,
+		ReturnDocument: &after,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&g)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("No grant found with that ID")
-	}
+	return g, nil
 }
 
-func (g *Grant) Delete(id string) {
+func (g *Grant) Delete(id string) (*Grant, error) {
 	collection := database.Db.Collection("grants")
-	filter := bson.D{{"_id", id}}
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	filter := bson.D{{Key: "_id", Value: id}}
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	if res.DeletedCount == 0 {
+		return nil, errors.New("failed to delete grant")
+	}
+	return g, nil
 }

@@ -13,9 +13,9 @@ type contextKey struct {
 }
 
 type contextInfo struct {
-	email string `json:"email"`
-	isAdmin bool `json:"isAdmin"`
-	id string `json:"id"`
+	Email  string `json:"email"`
+	Admin  bool   `json:"admin"`
+	UserID string `json:"user_id"`
 }
 
 func Middleware() func(http.Handler) http.Handler {
@@ -27,7 +27,7 @@ func Middleware() func(http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-			
+
 			//validate jwt token
 			tokenStr := header
 			token, err := jwt.ParseToken(tokenStr)
@@ -36,9 +36,9 @@ func Middleware() func(http.Handler) http.Handler {
 				return
 			}
 			email := token["email"].(string)
-			isAdmin := token["isAdmin"].(bool)
-			userID := token["userID"].(string)
-			contextInfo := &contextInfo{email, isAdmin, userID}
+			admin := token["admin"].(bool)
+			user_id := token["user_id"].(string)
+			contextInfo := &contextInfo{email, admin, user_id}
 			ctx := context.WithValue(r.Context(), userCtxKey, contextInfo)
 			// and call the next with our new context
 			r = r.WithContext(ctx)
@@ -50,10 +50,10 @@ func Middleware() func(http.Handler) http.Handler {
 // ForContext finds the user from the context. REQUIRES Middleware to have run.
 func ForUserID(ctx context.Context) string {
 	raw, _ := ctx.Value(userCtxKey).(*contextInfo)
-	return raw.id
+	return raw.UserID
 }
 
 func ForAdmin(ctx context.Context) bool {
 	raw, _ := ctx.Value(userCtxKey).(*contextInfo)
-	return raw.isAdmin
+	return raw.Admin
 }

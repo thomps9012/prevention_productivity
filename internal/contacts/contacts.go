@@ -2,12 +2,13 @@ package contacts
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Contact struct {
@@ -17,75 +18,84 @@ type Contact struct {
 	Phone     string `json:"phone" bson:"phone"`
 	Type      string `json:"type" bson:"type"`
 	Notes     string `json:"notes" bson:"notes"`
-	Active    bool
+	Active    bool   `json:"active" bson:"active"`
 	CreatedBy string `json:"created_by" bson:"created_by"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
 	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
 }
 
-func (c *Contact) Create() {
+func (c *Contact) Create() (*Contact, error) {
 	collection := database.Db.Collection("contacts")
-	var contact Contact
-	filter := bson.D{{"name", c.Name}, {"email", c.Email}, {"phone", c.Phone}}
-	err := collection.FindOne(context.TODO(), filter).Decode(&contact)
-	if err != nil{
-		c.ID = uuid.New().String()
-		c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-		c.UpdatedAt = c.CreatedAt
-		c.Active = true
-		_, err := collection.InsertOne(context.TODO(), c)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		fmt.Errorf("contact already exists")
+	filter := bson.D{{Key: "name", Value: c.Name}, {Key: "email", Value: c.Email}, {Key: "phone", Value: c.Phone}}
+	exists, err := collection.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return nil, err
 	}
+	if exists > 0 {
+		return nil, errors.New("contact already exists")
+	}
+	c.ID = uuid.New().String()
+	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
+	c.UpdatedAt = c.CreatedAt
+	c.Active = true
+	res, err := collection.InsertOne(context.TODO(), c)
+	if err != nil {
+		return nil, err
+	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to create contact")
+	}
+	return c, nil
 }
 
-func (c *Contact) Update(id string) {
+func (c *Contact) Update(id string) (*Contact, error) {
 	collection := database.Db.Collection("contacts")
 	c.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"name", c.Name},
-			{"email", c.Email},
-			{"phone", c.Phone},
-			{"notes", c.Notes},
-			{"type", c.Type},
-			{"updated_at", c.UpdatedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "name", Value: c.Name},
+			{Key: "email", Value: c.Email},
+			{Key: "phone", Value: c.Phone},
+			{Key: "notes", Value: c.Notes},
+			{Key: "type", Value: c.Type},
+			{Key: "updated_at", Value: c.UpdatedAt},
 		}},
 	}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	after := options.After
+	upsert := true
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&c)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	fmt.Println("Matched Count: ", result.MatchedCount)
-	fmt.Println("Modified Count: ", result.ModifiedCount)
-	if result.ModifiedCount == 0 {
-		fmt.Println("No document found")
-	}
+	return c, nil
 }
 
-func (c *Contact) Delete(id string) {
+func (c *Contact) Delete(id string) (*Contact, error) {
 	collection := database.Db.Collection("contacts")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	c.Active = false
 	c.DeletedAt = time.Now().Format("2006-01-02 15:04:05")
 	update := bson.D{
-		{"$set", bson.D{
-			{"active", c.Active},
-			{"deleted_at", c.DeletedAt},
+		{Key: "$set", Value: bson.D{
+			{Key: "active", Value: c.Active},
+			{Key: "deleted_at", Value: c.DeletedAt},
 		}},
 	}
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	after := options.After
+	upsert := true
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&c)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	fmt.Println("Matched Count: ", result.MatchedCount)
-	fmt.Println("Modified Count: ", result.ModifiedCount)
-	if result.ModifiedCount == 0 {
-		fmt.Println("No document found")
-	}
+	return c, nil
 }
