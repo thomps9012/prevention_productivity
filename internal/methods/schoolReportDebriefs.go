@@ -9,17 +9,90 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var debrief_detail *model.SchoolReportDebriefWithNotes
+	collection := database.Db.Collection("school_report_debriefs")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &debrief_detail)
+	if err != nil {
+		return nil, err
+	}
+	return debrief_detail, nil
 }
 func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOverview, error) {
-	return nil, errors.New("method unimplemented")
+	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
+	collection := database.Db.Collection("school_report_debriefs")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &debriefs)
+	if err != nil {
+		return nil, err
+	}
+	return debriefs, nil
 }
 func FindUserSchoolReportDebriefs(user_id string) ([]*model.SchoolReportDebriefOverview, error) {
-	return nil, errors.New("method unimplemented")
+	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
+	collection := database.Db.Collection("school_report_debriefs")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage, plan_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &debriefs)
+	if err != nil {
+		return nil, err
+	}
+	return debriefs, nil
 }
 
 func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief_author string) (*model.SchoolReportDebriefRes, error) {
