@@ -14,6 +14,7 @@ import (
 type SchoolReportPlan struct {
 	ID              string    `json:"id" bson:"_id"`
 	UserID          *string   `json:"user_id" bson:"user_id"`
+	Date            string    `json:"date" bson:"date"`
 	Co_Facilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
 	Curriculum      string    `json:"curriculum" bson:"curriculum"`
 	School          string    `json:"school" bson:"school"`

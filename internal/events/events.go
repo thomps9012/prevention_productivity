@@ -41,7 +41,7 @@ type Event struct {
 	EventTeam               []*string `json:"event_team" bson:"event_team"`
 	VolunteerList           []*string `json:"volunteer_list" bson:"volunteer_list"`
 	Budget                  float64   `json:"budget" bson:"budget"`
-	AffiliatedOrganizations *string   `json:"affiliated_organizations" bson:"affiliated_organizations"`
+	AffiliatedOrganizations []*string `json:"affiliated_organizations" bson:"affiliated_organizations"`
 	EducationalGoals        []*string `json:"educational_goals" bson:"educational_goals"`
 	EducationalOutcomes     []*string `json:"educational_outcomes" bson:"educational_outcomes"`
 	GrantGoals              []*string `json:"grant_goals" bson:"grant_goals"`
