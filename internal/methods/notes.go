@@ -83,7 +83,7 @@ func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, 
 		return nil, err
 	}
 	var author_info model.UserOverview
-	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", note_author}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&author_info)
+	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{Key: "_id", Value: note_author}}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&author_info)
 	if err != nil {
 		return nil, err
 	}

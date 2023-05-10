@@ -42,12 +42,12 @@ func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief
 		return nil, err
 	}
 	var debrief_author_info model.UserOverview
-	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", debrief_author}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&debrief_author_info)
+	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{Key: "_id", Value: debrief_author}}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&debrief_author_info)
 	if err != nil {
 		return nil, err
 	}
 	var lesson_plan_info model.SchoolReportPlanDescription
-	err = database.Db.Collection("lesson_plans").FindOne(context.TODO(), bson.D{{"_id", debrief.LessonPlanID}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"school", 1}, {"date", 1}})).Decode(&lesson_plan_info)
+	err = database.Db.Collection("lesson_plans").FindOne(context.TODO(), bson.D{{Key: "_id", Value: debrief.LessonPlanID}}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "school", Value: 1}, {Key: "date", Value: 1}})).Decode(&lesson_plan_info)
 	if err != nil {
 		return nil, err
 	}

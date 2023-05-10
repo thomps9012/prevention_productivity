@@ -44,7 +44,7 @@ func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator str
 		return nil, errors.New("failed to insert plan")
 	}
 	var plan_author model.UserOverview
-	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", plan_creator}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&plan_author)
+	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{Key: "_id", Value: plan_creator}}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&plan_author)
 	if err != nil {
 		return nil, err
 	}
