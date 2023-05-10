@@ -168,4 +168,3 @@ func GetUsers() ([]model.UserResult, error) {
 	}
 	return users, nil
 }
-func GetUser(filter bson.D)

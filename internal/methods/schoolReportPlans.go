@@ -9,17 +9,75 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var plan_detail *model.SchoolReportPlanWithNotes
+	collection := database.Db.Collection("school_report_plans")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &plan_detail)
+	if err != nil {
+		return nil, err
+	}
+	return plan_detail, nil
 }
 func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, error) {
-	return nil, errors.New("method unimplemented")
+	plans := make([]*model.SchoolReportPlanOverview, 0)
+	collection := database.Db.Collection("school_report_plans")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &plans)
+	if err != nil {
+		return nil, err
+	}
+	return plans, nil
 }
 func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOverview, error) {
-	return nil, errors.New("method unimplemented")
+	plans := make([]*model.SchoolReportPlanOverview, 0)
+	collection := database.Db.Collection("school_report_plans")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &plans)
+	if err != nil {
+		return nil, err
+	}
+	return plans, nil
 }
 
 func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator string) (*model.SchoolReportPlanRes, error) {
