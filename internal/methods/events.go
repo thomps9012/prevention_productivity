@@ -9,17 +9,79 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var EventWithNotes *model.EventWithNotes
+	collection := database.Db.Collection("events")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	co_planner_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_planners"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_planners"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	// add projection
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &EventWithNotes)
+	if err != nil {
+		return nil, err
+	}
+	return EventWithNotes, nil
 }
 func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
-	return nil, errors.New("method unimplemented")
+	events := make([]*model.EventOverview, 0)
+	collection := database.Db.Collection("events")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &events)
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
 }
 func FindUserEvents(user_id string) ([]*model.EventOverview, error) {
-	return nil, errors.New("method unimplemented")
+	events := make([]*model.EventOverview, 0)
+	collection := database.Db.Collection("events")
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage}
+	cursor, err := collection.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &events)
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
 }
 
 func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRes, error) {
