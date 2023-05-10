@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,17 +12,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindContacts(filter bson.D) ([]*models.ContactOverview, error) {
+func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
 	return nil, errors.New("not implemented")
 }
-func FindContactDetail(contact_id string) (*models.ContactDetail, error) {
+func FindContactDetail(contact_id string) (*model.ContactDetail, error) {
 	return nil, errors.New("not implemented")
 }
-func FindUserContacts() ([]*models.ContactOverview, error) {
+func FindUserContacts() ([]*model.ContactOverview, error) {
 	return nil, errors.New("not implemented")
 }
 
-func CreateContact(new_contact models.NewContact, contact_creator string) (*models.ContactDetail, error) {
+func CreateContact(new_contact model.NewContact, contact_creator string) (*model.ContactDetail, error) {
 	collection := database.Db.Collection("contacts")
 	filter := bson.D{{Key: "name", Value: new_contact.Name}, {Key: "email", Value: new_contact.Email}, {Key: "phone", Value: new_contact.Phone}}
 	exists, err := collection.CountDocuments(context.TODO(), filter)
@@ -33,12 +33,12 @@ func CreateContact(new_contact models.NewContact, contact_creator string) (*mode
 		return nil, errors.New("contact already exists")
 	}
 	opts := options.FindOne().SetProjection(bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}})
-	var created_by models.UserOverview
+	var created_by model.UserOverview
 	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{Key: "_id", Value: contact_creator}}, opts).Decode(&created_by)
 	if err != nil {
 		return nil, err
 	}
-	contact := models.Contact{
+	contact := model.Contact{
 		ID:        uuid.New().String(),
 		Name:      new_contact.Name,
 		Email:     new_contact.Email,
@@ -57,7 +57,7 @@ func CreateContact(new_contact models.NewContact, contact_creator string) (*mode
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to create contact")
 	}
-	return &models.ContactDetail{
+	return &model.ContactDetail{
 		ID:     contact.ID,
 		Name:   contact.Name,
 		Type:   contact.Type,
@@ -65,7 +65,7 @@ func CreateContact(new_contact models.NewContact, contact_creator string) (*mode
 		Phone:  contact.Phone,
 		Notes:  contact.Notes,
 		Active: true,
-		CreatedBy: []*models.UserOverview{{
+		CreatedBy: []*model.UserOverview{{
 			ID:        contact.CreatedBy,
 			FirstName: created_by.FirstName,
 			LastName:  created_by.LastName,
@@ -75,10 +75,9 @@ func CreateContact(new_contact models.NewContact, contact_creator string) (*mode
 		DeletedAt: bson.TypeNull.String(),
 	}, nil
 }
-func UpdateContact(update models.UpdateContact) (*models.Contact, error) {
+func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, error) {
 	collection := database.Db.Collection("contacts")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	update_fields := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "name", Value: update.Name},
@@ -95,16 +94,15 @@ func UpdateContact(update models.UpdateContact) (*models.Contact, error) {
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var c models.Contact
+	var c model.Contact
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_fields, &opts).Decode(&c)
 	if err != nil {
 		return nil, err
 	}
 	return &c, nil
 }
-func DeleteContact(id string) (*models.Contact, error) {
+func DeleteContact(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("contacts")
-	filter := bson.D{{Key: "_id", Value: id}}
 	deleted_at := time.Now().Format("2006-01-02 15:04:05")
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
@@ -118,10 +116,10 @@ func DeleteContact(id string) (*models.Contact, error) {
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var c models.Contact
+	var c model.Contact
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&c)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return &c, nil
+	return !c.Active, nil
 }

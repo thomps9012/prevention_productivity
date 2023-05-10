@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,19 +12,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindSchoolReportDebriefDetail(debrief_id string) (*models.SchoolReportDebriefWithNotes, error) {
+func FindSchoolReportDebriefDetail(debrief_id string) (*model.SchoolReportDebriefWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindSchoolReportDebriefs(filter bson.D) ([]*models.SchoolReportDebriefOverview, error) {
+func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindUserSchoolReportDebriefs(user_id string) ([]*models.SchoolReportDebriefOverview, error) {
+func FindUserSchoolReportDebriefs(user_id string) ([]*model.SchoolReportDebriefOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateSchoolReportDebrief(new_debrief models.NewSchoolReportDebrief, debrief_author string) (*models.SchoolReportDebriefRes, error) {
+func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief_author string) (*model.SchoolReportDebriefRes, error) {
 	collection := database.Db.Collection("school_report_debriefs")
-	debrief := models.SchoolReportDebrief{
+	debrief := model.SchoolReportDebrief{
 		ID:                     uuid.New().String(),
 		UserID:                 debrief_author,
 		LessonPlanID:           new_debrief.LessonPlanID,
@@ -41,12 +41,12 @@ func CreateSchoolReportDebrief(new_debrief models.NewSchoolReportDebrief, debrie
 	if err != nil {
 		return nil, err
 	}
-	var debrief_author_info models.UserOverview
+	var debrief_author_info model.UserOverview
 	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", debrief_author}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&debrief_author_info)
 	if err != nil {
 		return nil, err
 	}
-	var lesson_plan_info models.SchoolReportPlanDescription
+	var lesson_plan_info model.SchoolReportPlanDescription
 	err = database.Db.Collection("lesson_plans").FindOne(context.TODO(), bson.D{{"_id", debrief.LessonPlanID}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"school", 1}, {"date", 1}})).Decode(&lesson_plan_info)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func CreateSchoolReportDebrief(new_debrief models.NewSchoolReportDebrief, debrie
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to insert debrief")
 	}
-	return &models.SchoolReportDebriefRes{
+	return &model.SchoolReportDebriefRes{
 		ID:            debrief.ID,
 		DebriefAuthor: &debrief_author_info,
 		LessonPlan:    &lesson_plan_info,
@@ -62,10 +62,9 @@ func CreateSchoolReportDebrief(new_debrief models.NewSchoolReportDebrief, debrie
 		CreatedAt:     debrief.CreatedAt,
 	}, nil
 }
-func UpdateSchoolReportDebrief(update models.UpdateSchoolReportDebrief) (*models.SchoolReportDebrief, error) {
+func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bson.D) (*model.SchoolReportDebrief, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "student_count", Value: update.StudentCount},
@@ -83,16 +82,15 @@ func UpdateSchoolReportDebrief(update models.UpdateSchoolReportDebrief) (*models
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var srd models.SchoolReportDebrief
+	var srd model.SchoolReportDebrief
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srd)
 	if err != nil {
 		return nil, err
 	}
 	return &srd, nil
 }
-func DeleteDebrief(debrief_id string) (bool, error) {
+func DeleteDebrief(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("school_report_debriefs")
-	filter := bson.D{{Key: "_id", Value: debrief_id}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err

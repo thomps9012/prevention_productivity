@@ -3,9 +3,9 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	"thomps9012/prevention_productivity/internal/auth"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -28,7 +28,7 @@ func CheckPasswordHash(hash, password string) bool {
 	}
 	return err == nil
 }
-func CreateUser(new_user models.NewUser) (*models.LoginRes, error) {
+func CreateUser(new_user model.NewUser) (*model.LoginRes, error) {
 	collection := database.Db.Collection("users")
 	filter := bson.D{{Key: "email", Value: new_user.Email}}
 	count, err := collection.CountDocuments(context.TODO(), filter)
@@ -42,7 +42,7 @@ func CreateUser(new_user models.NewUser) (*models.LoginRes, error) {
 	if hashErr != nil {
 		return nil, hashErr
 	}
-	user := models.User{
+	user := model.User{
 		ID:        uuid.New().String(),
 		Email:     new_user.Email,
 		FirstName: new_user.FirstName,
@@ -65,7 +65,7 @@ func CreateUser(new_user models.NewUser) (*models.LoginRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &models.LoginRes{
+	return &model.LoginRes{
 		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -74,9 +74,9 @@ func CreateUser(new_user models.NewUser) (*models.LoginRes, error) {
 		CreatedAt: user.CreatedAt,
 	}, nil
 }
-func LoginUser(login models.LoginInput) (*models.LoginRes, error) {
+func LoginUser(login model.LoginInput) (*model.LoginRes, error) {
 	collection := database.Db.Collection("users")
-	var user models.User
+	var user model.User
 	filter := bson.D{{Key: "email", Value: login.Email}}
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
@@ -90,7 +90,7 @@ func LoginUser(login models.LoginInput) (*models.LoginRes, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &models.LoginRes{
+	return &model.LoginRes{
 		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -99,9 +99,8 @@ func LoginUser(login models.LoginInput) (*models.LoginRes, error) {
 		CreatedAt: user.CreatedAt,
 	}, nil
 }
-func UpdateUser(update models.UpdateUser) (*models.UserUpdateRes, error) {
+func UpdateUser(update model.UpdateUser, filter bson.D) (*model.UserUpdateRes, error) {
 	collection := database.Db.Collection("users")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	var update_args bson.D
 	if len(update.Password) <= 0 {
@@ -119,16 +118,15 @@ func UpdateUser(update models.UpdateUser) (*models.UserUpdateRes, error) {
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var u models.UserUpdateRes
+	var u model.UserUpdateRes
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&u)
 	if err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
-func DeleteUser(user_id string) (*models.UserUpdateRes, error) {
+func DeleteUser(filter bson.D) (*model.UserUpdateRes, error) {
 	collection := database.Db.Collection("users")
-	filter := bson.D{{Key: "_id", Value: user_id}}
 	upsert := true
 	after := options.After
 	opts := options.FindOneAndUpdateOptions{
@@ -137,7 +135,7 @@ func DeleteUser(user_id string) (*models.UserUpdateRes, error) {
 	}
 	now := time.Now().Format("2006-01-02 15:04:05")
 	update := bson.D{{Key: "active", Value: false}, {Key: "deleted_at", Value: now}, {Key: "updated_at", Value: now}}
-	var u models.UserUpdateRes
+	var u model.UserUpdateRes
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&u)
 	if err != nil {
 		return nil, err

@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,38 +12,38 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindEventDetails(event_id string) (*models.EventWithNotes, error) {
+func FindEventDetails(event_id string) (*model.EventWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindEvents(filter bson.D) ([]*models.EventOverview, error) {
+func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindUserEvents(user_id string) ([]*models.EventOverview, error) {
+func FindUserEvents(user_id string) ([]*model.EventOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateEvent(new_event models.NewEvent, event_creator string) (*models.EventRes, error) {
+func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRes, error) {
 	collection := database.Db.Collection("events")
-	event := models.Event{
+	event := model.Event{
 		ID:                      uuid.New().String(),
 		Title:                   new_event.Title,
 		Description:             new_event.Description,
 		EventLead:               event_creator,
-		Co_Planners:             new_event.CoPlanners,
+		CoPlanners:              new_event.CoPlanners,
 		StartDate:               new_event.StartDate,
 		SetUp:                   new_event.SetUp,
 		CleanUp:                 new_event.CleanUp,
 		EndDate:                 new_event.EndDate,
 		GrantID:                 new_event.GrantID,
 		PublicEvent:             new_event.PublicEvent,
-		RSVPRequired:            new_event.RsvpRequired,
+		RsvpRequired:            new_event.RsvpRequired,
 		AnnualEvent:             new_event.AnnualEvent,
 		NewEvent:                new_event.NewEvent,
 		VolunteersNeeded:        new_event.VolunteersNeeded,
 		Agenda:                  new_event.Agenda,
 		TargetAudience:          new_event.TargetAudience,
 		PartingGifts:            new_event.PartingGifts,
-		MarketingMaterials:      new_event.MarketingMaterials,
+		MarketingMaterial:       new_event.MarketingMaterials,
 		Supplies:                new_event.Supplies,
 		SpecialOrders:           new_event.SpecialOrders,
 		Performance:             *new_event.Performance,
@@ -62,7 +62,7 @@ func CreateEvent(new_event models.NewEvent, event_creator string) (*models.Event
 		CreatedAt:               time.Now().Format("2006-01-02 15:04:05"),
 		UpdatedAt:               bson.TypeNull.String(),
 	}
-	var event_lead_info models.UserOverview
+	var event_lead_info model.UserOverview
 	opts := options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})
 	res, err := collection.InsertOne(context.TODO(), event)
 	if err != nil {
@@ -75,7 +75,7 @@ func CreateEvent(new_event models.NewEvent, event_creator string) (*models.Event
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to create event")
 	}
-	return &models.EventRes{
+	return &model.EventRes{
 		ID:        event.ID,
 		EventLead: &event_lead_info,
 		Title:     event.Title,
@@ -84,26 +84,25 @@ func CreateEvent(new_event models.NewEvent, event_creator string) (*models.Event
 		CreatedAt: event.CreatedAt,
 	}, nil
 }
-func UpdateEvent(update models.UpdateEvent) (*models.Event, error) {
+func UpdateEvent(update model.UpdateEvent, filter bson.D) (*model.Event, error) {
 	collection := database.Db.Collection("events")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.M{"_id": update.ID}
 	after := options.After
 	upsert := true
 	opts := options.FindOneAndUpdateOptions{
 		Upsert:         &upsert,
 		ReturnDocument: &after,
 	}
-	var e models.Event
+	var e model.Event
 	err := collection.FindOneAndUpdate(context.TODO(), filter, bson.D{{Key: "$set", Value: update}, {Key: "$set", Value: bson.D{{Key: "updated_at", Value: updated_at}}}}, &opts).Decode(&e)
 	if err != nil {
 		return nil, err
 	}
 	return &e, nil
 }
-func DeleteEvent(event_id string) (bool, error) {
+func DeleteEvent(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("events")
-	res, err := collection.DeleteOne(context.TODO(), bson.M{"_id": event_id})
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err
 	}

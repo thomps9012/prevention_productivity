@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,19 +12,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindItemNotes(item_id string) ([]*models.NoteDetail, error) {
+func FindItemNotes(item_id string) ([]*model.NoteDetail, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindNoteDetail(note_id string) (*models.NoteDetail, error) {
+func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindUserNotes(user_id string) ([]*models.Note, error) {
+func FindUserNotes(user_id string) ([]*model.Note, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateNote(new_note models.NewNote, note_author string, item_type string) (*models.NoteDetail, error) {
+func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, error) {
 	collection := database.Db.Collection("notes")
-	note := models.Note{
+	note := model.Note{
 		ID:        uuid.New().String(),
 		CreatedAt: time.Now().Format("2003-01-02 15:05:05"),
 		UpdatedAt: bson.TypeNull.String(),
@@ -33,21 +33,17 @@ func CreateNote(new_note models.NewNote, note_author string, item_type string) (
 	if err != nil {
 		return nil, err
 	}
-	var author_info models.UserOverview
+	var author_info model.UserOverview
 	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", note_author}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&author_info)
 	if err != nil {
 		return nil, err
 	}
-	item_info := models.ItemOverview{
-		ID:   note.ItemID,
-		Type: item_type,
-	}
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to insert note")
 	}
-	return &models.NoteDetail{
+	return &model.NoteDetail{
 		ID:        note.ID,
-		ItemInfo:  &item_info,
+		ItemID:    note.ItemID,
 		Author:    &author_info,
 		Title:     note.Title,
 		Content:   note.Content,
@@ -55,10 +51,9 @@ func CreateNote(new_note models.NewNote, note_author string, item_type string) (
 		UpdatedAt: note.UpdatedAt,
 	}, nil
 }
-func UpdateNote(update models.UpdateNote) (*models.Note, error) {
+func UpdateNote(update model.UpdateNote, filter bson.D) (*model.Note, error) {
 	collection := database.Db.Collection("notes")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "title", Value: update.Title},
@@ -72,16 +67,15 @@ func UpdateNote(update models.UpdateNote) (*models.Note, error) {
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var n models.Note
+	var n model.Note
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&n)
 	if err != nil {
 		return nil, err
 	}
 	return &n, nil
 }
-func DeleteNote(note_id string) (bool, error) {
+func DeleteNote(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("notes")
-	filter := bson.D{{Key: "_id", Value: note_id}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err

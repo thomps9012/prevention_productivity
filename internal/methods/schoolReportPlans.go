@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,29 +12,29 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindSchoolReportPlanDetail(debrief_id string) (*models.SchoolReportPlanWithNotes, error) {
+func FindSchoolReportPlanDetail(debrief_id string) (*model.SchoolReportPlanWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindSchoolReportPlans(filter bson.D) ([]*models.SchoolReportPlanOverview, error) {
+func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindUserSchoolReportPlans(user_id string) ([]*models.SchoolReportPlanOverview, error) {
+func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateSchoolReportPlan(new_plan models.NewSchoolReportPlan, plan_creator string) (*models.SchoolReportPlanRes, error) {
+func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator string) (*model.SchoolReportPlanRes, error) {
 	collection := database.Db.Collection("school_report_plans")
-	plan := models.SchoolReportPlan{
-		ID:              uuid.New().String(),
-		UserID:          &plan_creator,
-		Date:            new_plan.Date,
-		Co_Facilitators: new_plan.CoFacilitators,
-		Curriculum:      new_plan.Curriculum,
-		School:          new_plan.School,
-		LessonTopics:    new_plan.LessonTopics,
-		CreatedAt:       time.Now().Format("2006-01-02 15:04:05"),
-		UpdatedAt:       bson.TypeNull.String(),
-		Status:          "pending",
+	plan := model.SchoolReportPlan{
+		ID:             uuid.New().String(),
+		UserID:         plan_creator,
+		Date:           new_plan.Date,
+		CoFacilitators: new_plan.CoFacilitators,
+		Curriculum:     new_plan.Curriculum,
+		School:         new_plan.School,
+		LessonTopics:   new_plan.LessonTopics,
+		CreatedAt:      time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:      bson.TypeNull.String(),
+		Status:         "pending",
 	}
 	res, err := collection.InsertOne(context.TODO(), plan)
 	if err != nil {
@@ -43,12 +43,12 @@ func CreateSchoolReportPlan(new_plan models.NewSchoolReportPlan, plan_creator st
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to insert plan")
 	}
-	var plan_author models.UserOverview
+	var plan_author model.UserOverview
 	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", plan_creator}}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&plan_author)
 	if err != nil {
 		return nil, err
 	}
-	return &models.SchoolReportPlanRes{
+	return &model.SchoolReportPlanRes{
 		ID:         plan.ID,
 		PlanAuthor: &plan_author,
 		Date:       plan.Date,
@@ -57,10 +57,9 @@ func CreateSchoolReportPlan(new_plan models.NewSchoolReportPlan, plan_creator st
 		CreatedAt:  plan.CreatedAt,
 	}, nil
 }
-func UpdateSchoolReportPlan(update models.UpdateSchoolReportPlan) (*models.SchoolReportPlan, error) {
+func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) (*model.SchoolReportPlan, error) {
 	collection := database.Db.Collection("school_report_plans")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "curriculum", Value: update.Curriculum},
@@ -77,16 +76,15 @@ func UpdateSchoolReportPlan(update models.UpdateSchoolReportPlan) (*models.Schoo
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var srp models.SchoolReportPlan
+	var srp model.SchoolReportPlan
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srp)
 	if err != nil {
 		return nil, err
 	}
 	return &srp, nil
 }
-func DeleteSchoolReportPlan(plan_id string) (bool, error) {
+func DeleteSchoolReportPlan(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("school_report_plans")
-	filter := bson.D{{Key: "_id", Value: plan_id}}
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err

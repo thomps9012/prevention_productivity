@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"net/http"
 )
 
@@ -26,7 +27,6 @@ func Middleware() func(http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-
 			//validate jwt token
 			tokenStr := header
 			token, err := ParseToken(tokenStr)
@@ -47,12 +47,18 @@ func Middleware() func(http.Handler) http.Handler {
 }
 
 // ForContext finds the user from the context. REQUIRES Middleware to have run.
-func ForUserID(ctx context.Context) string {
+func ForUserID(ctx context.Context) (*string, error) {
 	raw, _ := ctx.Value(userCtxKey).(*contextInfo)
-	return raw.UserID
+	if raw.UserID == "" {
+		return nil, errors.New("missing or invalid JSON Web Token")
+	}
+	return &raw.UserID, nil
 }
 
-func ForAdmin(ctx context.Context) bool {
+func ForAdmin(ctx context.Context) error {
 	raw, _ := ctx.Value(userCtxKey).(*contextInfo)
-	return raw.Admin
+	if !raw.Admin {
+		return errors.New("attempting to view an administrative route")
+	}
+	return nil
 }

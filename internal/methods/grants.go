@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,14 +12,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindGrantDetail(grant_id string) (*models.GrantDetail, error) {
+func FindGrantDetail(grant_id string) (*model.GrantDetail, error) {
 	return nil, errors.New("method unimplemented")
 }
-func FindAllGrants() ([]*models.GrantOverview, error) {
+func FindAllGrants() ([]*model.GrantOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateGrant(new_grant models.NewGrant, grant_creator string) (*models.GrantDetail, error) {
+func CreateGrant(new_grant model.NewGrant, grant_creator string) (*model.GrantDetail, error) {
 	collection := database.Db.Collection("grants")
 	var active bool
 	if new_grant.EndDate > time.Now().Format("01-02-2006 15:04:05") {
@@ -27,7 +27,7 @@ func CreateGrant(new_grant models.NewGrant, grant_creator string) (*models.Grant
 	} else {
 		active = false
 	}
-	grant := models.Grant{
+	grant := model.Grant{
 		ID:          uuid.New().String(),
 		Name:        new_grant.Name,
 		Description: new_grant.Description,
@@ -50,13 +50,13 @@ func CreateGrant(new_grant models.NewGrant, grant_creator string) (*models.Grant
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to create grant")
 	}
-	var grant_creator_info models.UserOverview
+	var grant_creator_info model.UserOverview
 	user_projection := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})
 	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", grant_creator}}, user_projection).Decode(&grant_creator_info)
 	if err != nil {
 		return nil, err
 	}
-	return &models.GrantDetail{
+	return &model.GrantDetail{
 		ID:          grant.ID,
 		Name:        grant.Name,
 		Description: grant.Description,
@@ -68,12 +68,12 @@ func CreateGrant(new_grant models.NewGrant, grant_creator string) (*models.Grant
 		AwardNumber: grant.AwardNumber,
 		Budget:      grant.Budget,
 		Active:      grant.Active,
-		CreatedBy:   []*models.UserOverview{&grant_creator_info},
+		CreatedBy:   []*model.UserOverview{&grant_creator_info},
 		CreatedAt:   grant.CreatedAt,
 		UpdatedAt:   grant.UpdatedAt,
 	}, nil
 }
-func UpdateGrant(update models.UpdateGrant) (*models.Grant, error) {
+func UpdateGrant(update model.UpdateGrant) (*model.Grant, error) {
 	collection := database.Db.Collection("grants")
 	updated_at := time.Now().Format("01-02-2006 15:04:05")
 	filter := bson.D{{Key: "_id", Value: update.ID}}
@@ -103,7 +103,7 @@ func UpdateGrant(update models.UpdateGrant) (*models.Grant, error) {
 		Upsert:         &upsert,
 		ReturnDocument: &after,
 	}
-	var g models.Grant
+	var g model.Grant
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&g)
 	if err != nil {
 		return nil, err

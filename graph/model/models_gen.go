@@ -405,7 +405,7 @@ type Note struct {
 
 type NoteDetail struct {
 	ID        string        `json:"id"`
-	ItemInfo  *ItemOverview `json:"item_info"`
+	ItemID    string        `json:"item_id"`
 	Author    *UserOverview `json:"author"`
 	Title     string        `json:"title"`
 	Content   string        `json:"content"`
@@ -625,16 +625,16 @@ type UpdateUser struct {
 }
 
 type User struct {
-	ID        string  `json:"id"`
-	FirstName string  `json:"first_name"`
-	LastName  string  `json:"last_name"`
-	Email     string  `json:"email"`
-	Password  string  `json:"password"`
-	Admin     bool    `json:"admin"`
-	Active    bool    `json:"active"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
-	DeletedAt *string `json:"deleted_at"`
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Admin     bool   `json:"admin"`
+	Active    bool   `json:"active"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	DeletedAt string `json:"deleted_at"`
 }
 
 type UserOverview struct {

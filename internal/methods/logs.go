@@ -3,8 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
+	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
-	"thomps9012/prevention_productivity/internal/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindLogDetail(log_id string) (*models.LogWithNotes, error) {
+func FindLogDetail(log_id string) (*model.LogWithNotes, error) {
 	// IsAdmin := auth.ForAdmin(ctx)
 	// UserID := auth.ForUserID(ctx)
 	// var LogWithNotes *model.LogWithNotes
@@ -41,7 +41,7 @@ func FindLogDetail(log_id string) (*models.LogWithNotes, error) {
 	// return LogWithNotes, nil
 	return nil, errors.New("method unimplemented")
 }
-func FindAllLogs(filter bson.D) ([]*models.LogOverview, error) {
+func FindAllLogs(filter bson.D) ([]*model.LogOverview, error) {
 	// IsAdmin := auth.ForAdmin(ctx)
 	// UserID := auth.ForUserID(ctx)
 	// if UserID == "" {
@@ -75,13 +75,13 @@ func FindAllLogs(filter bson.D) ([]*models.LogOverview, error) {
 	// return allLogs, nil
 	return nil, errors.New("method unimplemented")
 }
-func FindUserLogs(user_id string) ([]*models.LogOverview, error) {
+func FindUserLogs(user_id string) ([]*model.LogOverview, error) {
 	return nil, errors.New("method unimplemented")
 }
 
-func CreateNewLog(new_log models.NewLog, log_author string) (*models.LogRes, error) {
+func CreateNewLog(new_log model.NewLog, log_author string) (*model.LogRes, error) {
 	collection := database.Db.Collection("logs")
-	log := models.Log{
+	log := model.Log{
 		ID:            uuid.New().String(),
 		UserID:        log_author,
 		DailyActivity: new_log.DailyActivity,
@@ -92,7 +92,7 @@ func CreateNewLog(new_log models.NewLog, log_author string) (*models.LogRes, err
 		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
 		UpdatedAt:     bson.TypeNull.String(),
 	}
-	var author_info models.UserOverview
+	var author_info model.UserOverview
 	err := collection.FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&author_info)
 	if err != nil {
 		return nil, err
@@ -104,17 +104,16 @@ func CreateNewLog(new_log models.NewLog, log_author string) (*models.LogRes, err
 	if res.InsertedID == "" {
 		return nil, errors.New("failed to create productivity log")
 	}
-	return &models.LogRes{
+	return &model.LogRes{
 		ID:        log.ID,
 		LogAuthor: &author_info,
 		Status:    log.Status,
 		CreatedAt: log.CreatedAt,
 	}, nil
 }
-func UpdateLog(update models.UpdateLog) (*models.Log, error) {
+func UpdateLog(update model.UpdateLog, filter bson.D) (*model.Log, error) {
 	collection := database.Db.Collection("logs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{Key: "_id", Value: update.ID}}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.M{
 			"daily_activity": update.DailyActivity,
@@ -131,13 +130,22 @@ func UpdateLog(update models.UpdateLog) (*models.Log, error) {
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	}
-	var l models.Log
+	var l model.Log
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&l)
 	if err != nil {
 		return nil, err
 	}
 	return &l, nil
 }
+func DeleteLog(filter bson.D) (bool, error) {
+	collection := database.Db.Collection("logs")
+	result, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return false, err
+	}
+	return result.DeletedCount == 1, nil
+}
+
 func ApproveLog(log_id string) (bool, error) {
 	collection := database.Db.Collection("logs")
 	filter := bson.D{{Key: "_id", Value: log_id}}

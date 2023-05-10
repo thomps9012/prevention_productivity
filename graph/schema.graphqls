@@ -8,7 +8,7 @@ type User {
   active: Boolean!
   created_at: String!
   updated_at: String!
-  deleted_at: String
+  deleted_at: String!
 }
 
 type UserOverview {
@@ -65,7 +65,7 @@ type ItemOverview {
 
 type NoteDetail {
   id: ID!
-  item_info: ItemOverview!
+  item_id: ID!
   author: UserOverview!
   title: String!
   content: String!
@@ -684,29 +684,26 @@ type Mutation {
   updateUser(updateUser: UpdateUser!, id: ID!): UserUpdateRes!
   deleteUser(id: ID!): UserUpdateRes!
   createGrant(newGrant: NewGrant!): GrantDetail!
-  updateGrant(id: ID!, updateGrant: UpdateGrant!): Grant!
+  updateGrant(updateGrant: UpdateGrant!): Grant!
   deleteGrant(id: ID!): Boolean!
   createContact(newContact: NewContact!): ContactDetail!
-  updateContact(id: ID!, updateContact: UpdateContact!): Contact!
+  updateContact(updateContact: UpdateContact!): Contact!
   deleteContact(id: ID!): Boolean!
   createNote(newNote: NewNote!): NoteDetail!
-  updateNote(id: ID!, updateNote: UpdateNote!): Note!
+  updateNote(updateNote: UpdateNote!): Note!
   deleteNote(id: ID!): Boolean!
   createLog(newLog: NewLog!): LogRes!
-  updateLog(id: ID!, updateLog: UpdateLog!): Log!
+  updateLog(updateLog: UpdateLog!): Log!
   deleteLog(id: ID!): Boolean!
   approveLog(id: ID!): Boolean!
   rejectLog(id: ID!): Boolean!
   createEvent(newEvent: NewEvent!): EventRes!
-  updateEvent(id: ID!, updateEvent: UpdateEvent!): Event!
+  updateEvent(updateEvent: UpdateEvent!): Event!
   deleteEvent(id: ID!): Boolean!
   approveEvent(id: ID!): Boolean!
   rejectEvent(id: ID!): Boolean!
   createEventSummary(newEventSummary: NewEventSummary!): EventSummaryRes!
-  updateEventSummary(
-    id: ID!
-    updateEventSummary: UpdateEventSummary!
-  ): EventSummary!
+  updateEventSummary(updateEventSummary: UpdateEventSummary!): EventSummary!
   deleteEventSummary(id: ID!): Boolean!
   approveEventSummary(id: ID!): Boolean!
   rejectEventSummary(id: ID!): Boolean!
@@ -714,7 +711,6 @@ type Mutation {
     newSchoolReportPlan: NewSchoolReportPlan!
   ): SchoolReportPlanRes!
   updateSchoolReportPlan(
-    id: ID!
     updateSchoolReportPlan: UpdateSchoolReportPlan!
   ): SchoolReportPlan!
   deleteSchoolReportPlan(id: ID!): Boolean!
@@ -724,7 +720,6 @@ type Mutation {
     newSchoolReportDebrief: NewSchoolReportDebrief!
   ): SchoolReportDebriefRes!
   updateSchoolReportDebrief(
-    id: ID!
     updateSchoolReportDebrief: UpdateSchoolReportDebrief!
   ): SchoolReportDebrief!
   deleteSchoolReportDebrief(id: ID!): Boolean!
