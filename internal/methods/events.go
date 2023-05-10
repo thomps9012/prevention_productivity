@@ -28,7 +28,7 @@ func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRe
 		ID:                      uuid.New().String(),
 		Title:                   new_event.Title,
 		Description:             new_event.Description,
-		EventLead:               event_creator,
+		UserID:                  event_creator,
 		CoPlanners:              new_event.CoPlanners,
 		StartDate:               new_event.StartDate,
 		SetUp:                   new_event.SetUp,
@@ -77,7 +77,7 @@ func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRe
 	}
 	return &model.EventRes{
 		ID:        event.ID,
-		EventLead: &event_lead_info,
+		UserID:    &event_lead_info,
 		Title:     event.Title,
 		StartDate: event.StartDate,
 		Status:    event.Status,

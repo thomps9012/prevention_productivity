@@ -18,7 +18,7 @@ func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
 func FindContactDetail(contact_id string) (*model.ContactDetail, error) {
 	return nil, errors.New("not implemented")
 }
-func FindUserContacts() ([]*model.ContactOverview, error) {
+func FindUserContacts(user_id string) ([]*model.ContactOverview, error) {
 	return nil, errors.New("not implemented")
 }
 

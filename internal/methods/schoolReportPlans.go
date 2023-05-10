@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindSchoolReportPlanDetail(debrief_id string) (*model.SchoolReportPlanWithNotes, error) {
+func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
 func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, error) {

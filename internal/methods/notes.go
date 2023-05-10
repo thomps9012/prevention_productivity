@@ -9,17 +9,66 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindItemNotes(item_id string) ([]*model.NoteDetail, error) {
-	return nil, errors.New("method unimplemented")
+func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*model.NoteDetail, error) {
+	can_view_notes, err := database.Db.Collection(item_type).CountDocuments(context.TODO(), item_filter)
+	if err != nil {
+		return nil, err
+	}
+	if can_view_notes == 0 {
+		return nil, errors.New("no notes for this user and item")
+	}
+	filter := bson.D{{Key: "item_id", Value: item_id}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	pipeline := mongo.Pipeline{filter, user_stage}
+	notes := make([]*model.NoteDetail, 0)
+	cursor, err := database.Db.Collection("notes").Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &notes)
+	if err != nil {
+		return nil, err
+	}
+	return notes, nil
 }
 func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
-	return nil, errors.New("method unimplemented")
+	filter := bson.D{{Key: "_id", Value: note_id}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}, {
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	pipeline := mongo.Pipeline{filter, user_stage}
+	var note *model.NoteDetail
+	cursor, err := database.Db.Collection("notes").Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &note)
+	if err != nil {
+		return nil, err
+	}
+	return note, nil
 }
 func FindUserNotes(user_id string) ([]*model.Note, error) {
-	return nil, errors.New("method unimplemented")
+	var notes []*model.Note
+	cursor, err := database.Db.Collection("notes").Find(context.TODO(), bson.D{{Key: "user_id", Value: user_id}})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &notes)
+	if err != nil {
+		return nil, err
+	}
+	return notes, nil
 }
 
 func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, error) {

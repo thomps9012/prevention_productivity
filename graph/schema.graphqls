@@ -58,11 +58,6 @@ type Note {
   updated_at: String!
 }
 
-type ItemOverview {
-  id: ID!
-  type: String!
-}
-
 type NoteDetail {
   id: ID!
   item_id: ID!
@@ -87,7 +82,7 @@ type Log {
 
 type Event {
   id: ID!
-  event_lead: ID!
+  user_id: ID!
   co_planners: [ID]!
   title: String!
   description: String!
@@ -201,7 +196,7 @@ type LogOverview {
 
 type EventWithNotes {
   id: ID!
-  event_lead: [UserOverview!]!
+  user_id: [UserOverview!]!
   co_planners: [UserOverview]!
   title: String!
   description: String!
@@ -241,7 +236,7 @@ type EventWithNotes {
 
 type EventOverview {
   id: ID!
-  event_lead: [UserOverview!]!
+  user_id: [UserOverview!]!
   title: String!
   start_date: String!
   created_at: String!
@@ -370,11 +365,13 @@ type GrantOverview {
   active: Boolean!
 }
 
+union UserResult = User | UserOverview
+
 type Query {
-  users: [User!]!
+  users: [UserResult!]!
   me: User!
   user(id: ID!): User!
-  itemNotes(item_id: ID!): [NoteDetail!]!
+  itemNotes(item_id: ID!, item_type: String!): [NoteDetail!]!
   note(id: ID!): NoteDetail!
   userNotes(user_id: ID!): [Note!]!
   log(id: ID!): LogWithNotes!
@@ -396,7 +393,7 @@ type Query {
   grants: [GrantOverview!]!
   contact(id: ID!): ContactDetail!
   contacts: [ContactOverview!]!
-  userContacts: [ContactOverview!]!
+  userContacts(user_id: ID!): [ContactOverview!]!
 }
 
 input NewUser {
@@ -646,7 +643,7 @@ type LogRes {
 
 type EventRes {
   id: ID!
-  event_lead: UserOverview!
+  user_id: UserOverview!
   title: String!
   start_date: String!
   status: String!

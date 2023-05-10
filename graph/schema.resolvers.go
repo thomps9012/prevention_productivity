@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	generated1 "thomps9012/prevention_productivity/graph/generated"
 	"thomps9012/prevention_productivity/graph/model"
 	"thomps9012/prevention_productivity/internal/auth"
@@ -303,7 +302,7 @@ func (r *mutationResolver) UpdateEvent(ctx context.Context, updateEvent model.Up
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: updateEvent.ID}, {Key: "event_lead", Value: user_id}}
+		filter = bson.D{{Key: "_id", Value: updateEvent.ID}, {Key: "user_id", Value: user_id}}
 	} else {
 		filter = bson.D{{Key: "_id", Value: updateEvent.ID}}
 	}
@@ -322,7 +321,7 @@ func (r *mutationResolver) DeleteEvent(ctx context.Context, id string) (bool, er
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "event_lead", Value: user_id}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
 		filter = bson.D{{Key: "_id", Value: id}}
 	}
@@ -579,8 +578,19 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 	return res, nil
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	return nil, errors.New("method unimplemented")
+func (r *queryResolver) Users(ctx context.Context) ([]model.UserResult, error) {
+	admin_err := auth.ForAdmin(ctx)
+	var res []model.UserResult
+	var err error
+	if admin_err != nil {
+		res, err = methods.GetUserOverviews()
+	} else {
+		res, err = methods.GetUsers()
+	}
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
@@ -591,96 +601,359 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 	return nil, errors.New("method unimplemented")
 }
 
-func (r *queryResolver) ItemNotes(ctx context.Context, itemID string) ([]*model.NoteDetail, error) {
-	return nil, errors.New("method unimplemented")
+func (r *queryResolver) ItemNotes(ctx context.Context, itemID string, itemType string) ([]*model.NoteDetail, error) {
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: itemID}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: itemID}}
+	}
+	res, err := methods.FindItemNotes(itemID, filter, itemType)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.NoteDetail, error) {
-	return nil, errors.New("method unimplemented")
+	res, err := methods.FindNoteDetail(id)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserNotes(ctx context.Context, userID string) ([]*model.Note, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserNotes(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.FindLogDetail(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.LogOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindAllLogs(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserLogs(ctx context.Context, userID string) ([]*model.LogOverview, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserLogs(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.FindEventDetails(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Events(ctx context.Context) ([]*model.EventOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindEvents(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserEvents(ctx context.Context, userID string) ([]*model.EventOverview, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserEvents(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.EventSummaryWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.EventSummaryDetail(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.EventSummaryOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindEventSummaries(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserEventSummaries(ctx context.Context, userID string) ([]*model.EventSummaryOverview, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserEventSummaries(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model.SchoolReportPlanWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.FindSchoolReportPlanDetail(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) SchoolReportPlans(ctx context.Context) ([]*model.SchoolReportPlanOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindSchoolReportPlans(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserSchoolReportPlans(ctx context.Context, userID string) ([]*model.SchoolReportPlanOverview, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserSchoolReportPlans(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*model.SchoolReportDebriefWithNotes, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.FindSchoolReportDebriefDetail(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) SchoolReportDebriefs(ctx context.Context) ([]*model.SchoolReportDebriefOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindSchoolReportDebriefs(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) UserSchoolReportDebriefs(ctx context.Context, userID string) ([]*model.SchoolReportDebriefOverview, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserSchoolReportDebriefs(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Grant(ctx context.Context, id string) (*model.GrantDetail, error) {
-	return nil, errors.New("method unimplemented")
+	res, err := methods.FindGrantDetail(id)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Grants(ctx context.Context) ([]*model.GrantOverview, error) {
-	return nil, errors.New("method unimplemented")
+	res, err := methods.FindAllGrants()
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Contact(ctx context.Context, id string) (*model.ContactDetail, error) {
-	panic(fmt.Errorf("not implemented"))
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "created_by", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: id}}
+	}
+	res, err := methods.FindContactDetail(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (r *queryResolver) Contacts(ctx context.Context) ([]*model.ContactOverview, error) {
-	return nil, errors.New("method unimplemented")
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "created_by", Value: user_id}}
+	} else {
+		filter = bson.D{{}}
+	}
+	res, err := methods.FindContacts(filter)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
-func (r *queryResolver) UserContacts(ctx context.Context) ([]*model.ContactOverview, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) UserContacts(ctx context.Context, userID string) ([]*model.ContactOverview, error) {
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	res, err := methods.FindUserContacts(userID)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 // Mutation returns generated1.MutationResolver implementation.

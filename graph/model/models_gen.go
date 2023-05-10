@@ -2,6 +2,10 @@
 
 package model
 
+type UserResult interface {
+	IsUserResult()
+}
+
 type Contact struct {
 	ID        string  `json:"id"`
 	Type      string  `json:"type"`
@@ -39,7 +43,7 @@ type ContactOverview struct {
 
 type Event struct {
 	ID                      string    `json:"id"`
-	EventLead               string    `json:"event_lead"`
+	UserID                  string    `json:"user_id"`
 	CoPlanners              []*string `json:"co_planners"`
 	Title                   string    `json:"title"`
 	Description             string    `json:"description"`
@@ -84,7 +88,7 @@ type EventDescription struct {
 
 type EventOverview struct {
 	ID        string          `json:"id"`
-	EventLead []*UserOverview `json:"event_lead"`
+	UserID    []*UserOverview `json:"user_id"`
 	Title     string          `json:"title"`
 	StartDate string          `json:"start_date"`
 	CreatedAt string          `json:"created_at"`
@@ -94,7 +98,7 @@ type EventOverview struct {
 
 type EventRes struct {
 	ID        string        `json:"id"`
-	EventLead *UserOverview `json:"event_lead"`
+	UserID    *UserOverview `json:"user_id"`
 	Title     string        `json:"title"`
 	StartDate string        `json:"start_date"`
 	Status    string        `json:"status"`
@@ -150,7 +154,7 @@ type EventSummaryWithNotes struct {
 
 type EventWithNotes struct {
 	ID                      string          `json:"id"`
-	EventLead               []*UserOverview `json:"event_lead"`
+	UserID                  []*UserOverview `json:"user_id"`
 	CoPlanners              []*UserOverview `json:"co_planners"`
 	Title                   string          `json:"title"`
 	Description             string          `json:"description"`
@@ -231,11 +235,6 @@ type GrantOverview struct {
 	AwardNumber string  `json:"award_number"`
 	Budget      float64 `json:"budget"`
 	Active      bool    `json:"active"`
-}
-
-type ItemOverview struct {
-	ID   string `json:"id"`
-	Type string `json:"type"`
 }
 
 type Log struct {
@@ -637,11 +636,15 @@ type User struct {
 	DeletedAt string `json:"deleted_at"`
 }
 
+func (User) IsUserResult() {}
+
 type UserOverview struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 }
+
+func (UserOverview) IsUserResult() {}
 
 type UserUpdateRes struct {
 	ID        string `json:"id"`
