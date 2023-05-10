@@ -80,8 +80,8 @@ func CreateGrant(new_grant model.NewGrant, grant_creator string) (*model.GrantDe
 		return nil, errors.New("failed to create grant")
 	}
 	var grant_creator_info model.UserOverview
-	user_projection := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})
-	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{"_id", grant_creator}}, user_projection).Decode(&grant_creator_info)
+	user_projection := options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})
+	err = database.Db.Collection("users").FindOne(context.TODO(), bson.D{{Key: "_id", Value: grant_creator}}, user_projection).Decode(&grant_creator_info)
 	if err != nil {
 		return nil, err
 	}

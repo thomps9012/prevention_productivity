@@ -94,7 +94,7 @@ func CreateNewLog(new_log model.NewLog, log_author string) (*model.LogRes, error
 		UpdatedAt:     bson.TypeNull.String(),
 	}
 	var author_info model.UserOverview
-	err := collection.FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{"_id", 1}, {"first_name", 1}, {"last_name", 1}})).Decode(&author_info)
+	err := collection.FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&author_info)
 	if err != nil {
 		return nil, err
 	}
