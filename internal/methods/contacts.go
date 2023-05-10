@@ -9,17 +9,54 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
-	return nil, errors.New("not implemented")
+	projection := options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "type", Value: 1}, {Key: "name", Value: 1}, {Key: "active", Value: 1}})
+	cursor, err := database.Db.Collection("contacts").Find(context.TODO(), filter, projection)
+	if err != nil {
+		return nil, err
+	}
+	var contacts []*model.ContactOverview
+	err = cursor.All(context.TODO(), &contacts)
+	if err != nil {
+		return nil, err
+	}
+	return contacts, nil
 }
-func FindContactDetail(contact_id string) (*model.ContactDetail, error) {
+func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
+	var contactDetail model.ContactDetail
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+		// add unwinding
+		Key: "pipeline", Value: bson.A{
+			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
+		},
+	}}}}
+	pipeline := mongo.Pipeline{filter, user_stage}
+	cursor, err := database.Db.Collection("contacts").Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(context.TODO(), &contactDetail)
+	if err != nil {
+		return nil, err
+	}
 	return nil, errors.New("not implemented")
 }
 func FindUserContacts(user_id string) ([]*model.ContactOverview, error) {
-	return nil, errors.New("not implemented")
+	projection := options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "type", Value: 1}, {Key: "name", Value: 1}, {Key: "active", Value: 1}})
+	cursor, err := database.Db.Collection("contacts").Find(context.TODO(), bson.D{{Key: "created_by", Value: user_id}}, projection)
+	if err != nil {
+		return nil, err
+	}
+	var contacts []*model.ContactOverview
+	err = cursor.All(context.TODO(), &contacts)
+	if err != nil {
+		return nil, err
+	}
+	return contacts, nil
 }
 
 func CreateContact(new_contact model.NewContact, contact_creator string) (*model.ContactDetail, error) {

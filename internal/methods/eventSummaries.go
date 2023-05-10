@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func EventSummaryDetail(summary_id string) (*model.EventSummaryWithNotes, error) {
+func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
 func FindEventSummaries(filter bson.D) ([]*model.EventSummaryOverview, error) {

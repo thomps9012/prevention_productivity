@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func FindEventDetails(event_id string) (*model.EventWithNotes, error) {
+func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 	return nil, errors.New("method unimplemented")
 }
 func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
