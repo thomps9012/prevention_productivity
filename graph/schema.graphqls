@@ -196,7 +196,7 @@ type LogOverview {
 
 type EventWithNotes {
   id: ID!
-  user_id: [UserOverview!]!
+  event_lead: [UserOverview!]!
   co_planners: [UserOverview]!
   title: String!
   description: String!
@@ -236,7 +236,7 @@ type EventWithNotes {
 
 type EventOverview {
   id: ID!
-  user_id: [UserOverview!]!
+  event_lead: [UserOverview!]!
   title: String!
   start_date: String!
   created_at: String!

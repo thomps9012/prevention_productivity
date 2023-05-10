@@ -16,7 +16,7 @@ import (
 func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 	var EventWithNotes *model.EventWithNotes
 	collection := database.Db.Collection("events")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_lead"}, {
 		// add unwinding
 		Key: "pipeline", Value: bson.A{
 			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
@@ -44,13 +44,13 @@ func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
 	events := make([]*model.EventOverview, 0)
 	collection := database.Db.Collection("events")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_lead"}, {
 		// add unwinding
 		Key: "pipeline", Value: bson.A{
 			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
 		},
 	}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "event_lead"}}}}
 	pipeline := mongo.Pipeline{filter, notes_stage, user_stage}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {

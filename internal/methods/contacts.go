@@ -28,7 +28,7 @@ func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
 }
 func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
 	var contactDetail model.ContactDetail
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}, {
 		// add unwinding
 		Key: "pipeline", Value: bson.A{
 			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
