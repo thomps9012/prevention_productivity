@@ -2,44 +2,49 @@ package logs
 
 import (
 	"context"
+	"errors"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Log struct {
 	ID            string `json:"id" bson:"_id"`
 	UserID        string `json:"user_id" bson:"user_id"`
 	DailyActivity string `json:"daily_activity" bson:"daily_activity"`
-	Positives     string `json:"positives"`
-	Improvements  string `json:"improvements"`
+	Positives     string `json:"positives" bson:"positives"`
+	Improvements  string `json:"improvements" bson:"improvements"`
 	NextSteps     string `json:"next_steps" bson:"next_steps"`
-	Status        string `json:"status"`
+	Status        string `json:"status" bson:"status"`
 	CreatedAt     string `json:"created_at" bson:"created_at"`
 	UpdatedAt     string `json:"updated_at" bson:"updated_at"`
 }
 
-func (l *Log) Create() {
+func (l *Log) Create() (*Log, error) {
 	collection := database.Db.Collection("logs")
 	l.ID = uuid.New().String()
 	l.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	l.UpdatedAt = l.CreatedAt
 	l.Status = "pending"
-	_, err := collection.InsertOne(context.TODO(), l)
+	res, err := collection.InsertOne(context.TODO(), l)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to create productivity log")
+	}
+	return l, nil
 }
 
-func (l *Log) Update(id string) {
+func (l *Log) Update(id string) (*Log, error) {
 	collection := database.Db.Collection("logs")
 	l.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	filter := bson.D{{"_id", id}}
-	println(l.UpdatedAt)
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.M{
+		{Key: "$set", Value: bson.M{
 			"daily_activity": l.DailyActivity,
 			"positives":      l.Positives,
 			"improvements":   l.Improvements,
@@ -48,49 +53,47 @@ func (l *Log) Update(id string) {
 			"updated_at":     l.UpdatedAt,
 		}},
 	}
-	println(update)
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	upsert := true
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
+	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&l)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	println(result)
-	if result.ModifiedCount == 0 {
-		panic("Log not found")
-	}
+	return l, nil
 }
 
-func (l *Log) Approve(id string) {
+func (l *Log) Approve(id string) (bool, error) {
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "approved"},
-			{"updated_at", time.Now().Format("2006-01-02 15:04:05")},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "approved"},
+			{Key: "updated_at", Value: time.Now().Format("2006-01-02 15:04:05")},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("Log not found")
-	}
+	return result.ModifiedCount == 1, nil
 }
 
-func (l *Log) Reject(id string) {
+func (l *Log) Reject(id string) (bool, error) {
 	collection := database.Db.Collection("logs")
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"status", "rejected"},
-			{"updated_at", time.Now().Format("2006-01-02 15:04:05")},
+		{Key: "$set", Value: bson.D{
+			{Key: "status", Value: "rejected"},
+			{Key: "updated_at", Value: time.Now().Format("2006-01-02 15:04:05")},
 		}},
 	}
 	result, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	if result.ModifiedCount == 0 {
-		panic("Log not found")
-	}
+	return result.ModifiedCount == 1, nil
 }

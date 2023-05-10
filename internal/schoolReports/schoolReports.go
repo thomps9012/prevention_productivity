@@ -2,6 +2,7 @@ package schoolReports
 
 import (
 	"context"
+	"errors"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
 
@@ -11,16 +12,17 @@ import (
 )
 
 type SchoolReportPlan struct {
-	ID             string    `json:"id" bson:"_id"`
-	UserID         *string   `json:"user_id" bson:"user_id"`
-	Cofacilitators []*string `json:"cofacilitators" bson:"cofacilitators"`
-	Curriculum     string    `json:"curriculum"`
-	School         string    `json:"school"`
-	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
-	Status         string    `json:"status"`
-	CreatedAt      string    `json:"created_at" bson:"created_at"`
-	UpdatedAt      string    `json:"updated_at" bson:"updated_at"`
+	ID              string    `json:"id" bson:"_id"`
+	UserID          *string   `json:"user_id" bson:"user_id"`
+	Co_Facilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
+	Curriculum      string    `json:"curriculum" bson:"curriculum"`
+	School          string    `json:"school" bson:"school"`
+	LessonTopics    string    `json:"lesson_topics" bson:"lesson_topics"`
+	Status          string    `json:"status" bson:"status"`
+	CreatedAt       string    `json:"created_at" bson:"created_at"`
+	UpdatedAt       string    `json:"updated_at" bson:"updated_at"`
 }
+
 type SchoolReportDebrief struct {
 	ID                     string   `json:"id" bson:"_id"`
 	UserID                 *string  `json:"user_id" bson:"user_id"`
@@ -28,9 +30,9 @@ type SchoolReportDebrief struct {
 	StudentCount           int      `json:"student_count" bson:"student_count"`
 	StudentList            []string `json:"student_list" bson:"student_list"`
 	ChallengesImprovements string   `json:"challenges_improvements" bson:"challenges_improvements"`
-	Positives              string   `json:"positives"`
-	Discussion             string   `json:"discussion"`
-	Status                 string   `json:"status"`
+	Positives              string   `json:"positives" bson:"positives"`
+	Discussion             string   `json:"discussion" bson:"discussion"`
+	Status                 string   `json:"status" bson:"status"`
 	CreatedAt              string   `json:"created_at" bson:"created_at"`
 	UpdatedAt              string   `json:"updated_at" bson:"updated_at"`
 }
@@ -41,9 +43,12 @@ func (e *SchoolReportPlan) Create() (*SchoolReportPlan, error) {
 	e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	e.UpdatedAt = e.CreatedAt
 	e.Status = "pending"
-	_, err := collection.InsertOne(context.TODO(), e)
+	res, err := collection.InsertOne(context.TODO(), e)
 	if err != nil {
 		return nil, err
+	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to insert plan")
 	}
 	return e, nil
 }
@@ -57,7 +62,7 @@ func (e *SchoolReportPlan) Update(id string) (*SchoolReportPlan, error) {
 			{Key: "curriculum", Value: e.Curriculum},
 			{Key: "school", Value: e.School},
 			{Key: "lesson_topics", Value: e.LessonTopics},
-			{Key: "cofacilitators", Value: e.Cofacilitators},
+			{Key: "co_facilitators", Value: e.Co_Facilitators},
 			{Key: "status", Value: e.Status},
 			{Key: "updated_at", Value: e.UpdatedAt},
 		}},
@@ -124,9 +129,12 @@ func (e *SchoolReportDebrief) Create() (*SchoolReportDebrief, error) {
 	e.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	e.UpdatedAt = e.CreatedAt
 	e.Status = "pending"
-	_, err := collection.InsertOne(context.TODO(), e)
+	res, err := collection.InsertOne(context.TODO(), e)
 	if err != nil {
 		return nil, err
+	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to insert debrief")
 	}
 	return e, nil
 }

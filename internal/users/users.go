@@ -14,12 +14,12 @@ import (
 
 type User struct {
 	ID        string `json:"id" bson:"_id"`
-	FirstName string `json:"firstName" bson:"first_name"`
-	LastName  string `json:"lastName" bson:"last_name"`
+	FirstName string `json:"first_name" bson:"first_name"`
+	LastName  string `json:"last_name" bson:"last_name"`
 	Email     string `json:"email" bson:"email"`
 	Password  string `json:"password" bson:"password"`
-	Admin     bool
-	Active    bool
+	Admin     bool   `json:"admin" bson:"admin"`
+	Active    bool   `json:"active" bson:"active"`
 	CreatedAt string `json:"created_at" bson:"created_at"`
 	UpdatedAt string `json:"updated_at" bson:"updated_at"`
 	DeletedAt string `json:"deleted_at" bson:"deleted_at"`
@@ -45,9 +45,12 @@ func (u *User) Create() (*User, error) {
 	if hashErr != nil {
 		return nil, hashErr
 	}
-	_, err = collection.InsertOne(context.TODO(), u)
+	res, err := collection.InsertOne(context.TODO(), u)
 	if err != nil {
 		return nil, err
+	}
+	if res.InsertedID == "" {
+		return nil, errors.New("failed to insert user")
 	}
 	return u, nil
 }
