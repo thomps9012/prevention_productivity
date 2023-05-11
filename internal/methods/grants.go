@@ -15,23 +15,19 @@ import (
 
 func FindGrantDetail(grant_id string) (*model.GrantDetail, error) {
 	collection := database.Db.Collection("grants")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	pipeline := mongo.Pipeline{bson.D{{Key: "_id", Value: grant_id}}, user_stage}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}}}}
+	unwind := bson.D{{Key: "$unwind", Value: "created_by"}}
+	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: grant_id}}}}, user_stage, unwind}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
 	}
-	var res *model.GrantDetail
+	res := make([]*model.GrantDetail, 0)
 	err = cursor.All(context.TODO(), &res)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	return res[0], nil
 }
 func FindAllGrants() ([]*model.GrantOverview, error) {
 	projection := options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "name", Value: 1}, {Key: "start_date", Value: 1}, {Key: "end_date", Value: 1}, {Key: "award_date", Value: 1}, {Key: "award_number", Value: 1}, {Key: "budget", Value: 1}, {Key: "active", Value: 1}})

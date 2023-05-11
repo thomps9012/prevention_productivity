@@ -3887,7 +3887,7 @@ type SchoolReportDebrief {
 
 type LogWithNotes {
   id: ID!
-  log_author: [UserOverview!]
+  log_author: UserOverview!
   daily_activity: String!
   positives: String!
   improvements: String!
@@ -3900,7 +3900,7 @@ type LogWithNotes {
 
 type LogOverview {
   id: ID!
-  log_author: [UserOverview!]
+  log_author: UserOverview!
   created_at: String!
   updated_at: String!
   status: String!
@@ -3909,7 +3909,7 @@ type LogOverview {
 
 type EventWithNotes {
   id: ID!
-  event_lead: [UserOverview!]!
+  event_lead: UserOverview!
   co_planners: [UserOverview]!
   title: String!
   description: String!
@@ -3949,7 +3949,7 @@ type EventWithNotes {
 
 type EventOverview {
   id: ID!
-  event_lead: [UserOverview!]!
+  event_lead: UserOverview!
   title: String!
   start_date: String!
   created_at: String!
@@ -3959,8 +3959,8 @@ type EventOverview {
 
 type EventSummaryWithNotes {
   id: ID!
-  event_description: [EventDescription]!
-  summary_author: [UserOverview!]!
+  event_description: EventDescription!
+  summary_author: UserOverview!
   co_planners: [UserOverview]!
   attendee_count: Int!
   challenges: String!
@@ -3974,8 +3974,8 @@ type EventSummaryWithNotes {
 
 type EventSummaryOverview {
   id: ID!
-  event_description: [EventDescription]!
-  summary_author: [UserOverview!]!
+  event_description: EventDescription!
+  summary_author: UserOverview!
   attendee_count: Int!
   status: String!
   created_at: String!
@@ -3985,7 +3985,7 @@ type EventSummaryOverview {
 type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
-  report_author: [UserOverview!]!
+  report_author: UserOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -3998,7 +3998,7 @@ type SchoolReportPlanWithNotes {
 type SchoolReportPlanOverview {
   id: ID!
   date: String!
-  report_author: [UserOverview!]!
+  report_author: UserOverview!
   school: String!
   status: String!
   created_at: String!
@@ -4007,8 +4007,8 @@ type SchoolReportPlanOverview {
 
 type SchoolReportDebriefWithNotes {
   id: ID!
-  debrief_author: [UserOverview!]!
-  lesson_plan: [SchoolReportPlanDescription!]!
+  debrief_author: UserOverview!
+  lesson_plan: SchoolReportPlanDescription!
   student_count: Int!
   student_list: [String!]!
   challenges_improvements: String!
@@ -4022,8 +4022,8 @@ type SchoolReportDebriefWithNotes {
 
 type SchoolReportDebriefOverview {
   id: ID!
-  debrief_author: [UserOverview!]!
-  lesson_plan: [SchoolReportPlanDescription!]!
+  debrief_author: UserOverview!
+  lesson_plan: SchoolReportPlanDescription!
   status: String!
   created_at: String!
   note_count: Int!
@@ -8254,9 +8254,9 @@ func (ec *executionContext) _EventOverview_event_lead(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventOverview_event_lead(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9326,9 +9326,9 @@ func (ec *executionContext) _EventSummaryOverview_event_description(ctx context.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventDescription)
+	res := resTmp.(*model.EventDescription)
 	fc.Result = res
-	return ec.marshalNEventDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx, field.Selections, res)
+	return ec.marshalNEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummaryOverview_event_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9378,9 +9378,9 @@ func (ec *executionContext) _EventSummaryOverview_summary_author(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummaryOverview_summary_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9886,9 +9886,9 @@ func (ec *executionContext) _EventSummaryWithNotes_event_description(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.EventDescription)
+	res := resTmp.(*model.EventDescription)
 	fc.Result = res
-	return ec.marshalNEventDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx, field.Selections, res)
+	return ec.marshalNEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummaryWithNotes_event_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9938,9 +9938,9 @@ func (ec *executionContext) _EventSummaryWithNotes_summary_author(ctx context.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummaryWithNotes_summary_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10454,9 +10454,9 @@ func (ec *executionContext) _EventWithNotes_event_lead(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_event_lead(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14091,11 +14091,14 @@ func (ec *executionContext) _LogOverview_log_author(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalOUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LogOverview_log_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14544,11 +14547,14 @@ func (ec *executionContext) _LogWithNotes_log_author(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalOUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LogWithNotes_log_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20866,9 +20872,9 @@ func (ec *executionContext) _SchoolReportDebriefOverview_debrief_author(ctx cont
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefOverview_debrief_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20918,9 +20924,9 @@ func (ec *executionContext) _SchoolReportDebriefOverview_lesson_plan(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SchoolReportPlanDescription)
+	res := resTmp.(*model.SchoolReportPlanDescription)
 	fc.Result = res
-	return ec.marshalNSchoolReportPlanDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescriptionᚄ(ctx, field.Selections, res)
+	return ec.marshalNSchoolReportPlanDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefOverview_lesson_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21382,9 +21388,9 @@ func (ec *executionContext) _SchoolReportDebriefWithNotes_debrief_author(ctx con
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_debrief_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21434,9 +21440,9 @@ func (ec *executionContext) _SchoolReportDebriefWithNotes_lesson_plan(ctx contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SchoolReportPlanDescription)
+	res := resTmp.(*model.SchoolReportPlanDescription)
 	fc.Result = res
-	return ec.marshalNSchoolReportPlanDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescriptionᚄ(ctx, field.Selections, res)
+	return ec.marshalNSchoolReportPlanDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_lesson_plan(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22555,9 +22561,9 @@ func (ec *executionContext) _SchoolReportPlanOverview_report_author(ctx context.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportPlanOverview_report_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -23143,9 +23149,9 @@ func (ec *executionContext) _SchoolReportPlanWithNotes_report_author(ctx context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_report_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -29442,6 +29448,9 @@ func (ec *executionContext) _LogOverview(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = ec._LogOverview_log_author(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "created_at":
 
 			out.Values[i] = ec._LogOverview_created_at(ctx, field, obj)
@@ -29551,6 +29560,9 @@ func (ec *executionContext) _LogWithNotes(ctx context.Context, sel ast.Selection
 
 			out.Values[i] = ec._LogWithNotes_log_author(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "daily_activity":
 
 			out.Values[i] = ec._LogWithNotes_daily_activity(ctx, field, obj)
@@ -32141,44 +32153,6 @@ func (ec *executionContext) marshalNEvent2ᚖthomps9012ᚋprevention_productivit
 	return ec._Event(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNEventDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx context.Context, sel ast.SelectionSet, v []*model.EventDescription) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
 func (ec *executionContext) marshalNEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx context.Context, sel ast.SelectionSet, v *model.EventDescription) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -32906,50 +32880,6 @@ func (ec *executionContext) marshalNSchoolReportPlan2ᚖthomps9012ᚋprevention_
 	return ec._SchoolReportPlan(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSchoolReportPlanDescription2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SchoolReportPlanDescription) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNSchoolReportPlanDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescription(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNSchoolReportPlanDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐSchoolReportPlanDescription(ctx context.Context, sel ast.SelectionSet, v *model.SchoolReportPlanDescription) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -33613,13 +33543,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOEventDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐEventDescription(ctx context.Context, sel ast.SelectionSet, v *model.EventDescription) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._EventDescription(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
 	if v == nil {
 		return nil, nil
@@ -33714,53 +33637,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.UserOverview) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalOUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx context.Context, sel ast.SelectionSet, v *model.UserOverview) graphql.Marshaler {

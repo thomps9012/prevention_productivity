@@ -22,12 +22,9 @@ func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*mod
 		return nil, errors.New("no notes for this user and item")
 	}
 	filter := bson.D{{Key: "item_id", Value: item_id}}
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	pipeline := mongo.Pipeline{filter, user_stage}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}}
+	unwind := bson.D{{Key: "$unwind", Value: "$author"}}
+	pipeline := mongo.Pipeline{filter, user_stage, unwind}
 	notes := make([]*model.NoteDetail, 0)
 	cursor, err := database.Db.Collection("notes").Aggregate(context.TODO(), pipeline)
 	if err != nil {
@@ -41,13 +38,10 @@ func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*mod
 }
 func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
 	filter := bson.D{{Key: "_id", Value: note_id}}
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	pipeline := mongo.Pipeline{filter, user_stage}
-	var note *model.NoteDetail
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}}
+	unwind := bson.D{{Key: "$unwind", Value: "$author"}}
+	pipeline := mongo.Pipeline{filter, user_stage, unwind}
+	note := make([]*model.NoteDetail, 0)
 	cursor, err := database.Db.Collection("notes").Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -56,7 +50,7 @@ func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
 	if err != nil {
 		return nil, err
 	}
-	return note, nil
+	return note[0], nil
 }
 func FindUserNotes(user_id string) ([]*model.Note, error) {
 	var notes []*model.Note

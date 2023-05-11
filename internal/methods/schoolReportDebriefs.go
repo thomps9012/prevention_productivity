@@ -14,22 +14,14 @@ import (
 )
 
 func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWithNotes, error) {
-	var debrief_detail *model.SchoolReportDebriefWithNotes
+	debrief_detail := make([]*model.SchoolReportDebriefWithNotes, 0)
 	collection := database.Db.Collection("school_report_debriefs")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
-	// add projection
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$debrief_author"}}
+	unwind_lesson_plan := bson.D{{Key: "$unwind", Value: "$lesson_plan"}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage, unwind_author, unwind_lesson_plan}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -38,25 +30,17 @@ func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWit
 	if err != nil {
 		return nil, err
 	}
-	return debrief_detail, nil
+	return debrief_detail[0], nil
 }
 func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOverview, error) {
 	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
 	collection := database.Db.Collection("school_report_debriefs")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	// add projection
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$debrief_author"}}
+	unwind_lesson_plan := bson.D{{Key: "$unwind", Value: "$lesson_plan"}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage, unwind_author, unwind_lesson_plan}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -70,20 +54,12 @@ func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOvervi
 func FindUserSchoolReportDebriefs(user_id string) ([]*model.SchoolReportDebriefOverview, error) {
 	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
 	collection := database.Db.Collection("school_report_debriefs")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
+	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	// add projection
-	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage, plan_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$debrief_author"}}
+	unwind_lesson_plan := bson.D{{Key: "$unwind", Value: "$lesson_plan"}}
+	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, notes_stage, user_stage, plan_stage, unwind_author, unwind_lesson_plan}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err

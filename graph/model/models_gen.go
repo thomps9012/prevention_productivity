@@ -87,13 +87,13 @@ type EventDescription struct {
 }
 
 type EventOverview struct {
-	ID        string          `json:"id" bson:"_id"`
-	EventLead []*UserOverview `json:"event_lead" bson:"event_lead"`
-	Title     string          `json:"title" bson:"title"`
-	StartDate string          `json:"start_date" bson:"start_date"`
-	CreatedAt string          `json:"created_at" bson:"created_at"`
-	Status    string          `json:"status" bson:"status"`
-	NoteCount int             `json:"note_count" bson:"note_count"`
+	ID        string        `json:"id" bson:"_id"`
+	EventLead *UserOverview `json:"event_lead" bson:"event_lead"`
+	Title     string        `json:"title" bson:"title"`
+	StartDate string        `json:"start_date" bson:"start_date"`
+	CreatedAt string        `json:"created_at" bson:"created_at"`
+	Status    string        `json:"status" bson:"status"`
+	NoteCount int           `json:"note_count" bson:"note_count"`
 }
 
 type EventRes struct {
@@ -120,13 +120,13 @@ type EventSummary struct {
 }
 
 type EventSummaryOverview struct {
-	ID               string              `json:"id" bson:"_id"`
-	EventDescription []*EventDescription `json:"event_description" bson:"event_description"`
-	SummaryAuthor    []*UserOverview     `json:"summary_author" bson:"summary_author"`
-	AttendeeCount    int                 `json:"attendee_count" bson:"attendee_count"`
-	Status           string              `json:"status" bson:"status"`
-	CreatedAt        string              `json:"created_at" bson:"created_at"`
-	NoteCount        int                 `json:"note_count" bson:"note_count"`
+	ID               string            `json:"id" bson:"_id"`
+	EventDescription *EventDescription `json:"event_description" bson:"event_description"`
+	SummaryAuthor    *UserOverview     `json:"summary_author" bson:"summary_author"`
+	AttendeeCount    int               `json:"attendee_count" bson:"attendee_count"`
+	Status           string            `json:"status" bson:"status"`
+	CreatedAt        string            `json:"created_at" bson:"created_at"`
+	NoteCount        int               `json:"note_count" bson:"note_count"`
 }
 
 type EventSummaryRes struct {
@@ -138,23 +138,23 @@ type EventSummaryRes struct {
 }
 
 type EventSummaryWithNotes struct {
-	ID               string              `json:"id" bson:"_id"`
-	EventDescription []*EventDescription `json:"event_description" bson:"event_description"`
-	SummaryAuthor    []*UserOverview     `json:"summary_author" bson:"summary_author"`
-	CoPlanners       []*UserOverview     `json:"co_planners" bson:"co_planners"`
-	AttendeeCount    int                 `json:"attendee_count" bson:"attendee_count"`
-	Challenges       string              `json:"challenges" bson:"challenges"`
-	Successes        string              `json:"successes" bson:"successes"`
-	Improvements     string              `json:"improvements" bson:"improvements"`
-	Status           string              `json:"status" bson:"status"`
-	CreatedAt        string              `json:"created_at" bson:"created_at"`
-	UpdatedAt        string              `json:"updated_at" bson:"updated_at"`
-	Notes            []*Note             `json:"notes" bson:"notes"`
+	ID               string            `json:"id" bson:"_id"`
+	EventDescription *EventDescription `json:"event_description" bson:"event_description"`
+	SummaryAuthor    *UserOverview     `json:"summary_author" bson:"summary_author"`
+	CoPlanners       []*UserOverview   `json:"co_planners" bson:"co_planners"`
+	AttendeeCount    int               `json:"attendee_count" bson:"attendee_count"`
+	Challenges       string            `json:"challenges" bson:"challenges"`
+	Successes        string            `json:"successes" bson:"successes"`
+	Improvements     string            `json:"improvements" bson:"improvements"`
+	Status           string            `json:"status" bson:"status"`
+	CreatedAt        string            `json:"created_at" bson:"created_at"`
+	UpdatedAt        string            `json:"updated_at" bson:"updated_at"`
+	Notes            []*Note           `json:"notes" bson:"notes"`
 }
 
 type EventWithNotes struct {
 	ID                      string          `json:"id" bson:"_id"`
-	EventLead               []*UserOverview `json:"event_lead" bson:"event_lead"`
+	EventLead               *UserOverview   `json:"event_lead" bson:"event_lead"`
 	CoPlanners              []*UserOverview `json:"co_planners" bson:"co_planners"`
 	Title                   string          `json:"title" bson:"title"`
 	Description             string          `json:"description" bson:"description"`
@@ -250,12 +250,12 @@ type Log struct {
 }
 
 type LogOverview struct {
-	ID        string          `json:"id" bson:"_id"`
-	LogAuthor []*UserOverview `json:"log_author" bson:"log_author"`
-	CreatedAt string          `json:"created_at" bson:"created_at"`
-	UpdatedAt string          `json:"updated_at" bson:"updated_at"`
-	Status    string          `json:"status" bson:"status"`
-	NoteCount int             `json:"note_count" bson:"note_count"`
+	ID        string        `json:"id" bson:"_id"`
+	LogAuthor *UserOverview `json:"log_author" bson:"log_author"`
+	CreatedAt string        `json:"created_at" bson:"created_at"`
+	UpdatedAt string        `json:"updated_at" bson:"updated_at"`
+	Status    string        `json:"status" bson:"status"`
+	NoteCount int           `json:"note_count" bson:"note_count"`
 }
 
 type LogRes struct {
@@ -266,16 +266,16 @@ type LogRes struct {
 }
 
 type LogWithNotes struct {
-	ID            string          `json:"id" bson:"_id"`
-	LogAuthor     []*UserOverview `json:"log_author" bson:"log_author"`
-	DailyActivity string          `json:"daily_activity" bson:"daily_activity"`
-	Positives     string          `json:"positives" bson:"positives"`
-	Improvements  string          `json:"improvements" bson:"improvements"`
-	NextSteps     string          `json:"next_steps" bson:"next_steps"`
-	Status        string          `json:"status" bson:"status"`
-	CreatedAt     string          `json:"created_at" bson:"created_at"`
-	UpdatedAt     string          `json:"updated_at" bson:"updated_at"`
-	Notes         []*Note         `json:"notes" bson:"notes"`
+	ID            string        `json:"id" bson:"_id"`
+	LogAuthor     *UserOverview `json:"log_author" bson:"log_author"`
+	DailyActivity string        `json:"daily_activity" bson:"daily_activity"`
+	Positives     string        `json:"positives" bson:"positives"`
+	Improvements  string        `json:"improvements" bson:"improvements"`
+	NextSteps     string        `json:"next_steps" bson:"next_steps"`
+	Status        string        `json:"status" bson:"status"`
+	CreatedAt     string        `json:"created_at" bson:"created_at"`
+	UpdatedAt     string        `json:"updated_at" bson:"updated_at"`
+	Notes         []*Note       `json:"notes" bson:"notes"`
 }
 
 type LoginInput struct {
@@ -427,12 +427,12 @@ type SchoolReportDebrief struct {
 }
 
 type SchoolReportDebriefOverview struct {
-	ID            string                         `json:"id" bson:"_id"`
-	DebriefAuthor []*UserOverview                `json:"debrief_author" bson:"debrief_author"`
-	LessonPlan    []*SchoolReportPlanDescription `json:"lesson_plan" bson:"lesson_plan"`
-	Status        string                         `json:"status" bson:"status"`
-	CreatedAt     string                         `json:"created_at" bson:"created_at"`
-	NoteCount     int                            `json:"note_count" bson:"note_count"`
+	ID            string                       `json:"id" bson:"_id"`
+	DebriefAuthor *UserOverview                `json:"debrief_author" bson:"debrief_author"`
+	LessonPlan    *SchoolReportPlanDescription `json:"lesson_plan" bson:"lesson_plan"`
+	Status        string                       `json:"status" bson:"status"`
+	CreatedAt     string                       `json:"created_at" bson:"created_at"`
+	NoteCount     int                          `json:"note_count" bson:"note_count"`
 }
 
 type SchoolReportDebriefRes struct {
@@ -444,18 +444,18 @@ type SchoolReportDebriefRes struct {
 }
 
 type SchoolReportDebriefWithNotes struct {
-	ID                     string                         `json:"id" bson:"_id"`
-	DebriefAuthor          []*UserOverview                `json:"debrief_author" bson:"debrief_author"`
-	LessonPlan             []*SchoolReportPlanDescription `json:"lesson_plan" bson:"lesson_plan"`
-	StudentCount           int                            `json:"student_count" bson:"student_count"`
-	StudentList            []string                       `json:"student_list" bson:"student_list"`
-	ChallengesImprovements string                         `json:"challenges_improvements" bson:"challenges_improvements"`
-	Positives              string                         `json:"positives" bson:"positives"`
-	Discussion             string                         `json:"discussion" bson:"discussion"`
-	Status                 string                         `json:"status" bson:"status"`
-	CreatedAt              string                         `json:"created_at" bson:"created_at"`
-	UpdatedAt              string                         `json:"updated_at" bson:"updated_at"`
-	Notes                  []*Note                        `json:"notes" bson:"notes"`
+	ID                     string                       `json:"id" bson:"_id"`
+	DebriefAuthor          *UserOverview                `json:"debrief_author" bson:"debrief_author"`
+	LessonPlan             *SchoolReportPlanDescription `json:"lesson_plan" bson:"lesson_plan"`
+	StudentCount           int                          `json:"student_count" bson:"student_count"`
+	StudentList            []string                     `json:"student_list" bson:"student_list"`
+	ChallengesImprovements string                       `json:"challenges_improvements" bson:"challenges_improvements"`
+	Positives              string                       `json:"positives" bson:"positives"`
+	Discussion             string                       `json:"discussion" bson:"discussion"`
+	Status                 string                       `json:"status" bson:"status"`
+	CreatedAt              string                       `json:"created_at" bson:"created_at"`
+	UpdatedAt              string                       `json:"updated_at" bson:"updated_at"`
+	Notes                  []*Note                      `json:"notes" bson:"notes"`
 }
 
 type SchoolReportPlan struct {
@@ -478,13 +478,13 @@ type SchoolReportPlanDescription struct {
 }
 
 type SchoolReportPlanOverview struct {
-	ID           string          `json:"id" bson:"_id"`
-	Date         string          `json:"date" bson:"date"`
-	ReportAuthor []*UserOverview `json:"report_author" bson:"report_author"`
-	School       string          `json:"school" bson:"school"`
-	Status       string          `json:"status" bson:"status"`
-	CreatedAt    string          `json:"created_at" bson:"created_at"`
-	NoteCount    int             `json:"note_count" bson:"note_count"`
+	ID           string        `json:"id" bson:"_id"`
+	Date         string        `json:"date" bson:"date"`
+	ReportAuthor *UserOverview `json:"report_author" bson:"report_author"`
+	School       string        `json:"school" bson:"school"`
+	Status       string        `json:"status" bson:"status"`
+	CreatedAt    string        `json:"created_at" bson:"created_at"`
+	NoteCount    int           `json:"note_count" bson:"note_count"`
 }
 
 type SchoolReportPlanRes struct {
@@ -499,7 +499,7 @@ type SchoolReportPlanRes struct {
 type SchoolReportPlanWithNotes struct {
 	ID             string          `json:"id" bson:"_id"`
 	Date           string          `json:"date" bson:"date"`
-	ReportAuthor   []*UserOverview `json:"report_author" bson:"report_author"`
+	ReportAuthor   *UserOverview   `json:"report_author" bson:"report_author"`
 	CoFacilitators []*UserOverview `json:"co_facilitators" bson:"co_facilitators"`
 	Curriculum     string          `json:"curriculum" bson:"curriculum"`
 	School         string          `json:"school" bson:"school"`

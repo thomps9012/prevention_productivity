@@ -174,7 +174,7 @@ type SchoolReportDebrief {
 
 type LogWithNotes {
   id: ID!
-  log_author: [UserOverview!]
+  log_author: UserOverview!
   daily_activity: String!
   positives: String!
   improvements: String!
@@ -187,7 +187,7 @@ type LogWithNotes {
 
 type LogOverview {
   id: ID!
-  log_author: [UserOverview!]
+  log_author: UserOverview!
   created_at: String!
   updated_at: String!
   status: String!
@@ -196,7 +196,7 @@ type LogOverview {
 
 type EventWithNotes {
   id: ID!
-  event_lead: [UserOverview!]!
+  event_lead: UserOverview!
   co_planners: [UserOverview]!
   title: String!
   description: String!
@@ -236,7 +236,7 @@ type EventWithNotes {
 
 type EventOverview {
   id: ID!
-  event_lead: [UserOverview!]!
+  event_lead: UserOverview!
   title: String!
   start_date: String!
   created_at: String!
@@ -246,8 +246,8 @@ type EventOverview {
 
 type EventSummaryWithNotes {
   id: ID!
-  event_description: [EventDescription]!
-  summary_author: [UserOverview!]!
+  event_description: EventDescription!
+  summary_author: UserOverview!
   co_planners: [UserOverview]!
   attendee_count: Int!
   challenges: String!
@@ -261,8 +261,8 @@ type EventSummaryWithNotes {
 
 type EventSummaryOverview {
   id: ID!
-  event_description: [EventDescription]!
-  summary_author: [UserOverview!]!
+  event_description: EventDescription!
+  summary_author: UserOverview!
   attendee_count: Int!
   status: String!
   created_at: String!
@@ -272,7 +272,7 @@ type EventSummaryOverview {
 type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
-  report_author: [UserOverview!]!
+  report_author: UserOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -285,7 +285,7 @@ type SchoolReportPlanWithNotes {
 type SchoolReportPlanOverview {
   id: ID!
   date: String!
-  report_author: [UserOverview!]!
+  report_author: UserOverview!
   school: String!
   status: String!
   created_at: String!
@@ -294,8 +294,8 @@ type SchoolReportPlanOverview {
 
 type SchoolReportDebriefWithNotes {
   id: ID!
-  debrief_author: [UserOverview!]!
-  lesson_plan: [SchoolReportPlanDescription!]!
+  debrief_author: UserOverview!
+  lesson_plan: SchoolReportPlanDescription!
   student_count: Int!
   student_list: [String!]!
   challenges_improvements: String!
@@ -309,8 +309,8 @@ type SchoolReportDebriefWithNotes {
 
 type SchoolReportDebriefOverview {
   id: ID!
-  debrief_author: [UserOverview!]!
-  lesson_plan: [SchoolReportPlanDescription!]!
+  debrief_author: UserOverview!
+  lesson_plan: SchoolReportPlanDescription!
   status: String!
   created_at: String!
   note_count: Int!

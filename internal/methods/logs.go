@@ -14,17 +14,12 @@ import (
 )
 
 func FindLogDetail(filter bson.D) (*model.LogWithNotes, error) {
-	var LogWithNotes *model.LogWithNotes
+	LogWithNotes := make([]*model.LogWithNotes, 0)
 	logCollection := database.Db.Collection("logs")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
 	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
-	// add projection
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage}
+	unwind := bson.D{{Key: "$unwind", Value: "$log_author"}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, unwind}
 	cursor, err := logCollection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -33,19 +28,15 @@ func FindLogDetail(filter bson.D) (*model.LogWithNotes, error) {
 	if err != nil {
 		return nil, err
 	}
-	return LogWithNotes, nil
+	return LogWithNotes[0], nil
 }
 func FindAllLogs(filter bson.D) ([]*model.LogOverview, error) {
 	logsCollection := database.Db.Collection("logs")
 	sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
 	note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	// // add in projection
-	log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage}
+	unwind := bson.D{{Key: "$unwind", Value: "$log_author"}}
+	log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage, unwind}
 	cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
 	if err != nil {
 		return nil, err
@@ -60,14 +51,10 @@ func FindAllLogs(filter bson.D) ([]*model.LogOverview, error) {
 func FindUserLogs(user_id string) ([]*model.LogOverview, error) {
 	logsCollection := database.Db.Collection("logs")
 	sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
 	note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	// // add in projection
-	log_pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, sort_stage, user_stage, note_stage}
+	unwind := bson.D{{Key: "$unwind", Value: "$log_author"}}
+	log_pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, sort_stage, user_stage, note_stage, unwind}
 	cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
 	if err != nil {
 		return nil, err
