@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes, error) {
 	plan_detail := make([]*model.SchoolReportPlanWithNotes, 0)
 	collection := database.Db.Collection("school_report_plans")
@@ -34,9 +35,10 @@ func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, er
 	plans := make([]*model.SchoolReportPlanOverview, 0)
 	collection := database.Db.Collection("school_report_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$plan_author"}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, unwind}
+	pipeline := mongo.Pipeline{filter, note_stage, note_count, user_stage, unwind}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -51,9 +53,10 @@ func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOvervie
 	plans := make([]*model.SchoolReportPlanOverview, 0)
 	collection := database.Db.Collection("school_report_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$plan_author"}}
-	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, notes_stage, user_stage, unwind}
+	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, note_stage, note_count, user_stage, unwind}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -65,6 +68,7 @@ func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOvervie
 	return plans, nil
 }
 
+// mutations
 func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator string) (*model.SchoolReportPlanRes, error) {
 	collection := database.Db.Collection("school_report_plans")
 	plan := model.SchoolReportPlan{
@@ -107,6 +111,7 @@ func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) 
 		{Key: "$set", Value: bson.D{
 			{Key: "curriculum", Value: update.Curriculum},
 			{Key: "school", Value: update.School},
+			{Key: "date", Value: update.Date},
 			{Key: "lesson_topics", Value: update.LessonTopics},
 			{Key: "co_facilitators", Value: update.CoFacilitators},
 			{Key: "status", Value: update.Status},

@@ -98,7 +98,7 @@ type EventOverview struct {
 
 type EventRes struct {
 	ID        string        `json:"id" bson:"_id"`
-	UserID    *UserOverview `json:"user_id" bson:"user_id"`
+	EventLead *UserOverview `json:"event_lead" bson:"event_lead"`
 	Title     string        `json:"title" bson:"title"`
 	StartDate string        `json:"start_date" bson:"start_date"`
 	Status    string        `json:"status" bson:"status"`
@@ -507,6 +507,7 @@ type SchoolReportPlanWithNotes struct {
 	Status         string          `json:"status" bson:"status"`
 	CreatedAt      string          `json:"created_at" bson:"created_at"`
 	UpdatedAt      string          `json:"updated_at" bson:"updated_at"`
+	Notes          []*Note         `json:"notes" bson:"notes"`
 }
 
 type UpdateContact struct {
@@ -606,6 +607,7 @@ type UpdateSchoolReportDebrief struct {
 
 type UpdateSchoolReportPlan struct {
 	ID             string    `json:"id" bson:"_id"`
+	Date           string    `json:"date" bson:"date"`
 	CoFacilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
 	Curriculum     string    `json:"curriculum" bson:"curriculum"`
 	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`

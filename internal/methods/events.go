@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 	EventWithNotes := make([]*model.EventWithNotes, 0)
 	collection := database.Db.Collection("events")
@@ -35,9 +36,10 @@ func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
 	events := make([]*model.EventOverview, 0)
 	collection := database.Db.Collection("events")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_lead"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "event_lead"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$event_lead"}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, unwind_stage}
+	pipeline := mongo.Pipeline{filter, note_stage, note_count, user_stage, unwind_stage}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -52,9 +54,10 @@ func FindUserEvents(user_id string) ([]*model.EventOverview, error) {
 	events := make([]*model.EventOverview, 0)
 	collection := database.Db.Collection("events")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$event_lead"}}
-	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, notes_stage, user_stage, unwind_stage}
+	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, note_stage, note_count, user_stage, unwind_stage}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -66,6 +69,7 @@ func FindUserEvents(user_id string) ([]*model.EventOverview, error) {
 	return events, nil
 }
 
+// mutations
 func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRes, error) {
 	collection := database.Db.Collection("events")
 	event := model.Event{
@@ -121,7 +125,7 @@ func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRe
 	}
 	return &model.EventRes{
 		ID:        event.ID,
-		UserID:    &event_lead_info,
+		EventLead: &event_lead_info,
 		Title:     event.Title,
 		StartDate: event.StartDate,
 		Status:    event.Status,

@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 	event_summary := make([]*model.EventSummaryWithNotes, 0)
 	collection := database.Db.Collection("event_summaries")
@@ -38,10 +39,11 @@ func FindEventSummaries(filter bson.D) ([]*model.EventSummaryOverview, error) {
 	collection := database.Db.Collection("event_summaries")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
 	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
 	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, event_stage, unwind_author, unwind_event}
+	pipeline := mongo.Pipeline{filter, note_stage, note_count, user_stage, event_stage, unwind_author, unwind_event}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -57,10 +59,11 @@ func FindUserEventSummaries(user_id string) ([]*model.EventSummaryOverview, erro
 	collection := database.Db.Collection("event_summaries")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
 	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
-	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
 	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
-	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, notes_stage, user_stage, event_stage, unwind_author, unwind_event}
+	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, note_stage, note_count, user_stage, event_stage, unwind_author, unwind_event}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -72,6 +75,7 @@ func FindUserEventSummaries(user_id string) ([]*model.EventSummaryOverview, erro
 	return event_summaries, nil
 }
 
+// mutations
 func CreateEventSummary(new_summary model.NewEventSummary, summary_creator string) (*model.EventSummaryRes, error) {
 	collection := database.Db.Collection("event_summaries")
 	summary := model.EventSummary{

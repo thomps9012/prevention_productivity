@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindGrantDetail(grant_id string) (*model.GrantDetail, error) {
 	collection := database.Db.Collection("grants")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}}}}
@@ -44,6 +45,7 @@ func FindAllGrants() ([]*model.GrantOverview, error) {
 	return res, nil
 }
 
+// mutations
 func CreateGrant(new_grant model.NewGrant, grant_creator string) (*model.GrantDetail, error) {
 	collection := database.Db.Collection("grants")
 	var active bool

@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*model.NoteDetail, error) {
 	can_view_notes, err := database.Db.Collection(item_type).CountDocuments(context.TODO(), item_filter)
 	if err != nil {
@@ -65,11 +66,16 @@ func FindUserNotes(user_id string) ([]*model.Note, error) {
 	return notes, nil
 }
 
+// mutations
 func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, error) {
 	collection := database.Db.Collection("notes")
 	note := model.Note{
 		ID:        uuid.New().String(),
 		CreatedAt: time.Now().Format("2003-01-02 15:05:05"),
+		Title:     new_note.Title,
+		Content:   new_note.Content,
+		ItemID:    new_note.ItemID,
+		UserID:    note_author,
 		UpdatedAt: bson.TypeNull.String(),
 	}
 	res, err := collection.InsertOne(context.TODO(), note)

@@ -136,11 +136,11 @@ type ComplexityRoot struct {
 
 	EventRes struct {
 		CreatedAt func(childComplexity int) int
+		EventLead func(childComplexity int) int
 		ID        func(childComplexity int) int
 		StartDate func(childComplexity int) int
 		Status    func(childComplexity int) int
 		Title     func(childComplexity int) int
-		UserID    func(childComplexity int) int
 	}
 
 	EventSummary struct {
@@ -363,7 +363,7 @@ type ComplexityRoot struct {
 		UpdateNote                 func(childComplexity int, updateNote model.UpdateNote) int
 		UpdateSchoolReportDebrief  func(childComplexity int, updateSchoolReportDebrief model.UpdateSchoolReportDebrief) int
 		UpdateSchoolReportPlan     func(childComplexity int, updateSchoolReportPlan model.UpdateSchoolReportPlan) int
-		UpdateUser                 func(childComplexity int, updateUser model.UpdateUser, id string) int
+		UpdateUser                 func(childComplexity int, updateUser model.UpdateUser) int
 	}
 
 	Note struct {
@@ -506,6 +506,7 @@ type ComplexityRoot struct {
 		Date           func(childComplexity int) int
 		ID             func(childComplexity int) int
 		LessonTopics   func(childComplexity int) int
+		Notes          func(childComplexity int) int
 		ReportAuthor   func(childComplexity int) int
 		School         func(childComplexity int) int
 		Status         func(childComplexity int) int
@@ -545,7 +546,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateUser(ctx context.Context, newUser model.NewUser) (*model.LoginRes, error)
 	Login(ctx context.Context, login model.LoginInput) (*model.LoginRes, error)
-	UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.UserUpdateRes, error)
+	UpdateUser(ctx context.Context, updateUser model.UpdateUser) (*model.UserUpdateRes, error)
 	DeleteUser(ctx context.Context, id string) (*model.UserUpdateRes, error)
 	CreateGrant(ctx context.Context, newGrant model.NewGrant) (*model.GrantDetail, error)
 	UpdateGrant(ctx context.Context, updateGrant model.UpdateGrant) (*model.Grant, error)
@@ -1137,6 +1138,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventRes.CreatedAt(childComplexity), true
 
+	case "EventRes.event_lead":
+		if e.complexity.EventRes.EventLead == nil {
+			break
+		}
+
+		return e.complexity.EventRes.EventLead(childComplexity), true
+
 	case "EventRes.id":
 		if e.complexity.EventRes.ID == nil {
 			break
@@ -1164,13 +1172,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EventRes.Title(childComplexity), true
-
-	case "EventRes.user_id":
-		if e.complexity.EventRes.UserID == nil {
-			break
-		}
-
-		return e.complexity.EventRes.UserID(childComplexity), true
 
 	case "EventSummary.attendee_count":
 		if e.complexity.EventSummary.AttendeeCount == nil {
@@ -2627,7 +2628,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["updateUser"].(model.UpdateUser), args["id"].(string)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["updateUser"].(model.UpdateUser)), true
 
 	case "Note.content":
 		if e.complexity.Note.Content == nil {
@@ -3456,6 +3457,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportPlanWithNotes.LessonTopics(childComplexity), true
 
+	case "SchoolReportPlanWithNotes.notes":
+		if e.complexity.SchoolReportPlanWithNotes.Notes == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlanWithNotes.Notes(childComplexity), true
+
 	case "SchoolReportPlanWithNotes.report_author":
 		if e.complexity.SchoolReportPlanWithNotes.ReportAuthor == nil {
 			break
@@ -3993,6 +4001,7 @@ type SchoolReportPlanWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
+  notes: [Note!]!
 }
 
 type SchoolReportPlanOverview {
@@ -4258,6 +4267,7 @@ input NewSchoolReportPlan {
 
 input UpdateSchoolReportPlan {
   id: ID!
+  date: String!
   co_facilitators: [ID]!
   curriculum: String!
   lesson_topics: String!
@@ -4356,7 +4366,7 @@ type LogRes {
 
 type EventRes {
   id: ID!
-  user_id: UserOverview!
+  event_lead: UserOverview!
   title: String!
   start_date: String!
   status: String!
@@ -4391,7 +4401,7 @@ type SchoolReportDebriefRes {
 type Mutation {
   createUser(newUser: NewUser!): LoginRes!
   login(login: LoginInput!): LoginRes!
-  updateUser(updateUser: UpdateUser!, id: ID!): UserUpdateRes!
+  updateUser(updateUser: UpdateUser!): UserUpdateRes!
   deleteUser(id: ID!): UserUpdateRes!
   createGrant(newGrant: NewGrant!): GrantDetail!
   updateGrant(updateGrant: UpdateGrant!): Grant!
@@ -5011,15 +5021,6 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 		}
 	}
 	args["updateUser"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg1
 	return args, nil
 }
 
@@ -8544,8 +8545,8 @@ func (ec *executionContext) fieldContext_EventRes_id(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _EventRes_user_id(ctx context.Context, field graphql.CollectedField, obj *model.EventRes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventRes_user_id(ctx, field)
+func (ec *executionContext) _EventRes_event_lead(ctx context.Context, field graphql.CollectedField, obj *model.EventRes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EventRes_event_lead(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8558,7 +8559,7 @@ func (ec *executionContext) _EventRes_user_id(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
+		return obj.EventLead, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8575,7 +8576,7 @@ func (ec *executionContext) _EventRes_user_id(ctx context.Context, field graphql
 	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_EventRes_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_EventRes_event_lead(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "EventRes",
 		Field:      field,
@@ -15362,7 +15363,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["updateUser"].(model.UpdateUser), fc.Args["id"].(string))
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["updateUser"].(model.UpdateUser))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16471,8 +16472,8 @@ func (ec *executionContext) fieldContext_Mutation_createEvent(ctx context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_EventRes_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_EventRes_user_id(ctx, field)
+			case "event_lead":
+				return ec.fieldContext_EventRes_event_lead(ctx, field)
 			case "title":
 				return ec.fieldContext_EventRes_title(ctx, field)
 			case "start_date":
@@ -19487,6 +19488,8 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlan(ctx context.Cont
 				return ec.fieldContext_SchoolReportPlanWithNotes_created_at(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_SchoolReportPlanWithNotes_updated_at(ctx, field)
+			case "notes":
+				return ec.fieldContext_SchoolReportPlanWithNotes_notes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SchoolReportPlanWithNotes", field.Name)
 		},
@@ -23486,6 +23489,66 @@ func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_updated_at(ct
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlanWithNotes_notes(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_notes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Notes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Note)
+	fc.Result = res
+	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlanWithNotes",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "item_id":
+				return ec.fieldContext_Note_item_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Note_user_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "content":
+				return ec.fieldContext_Note_content(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
 	}
 	return fc, nil
@@ -27608,6 +27671,14 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportPlan(ctx context.Con
 			if err != nil {
 				return it, err
 			}
+		case "date":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			it.Date, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "co_facilitators":
 			var err error
 
@@ -28379,9 +28450,9 @@ func (ec *executionContext) _EventRes(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "user_id":
+		case "event_lead":
 
-			out.Values[i] = ec._EventRes_user_id(ctx, field, obj)
+			out.Values[i] = ec._EventRes_event_lead(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -31506,6 +31577,13 @@ func (ec *executionContext) _SchoolReportPlanWithNotes(ctx context.Context, sel 
 		case "updated_at":
 
 			out.Values[i] = ec._SchoolReportPlanWithNotes_updated_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "notes":
+
+			out.Values[i] = ec._SchoolReportPlanWithNotes_notes(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

@@ -14,6 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// mutations
 func HashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
@@ -86,6 +87,9 @@ func LoginUser(login model.LoginInput) (*model.LoginRes, error) {
 	if !match {
 		return nil, errors.New("incorrect login credentials")
 	}
+	if !user.Active {
+		return nil, errors.New("unauthorized, attempting to login with an inactive account")
+	}
 	token, err := auth.GenerateToken(user.Email, user.Admin, user.ID)
 	if err != nil {
 		return nil, err
@@ -99,18 +103,29 @@ func LoginUser(login model.LoginInput) (*model.LoginRes, error) {
 		CreatedAt: user.CreatedAt,
 	}, nil
 }
-func UpdateUser(update model.UpdateUser, filter bson.D) (*model.UserUpdateRes, error) {
+func UpdateUser(update model.UpdateUser, filter bson.D, is_admin bool) (*model.UserUpdateRes, error) {
 	collection := database.Db.Collection("users")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	var update_args bson.D
-	if len(update.Password) <= 0 {
+	if is_admin && len(update.Password) <= 0 {
 		update_args = bson.D{{Key: "$set", Value: bson.M{"first_name": update.FirstName, "last_name": update.LastName, "email": update.Email, "updated_at": updated_at, "active": update.Active, "admin": update.Admin}}}
-	} else {
+	}
+	if is_admin && len(update.Password) > 0 {
 		hashed, hashErr := HashPassword(update.Password)
 		if hashErr != nil {
 			return nil, hashErr
 		}
 		update_args = bson.D{{Key: "$set", Value: bson.M{"password": hashed, "first_name": update.FirstName, "last_name": update.LastName, "email": update.Email, "updated_at": updated_at, "active": update.Active, "admin": update.Admin}}}
+	}
+	if !is_admin && len(update.Password) <= 0 {
+		update_args = bson.D{{Key: "$set", Value: bson.M{"first_name": update.FirstName, "last_name": update.LastName, "email": update.Email, "updated_at": updated_at, "active": update.Active}}}
+	}
+	if !is_admin && len(update.Password) > 0 {
+		hashed, hashErr := HashPassword(update.Password)
+		if hashErr != nil {
+			return nil, hashErr
+		}
+		update_args = bson.D{{Key: "$set", Value: bson.M{"password": hashed, "first_name": update.FirstName, "last_name": update.LastName, "email": update.Email, "updated_at": updated_at, "active": update.Active}}}
 	}
 	upsert := true
 	after := options.After
@@ -134,7 +149,7 @@ func DeleteUser(filter bson.D) (*model.UserUpdateRes, error) {
 		Upsert:         &upsert,
 	}
 	now := time.Now().Format("2006-01-02 15:04:05")
-	update := bson.D{{Key: "active", Value: false}, {Key: "deleted_at", Value: now}, {Key: "updated_at", Value: now}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "active", Value: false}, {Key: "deleted_at", Value: now}, {Key: "updated_at", Value: now}}}}
 	var u model.UserUpdateRes
 	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&u)
 	if err != nil {
@@ -142,9 +157,11 @@ func DeleteUser(filter bson.D) (*model.UserUpdateRes, error) {
 	}
 	return &u, nil
 }
-func GetUserOverviews() ([]model.UserResult, error) {
+
+// queries
+func GetUserOverviews() ([]model.UserOverview, error) {
 	collection := database.Db.Collection("users")
-	users := make([]model.UserResult, 0)
+	users := make([]model.UserOverview, 0)
 	cursor, err := collection.Find(context.TODO(), bson.D{}, options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}}))
 	if err != nil {
 		return nil, err
@@ -155,9 +172,9 @@ func GetUserOverviews() ([]model.UserResult, error) {
 	}
 	return users, nil
 }
-func GetUsers() ([]model.UserResult, error) {
+func GetUsers() ([]model.User, error) {
 	collection := database.Db.Collection("users")
-	users := make([]model.UserResult, 0)
+	users := make([]model.User, 0)
 	cursor, err := collection.Find(context.TODO(), bson.D{})
 	if err != nil {
 		return nil, err

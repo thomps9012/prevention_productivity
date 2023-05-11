@@ -30,19 +30,20 @@ func (r *mutationResolver) Login(ctx context.Context, login model.LoginInput) (*
 	return res, nil
 }
 
-func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser, id string) (*model.UserUpdateRes, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, updateUser model.UpdateUser) (*model.UserUpdateRes, error) {
 	var filter bson.D
 	user_id, err := auth.ForUserID(ctx)
 	if err != nil {
 		return nil, err
 	}
 	admin_err := auth.ForAdmin(ctx)
+	filter = bson.D{{Key: "_id", Value: updateUser.ID}}
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: user_id}}
-	} else {
-		filter = bson.D{{Key: "_id", Value: updateUser.ID}}
+		if user_id != updateUser.ID {
+			return nil, errors.New("you are unauthorized to edit this account")
+		}
 	}
-	res, err := methods.UpdateUser(updateUser, filter)
+	res, err := methods.UpdateUser(updateUser, filter, admin_err == nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,10 +57,11 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*model.Us
 		return nil, err
 	}
 	admin_err := auth.ForAdmin(ctx)
+	filter = bson.D{{Key: "_id", Value: id}}
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: user_id}}
-	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		if user_id != id {
+			return nil, errors.New("you are unauthorized to delete this account")
+		}
 	}
 	res, err := methods.DeleteUser(filter)
 	if err != nil {
@@ -581,14 +583,22 @@ func (r *mutationResolver) RejectSchoolReportDebrief(ctx context.Context, id str
 func (r *queryResolver) Users(ctx context.Context) ([]model.UserResult, error) {
 	admin_err := auth.ForAdmin(ctx)
 	var res []model.UserResult
-	var err error
 	if admin_err != nil {
-		res, err = methods.GetUserOverviews()
+		overviews, err := methods.GetUserOverviews()
+		if err != nil {
+			return nil, err
+		}
+		for _, overview := range overviews {
+			res = append(res, overview)
+		}
 	} else {
-		res, err = methods.GetUsers()
-	}
-	if err != nil {
-		return nil, err
+		users, err := methods.GetUsers()
+		if err != nil {
+			return nil, err
+		}
+		for _, user := range users {
+			res = append(res, user)
+		}
 	}
 	return res, nil
 }

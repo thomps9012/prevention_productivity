@@ -280,6 +280,7 @@ type SchoolReportPlanWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
+  notes: [Note!]!
 }
 
 type SchoolReportPlanOverview {
@@ -545,6 +546,7 @@ input NewSchoolReportPlan {
 
 input UpdateSchoolReportPlan {
   id: ID!
+  date: String!
   co_facilitators: [ID]!
   curriculum: String!
   lesson_topics: String!
@@ -643,7 +645,7 @@ type LogRes {
 
 type EventRes {
   id: ID!
-  user_id: UserOverview!
+  event_lead: UserOverview!
   title: String!
   start_date: String!
   status: String!
@@ -678,7 +680,7 @@ type SchoolReportDebriefRes {
 type Mutation {
   createUser(newUser: NewUser!): LoginRes!
   login(login: LoginInput!): LoginRes!
-  updateUser(updateUser: UpdateUser!, id: ID!): UserUpdateRes!
+  updateUser(updateUser: UpdateUser!): UserUpdateRes!
   deleteUser(id: ID!): UserUpdateRes!
   createGrant(newGrant: NewGrant!): GrantDetail!
   updateGrant(updateGrant: UpdateGrant!): Grant!

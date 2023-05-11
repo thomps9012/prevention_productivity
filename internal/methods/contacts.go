@@ -14,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
 	projection := options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "type", Value: 1}, {Key: "name", Value: 1}, {Key: "active", Value: 1}})
 	cursor, err := database.Db.Collection("contacts").Find(context.TODO(), filter, projection)
@@ -57,6 +58,7 @@ func FindUserContacts(user_id string) ([]*model.ContactOverview, error) {
 	return contacts, nil
 }
 
+// mutations
 func CreateContact(new_contact model.NewContact, contact_creator string) (*model.ContactDetail, error) {
 	collection := database.Db.Collection("contacts")
 	filter := bson.D{{Key: "name", Value: new_contact.Name}, {Key: "email", Value: new_contact.Email}, {Key: "phone", Value: new_contact.Phone}}

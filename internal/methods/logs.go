@@ -3,6 +3,7 @@ package methods
 import (
 	"context"
 	"errors"
+	"fmt"
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// queries
 func FindLogDetail(filter bson.D) (*model.LogWithNotes, error) {
 	LogWithNotes := make([]*model.LogWithNotes, 0)
 	logCollection := database.Db.Collection("logs")
@@ -34,9 +36,11 @@ func FindAllLogs(filter bson.D) ([]*model.LogOverview, error) {
 	logsCollection := database.Db.Collection("logs")
 	sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
-	note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$log_author"}}
-	log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage, unwind}
+	projection := bson.D{{Key: "$project", Value: bson.D{{Key: "notes", Value: 0}}}}
+	log_pipeline := mongo.Pipeline{filter, sort_stage, user_stage, note_stage, unwind, note_count, projection}
 	cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
 	if err != nil {
 		return nil, err
@@ -52,9 +56,10 @@ func FindUserLogs(user_id string) ([]*model.LogOverview, error) {
 	logsCollection := database.Db.Collection("logs")
 	sort_stage := bson.D{{Key: "$sort", Value: bson.D{{Key: "created_at", Value: -1}}}}
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
-	note_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
+	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$log_author"}}
-	log_pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, sort_stage, user_stage, note_stage, unwind}
+	log_pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}, sort_stage, user_stage, note_stage, note_count, unwind}
 	cursor, err := logsCollection.Aggregate(context.TODO(), log_pipeline)
 	if err != nil {
 		return nil, err
@@ -64,9 +69,11 @@ func FindUserLogs(user_id string) ([]*model.LogOverview, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(len(userLogs))
 	return userLogs, nil
 }
 
+// mutations
 func CreateNewLog(new_log model.NewLog, log_author string) (*model.LogRes, error) {
 	collection := database.Db.Collection("logs")
 	log := model.Log{
@@ -81,7 +88,7 @@ func CreateNewLog(new_log model.NewLog, log_author string) (*model.LogRes, error
 		UpdatedAt:     bson.TypeNull.String(),
 	}
 	var author_info model.UserOverview
-	err := collection.FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&author_info)
+	err := database.Db.Collection("users").FindOne(context.Background(), bson.M{"_id": log_author}, options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}})).Decode(&author_info)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +140,6 @@ func DeleteLog(filter bson.D) (bool, error) {
 	}
 	return result.DeletedCount == 1, nil
 }
-
 func ApproveLog(log_id string) (bool, error) {
 	collection := database.Db.Collection("logs")
 	filter := bson.D{{Key: "_id", Value: log_id}}
