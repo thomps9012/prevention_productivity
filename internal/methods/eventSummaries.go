@@ -16,26 +16,13 @@ import (
 func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 	var event_summary *model.EventSummaryWithNotes
 	collection := database.Db.Collection("event_summaries")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
-	co_planner_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_planners"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_planners"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
+	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
+	co_planner_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_planners"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_planners"}}}}
 	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
-	// add projection
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, event_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
+	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, event_stage, unwind_author, unwind_event}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -49,19 +36,12 @@ func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 func FindEventSummaries(filter bson.D) ([]*model.EventSummaryOverview, error) {
 	event_summaries := make([]*model.EventSummaryOverview, 0)
 	collection := database.Db.Collection("event_summaries")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
+	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
 	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, event_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
+	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, event_stage, unwind_author, unwind_event}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -75,19 +55,12 @@ func FindEventSummaries(filter bson.D) ([]*model.EventSummaryOverview, error) {
 func FindUserEventSummaries(user_id string) ([]*model.EventSummaryOverview, error) {
 	event_summaries := make([]*model.EventSummaryOverview, 0)
 	collection := database.Db.Collection("event_summaries")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}, {
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}, {Key: "title", Value: 1}, {Key: "start_date", Value: 1}}}},
-		},
-	}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
+	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
 	notes_stage := bson.D{{Key: "$count", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "note_count"}}}}
-	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage, event_stage}
+	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
+	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
+	pipeline := mongo.Pipeline{bson.D{{Key: "user_id", Value: user_id}}, notes_stage, user_stage, event_stage, unwind_author, unwind_event}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err

@@ -47,12 +47,12 @@ func Middleware() func(http.Handler) http.Handler {
 }
 
 // ForContext finds the user from the context. REQUIRES Middleware to have run.
-func ForUserID(ctx context.Context) (*string, error) {
+func ForUserID(ctx context.Context) (string, error) {
 	raw, _ := ctx.Value(userCtxKey).(*contextInfo)
 	if raw.UserID == "" {
-		return nil, errors.New("missing or invalid JSON Web Token")
+		return "", errors.New("missing or invalid JSON Web Token")
 	}
-	return &raw.UserID, nil
+	return raw.UserID, nil
 }
 
 func ForAdmin(ctx context.Context) error {

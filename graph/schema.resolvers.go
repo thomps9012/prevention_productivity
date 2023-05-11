@@ -77,7 +77,7 @@ func (r *mutationResolver) CreateGrant(ctx context.Context, newGrant model.NewGr
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateGrant(newGrant, *user_id)
+	res, err := methods.CreateGrant(newGrant, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (r *mutationResolver) CreateContact(ctx context.Context, newContact model.N
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateContact(newContact, *contact_creator)
+	res, err := methods.CreateContact(newContact, contact_creator)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (r *mutationResolver) UpdateContact(ctx context.Context, updateContact mode
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: updateContact.ID}, {Key: "created_by", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: updateContact.ID}, {Key: "created_by", Value: user_id}}
 	} else {
 		filter = bson.D{{Key: "_id", Value: updateContact.ID}}
 	}
@@ -149,7 +149,7 @@ func (r *mutationResolver) DeleteContact(ctx context.Context, id string) (bool, 
 	if admin_err == nil {
 		filter = bson.D{{Key: "_id", Value: id}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "created_by", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "created_by", Value: user_id}}
 	}
 	res, err := methods.DeleteContact(filter)
 	if err != nil {
@@ -163,7 +163,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateNote(newNote, *user_id)
+	res, err := methods.CreateNote(newNote, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,7 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, updateNote model.Upda
 	if is_admin == nil {
 		filter = bson.D{{Key: "_id", Value: updateNote.ID}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: updateNote.ID}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: updateNote.ID}, {Key: "user_id", Value: user_id}}
 	}
 	res, err := methods.UpdateNote(updateNote, filter)
 	if err != nil {
@@ -199,7 +199,7 @@ func (r *mutationResolver) DeleteNote(ctx context.Context, id string) (bool, err
 	if is_admin == nil {
 		filter = bson.D{{Key: "_id", Value: id}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	}
 	res, err := methods.DeleteNote(filter)
 	if err != nil {
@@ -213,7 +213,7 @@ func (r *mutationResolver) CreateLog(ctx context.Context, newLog model.NewLog) (
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateNewLog(newLog, *user_id)
+	res, err := methods.CreateNewLog(newLog, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -247,9 +247,9 @@ func (r *mutationResolver) DeleteLog(ctx context.Context, id string) (bool, erro
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.DeleteLog(filter)
 	if err != nil {
@@ -287,7 +287,7 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, newEvent model.NewEv
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateEvent(newEvent, *user_id)
+	res, err := methods.CreateEvent(newEvent, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -321,9 +321,9 @@ func (r *mutationResolver) DeleteEvent(ctx context.Context, id string) (bool, er
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.DeleteEvent(filter)
 	if err != nil {
@@ -361,7 +361,7 @@ func (r *mutationResolver) CreateEventSummary(ctx context.Context, newEventSumma
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateEventSummary(newEventSummary, *user_id)
+	res, err := methods.CreateEventSummary(newEventSummary, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -395,9 +395,9 @@ func (r *mutationResolver) DeleteEventSummary(ctx context.Context, id string) (b
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.DeleteEventSummary(filter)
 	if err != nil {
@@ -435,7 +435,7 @@ func (r *mutationResolver) CreateSchoolReportPlan(ctx context.Context, newSchool
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateSchoolReportPlan(newSchoolReportPlan, *user_id)
+	res, err := methods.CreateSchoolReportPlan(newSchoolReportPlan, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -450,7 +450,7 @@ func (r *mutationResolver) UpdateSchoolReportPlan(ctx context.Context, updateSch
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: updateSchoolReportPlan.ID}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: updateSchoolReportPlan.ID}, {Key: "user_id", Value: user_id}}
 	} else {
 		filter = bson.D{{Key: "_id", Value: updateSchoolReportPlan.ID}}
 	}
@@ -469,9 +469,9 @@ func (r *mutationResolver) DeleteSchoolReportPlan(ctx context.Context, id string
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.DeleteSchoolReportPlan(filter)
 	if err != nil {
@@ -509,7 +509,7 @@ func (r *mutationResolver) CreateSchoolReportDebrief(ctx context.Context, newSch
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateSchoolReportDebrief(newSchoolReportDebrief, *user_id)
+	res, err := methods.CreateSchoolReportDebrief(newSchoolReportDebrief, user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -524,7 +524,7 @@ func (r *mutationResolver) UpdateSchoolReportDebrief(ctx context.Context, update
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: updateSchoolReportDebrief.ID}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "_id", Value: updateSchoolReportDebrief.ID}, {Key: "user_id", Value: user_id}}
 	} else {
 		filter = bson.D{{Key: "_id", Value: updateSchoolReportDebrief.ID}}
 	}
@@ -543,9 +543,9 @@ func (r *mutationResolver) DeleteSchoolReportDebrief(ctx context.Context, id str
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: *user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.DeleteDebrief(filter)
 	if err != nil {
@@ -648,9 +648,9 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*model.LogWithNotes
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.FindLogDetail(filter)
 	if err != nil {
@@ -667,8 +667,9 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.LogOverview, erro
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindAllLogs(filter)
@@ -698,9 +699,9 @@ func (r *queryResolver) Event(ctx context.Context, id string) (*model.EventWithN
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.FindEventDetails(filter)
 	if err != nil {
@@ -717,8 +718,9 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.EventOverview, err
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindEvents(filter)
@@ -748,9 +750,9 @@ func (r *queryResolver) EventSummary(ctx context.Context, id string) (*model.Eve
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.EventSummaryDetail(filter)
 	if err != nil {
@@ -767,8 +769,9 @@ func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.EventSumma
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindEventSummaries(filter)
@@ -798,9 +801,9 @@ func (r *queryResolver) SchoolReportPlan(ctx context.Context, id string) (*model
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.FindSchoolReportPlanDetail(filter)
 	if err != nil {
@@ -817,8 +820,9 @@ func (r *queryResolver) SchoolReportPlans(ctx context.Context) ([]*model.SchoolR
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindSchoolReportPlans(filter)
@@ -848,9 +852,9 @@ func (r *queryResolver) SchoolReportDebrief(ctx context.Context, id string) (*mo
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.FindSchoolReportDebriefDetail(filter)
 	if err != nil {
@@ -867,8 +871,9 @@ func (r *queryResolver) SchoolReportDebriefs(ctx context.Context) ([]*model.Scho
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "user_id", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindSchoolReportDebriefs(filter)
@@ -914,9 +919,9 @@ func (r *queryResolver) Contact(ctx context.Context, id string) (*model.ContactD
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "_id", Value: id}, {Key: "created_by", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "created_by", Value: user_id}}}}
 	} else {
-		filter = bson.D{{Key: "_id", Value: id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
 	}
 	res, err := methods.FindContactDetail(filter)
 	if err != nil {
@@ -933,8 +938,9 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.ContactOverview,
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "created_by", Value: user_id}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "created_by", Value: user_id}}}}
 	} else {
+		// possible refactor
 		filter = bson.D{{}}
 	}
 	res, err := methods.FindContacts(filter)

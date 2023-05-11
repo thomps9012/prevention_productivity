@@ -3,6 +3,7 @@ package methods
 import (
 	"context"
 	"errors"
+	"fmt"
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
@@ -27,14 +28,11 @@ func FindContacts(filter bson.D) ([]*model.ContactOverview, error) {
 	return contacts, nil
 }
 func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
-	var contactDetail model.ContactDetail
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}, {
-		// add unwinding
-		Key: "pipeline", Value: bson.A{
-			bson.D{{Key: "$project", Value: bson.D{{Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "_id", Value: 1}}}},
-		},
-	}}}}
-	pipeline := mongo.Pipeline{filter, user_stage}
+	contactDetail := make([]model.ContactDetail, 0)
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}}}}
+	unwind_stage := bson.D{{Key: "$unwind", Value: "$created_by"}}
+	fmt.Println(filter)
+	pipeline := mongo.Pipeline{filter, user_stage, unwind_stage}
 	cursor, err := database.Db.Collection("contacts").Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -43,7 +41,7 @@ func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
 	if err != nil {
 		return nil, err
 	}
-	return nil, errors.New("not implemented")
+	return &contactDetail[0], nil
 }
 func FindUserContacts(user_id string) ([]*model.ContactOverview, error) {
 	projection := options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "type", Value: 1}, {Key: "name", Value: 1}, {Key: "active", Value: 1}})
@@ -81,6 +79,7 @@ func CreateContact(new_contact model.NewContact, contact_creator string) (*model
 		Email:     new_contact.Email,
 		Type:      new_contact.Type,
 		Phone:     new_contact.Phone,
+		Notes:     new_contact.Notes,
 		CreatedBy: created_by.ID,
 		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 		Active:    true,
@@ -102,11 +101,11 @@ func CreateContact(new_contact model.NewContact, contact_creator string) (*model
 		Phone:  contact.Phone,
 		Notes:  contact.Notes,
 		Active: true,
-		CreatedBy: []*model.UserOverview{{
+		CreatedBy: &model.UserOverview{
 			ID:        contact.CreatedBy,
 			FirstName: created_by.FirstName,
 			LastName:  created_by.LastName,
-		}},
+		},
 		CreatedAt: contact.CreatedAt,
 		UpdatedAt: bson.TypeNull.String(),
 		DeletedAt: bson.TypeNull.String(),

@@ -324,7 +324,7 @@ type ContactDetail {
   phone: String
   notes: String
   active: Boolean!
-  created_by: [UserOverview!]!
+  created_by: UserOverview!
   created_at: String!
   updated_at: String!
   deleted_at: String!
