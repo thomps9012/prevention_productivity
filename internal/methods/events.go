@@ -97,7 +97,7 @@ func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRe
 		Agenda:                  new_event.Agenda,
 		TargetAudience:          new_event.TargetAudience,
 		PartingGifts:            new_event.PartingGifts,
-		MarketingMaterial:       new_event.MarketingMaterials,
+		MarketingMaterials:      new_event.MarketingMaterials,
 		Supplies:                new_event.Supplies,
 		SpecialOrders:           new_event.SpecialOrders,
 		Performance:             *new_event.Performance,

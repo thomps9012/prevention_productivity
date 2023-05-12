@@ -60,7 +60,7 @@ type Event struct {
 	Agenda                  []string  `json:"agenda" bson:"agenda"`
 	TargetAudience          string    `json:"target_audience" bson:"target_audience"`
 	PartingGifts            []*string `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial       []*string `json:"marketing_material" bson:"marketing_material"`
+	MarketingMaterials      []*string `json:"marketing_materials" bson:"marketing_materials"`
 	Supplies                []*string `json:"supplies" bson:"supplies"`
 	SpecialOrders           []*string `json:"special_orders" bson:"special_orders"`
 	Performance             string    `json:"performance" bson:"performance"`
@@ -171,7 +171,7 @@ type EventWithNotes struct {
 	Agenda                  []string        `json:"agenda" bson:"agenda"`
 	TargetAudience          string          `json:"target_audience" bson:"target_audience"`
 	PartingGifts            []*string       `json:"parting_gifts" bson:"parting_gifts"`
-	MarketingMaterial       []*string       `json:"marketing_material" bson:"marketing_material"`
+	MarketingMaterials      []*string       `json:"marketing_materials" bson:"marketing_materials"`
 	Supplies                []*string       `json:"supplies" bson:"supplies"`
 	SpecialOrders           []*string       `json:"special_orders" bson:"special_orders"`
 	Performance             string          `json:"performance" bson:"performance"`

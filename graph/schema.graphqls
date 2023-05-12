@@ -107,7 +107,7 @@ type Event {
   agenda: [String!]!
   target_audience: String!
   parting_gifts: [String]!
-  marketing_material: [String]!
+  marketing_materials: [String]!
   supplies: [String]!
   special_orders: [String]!
   performance: String!
@@ -221,7 +221,7 @@ type EventWithNotes {
   agenda: [String!]!
   target_audience: String!
   parting_gifts: [String]!
-  marketing_material: [String]!
+  marketing_materials: [String]!
   supplies: [String]!
   special_orders: [String]!
   performance: String!

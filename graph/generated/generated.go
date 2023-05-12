@@ -98,7 +98,7 @@ type ComplexityRoot struct {
 		GrantGoals              func(childComplexity int) int
 		GrantID                 func(childComplexity int) int
 		ID                      func(childComplexity int) int
-		MarketingMaterial       func(childComplexity int) int
+		MarketingMaterials      func(childComplexity int) int
 		NewEvent                func(childComplexity int) int
 		PartingGifts            func(childComplexity int) int
 		Performance             func(childComplexity int) int
@@ -210,7 +210,7 @@ type ComplexityRoot struct {
 		GrantGoals              func(childComplexity int) int
 		GrantID                 func(childComplexity int) int
 		ID                      func(childComplexity int) int
-		MarketingMaterial       func(childComplexity int) int
+		MarketingMaterials      func(childComplexity int) int
 		NewEvent                func(childComplexity int) int
 		Notes                   func(childComplexity int) int
 		PartingGifts            func(childComplexity int) int
@@ -943,12 +943,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Event.ID(childComplexity), true
 
-	case "Event.marketing_material":
-		if e.complexity.Event.MarketingMaterial == nil {
+	case "Event.marketing_materials":
+		if e.complexity.Event.MarketingMaterials == nil {
 			break
 		}
 
-		return e.complexity.Event.MarketingMaterial(childComplexity), true
+		return e.complexity.Event.MarketingMaterials(childComplexity), true
 
 	case "Event.new_event":
 		if e.complexity.Event.NewEvent == nil {
@@ -1559,12 +1559,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventWithNotes.ID(childComplexity), true
 
-	case "EventWithNotes.marketing_material":
-		if e.complexity.EventWithNotes.MarketingMaterial == nil {
+	case "EventWithNotes.marketing_materials":
+		if e.complexity.EventWithNotes.MarketingMaterials == nil {
 			break
 		}
 
-		return e.complexity.EventWithNotes.MarketingMaterial(childComplexity), true
+		return e.complexity.EventWithNotes.MarketingMaterials(childComplexity), true
 
 	case "EventWithNotes.new_event":
 		if e.complexity.EventWithNotes.NewEvent == nil {
@@ -3871,7 +3871,7 @@ type Event {
   agenda: [String!]!
   target_audience: String!
   parting_gifts: [String]!
-  marketing_material: [String]!
+  marketing_materials: [String]!
   supplies: [String]!
   special_orders: [String]!
   performance: String!
@@ -3985,7 +3985,7 @@ type EventWithNotes {
   agenda: [String!]!
   target_audience: String!
   parting_gifts: [String]!
-  marketing_material: [String]!
+  marketing_materials: [String]!
   supplies: [String]!
   special_orders: [String]!
   performance: String!
@@ -7322,8 +7322,8 @@ func (ec *executionContext) fieldContext_Event_parting_gifts(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Event_marketing_material(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Event_marketing_material(ctx, field)
+func (ec *executionContext) _Event_marketing_materials(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_marketing_materials(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -7336,7 +7336,7 @@ func (ec *executionContext) _Event_marketing_material(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MarketingMaterial, nil
+		return obj.MarketingMaterials, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7353,7 +7353,7 @@ func (ec *executionContext) _Event_marketing_material(ctx context.Context, field
 	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Event_marketing_material(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Event_marketing_materials(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Event",
 		Field:      field,
@@ -11244,8 +11244,8 @@ func (ec *executionContext) fieldContext_EventWithNotes_parting_gifts(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _EventWithNotes_marketing_material(ctx context.Context, field graphql.CollectedField, obj *model.EventWithNotes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventWithNotes_marketing_material(ctx, field)
+func (ec *executionContext) _EventWithNotes_marketing_materials(ctx context.Context, field graphql.CollectedField, obj *model.EventWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EventWithNotes_marketing_materials(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11258,7 +11258,7 @@ func (ec *executionContext) _EventWithNotes_marketing_material(ctx context.Conte
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MarketingMaterial, nil
+		return obj.MarketingMaterials, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11275,7 +11275,7 @@ func (ec *executionContext) _EventWithNotes_marketing_material(ctx context.Conte
 	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_EventWithNotes_marketing_material(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_EventWithNotes_marketing_materials(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "EventWithNotes",
 		Field:      field,
@@ -16846,8 +16846,8 @@ func (ec *executionContext) fieldContext_Mutation_updateEvent(ctx context.Contex
 				return ec.fieldContext_Event_target_audience(ctx, field)
 			case "parting_gifts":
 				return ec.fieldContext_Event_parting_gifts(ctx, field)
-			case "marketing_material":
-				return ec.fieldContext_Event_marketing_material(ctx, field)
+			case "marketing_materials":
+				return ec.fieldContext_Event_marketing_materials(ctx, field)
 			case "supplies":
 				return ec.fieldContext_Event_supplies(ctx, field)
 			case "special_orders":
@@ -19301,8 +19301,8 @@ func (ec *executionContext) fieldContext_Query_event(ctx context.Context, field 
 				return ec.fieldContext_EventWithNotes_target_audience(ctx, field)
 			case "parting_gifts":
 				return ec.fieldContext_EventWithNotes_parting_gifts(ctx, field)
-			case "marketing_material":
-				return ec.fieldContext_EventWithNotes_marketing_material(ctx, field)
+			case "marketing_materials":
+				return ec.fieldContext_EventWithNotes_marketing_materials(ctx, field)
 			case "supplies":
 				return ec.fieldContext_EventWithNotes_supplies(ctx, field)
 			case "special_orders":
@@ -28413,9 +28413,9 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "marketing_material":
+		case "marketing_materials":
 
-			out.Values[i] = ec._Event_marketing_material(ctx, field, obj)
+			out.Values[i] = ec._Event_marketing_materials(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -29184,9 +29184,9 @@ func (ec *executionContext) _EventWithNotes(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "marketing_material":
+		case "marketing_materials":
 
-			out.Values[i] = ec._EventWithNotes_marketing_material(ctx, field, obj)
+			out.Values[i] = ec._EventWithNotes_marketing_materials(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
