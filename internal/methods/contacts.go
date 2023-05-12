@@ -86,7 +86,6 @@ func CreateContact(new_contact model.NewContact, contact_creator string) (*model
 		CreatedBy: created_by.ID,
 		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
 		Active:    true,
-		DeletedAt: bson.TypeNull.String(),
 		UpdatedAt: bson.TypeNull.String(),
 	}
 	res, err := collection.InsertOne(context.TODO(), contact)
@@ -111,7 +110,6 @@ func CreateContact(new_contact model.NewContact, contact_creator string) (*model
 		},
 		CreatedAt: contact.CreatedAt,
 		UpdatedAt: bson.TypeNull.String(),
-		DeletedAt: bson.TypeNull.String(),
 	}, nil
 }
 func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, error) {

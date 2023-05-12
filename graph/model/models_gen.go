@@ -17,7 +17,6 @@ type Contact struct {
 	CreatedBy string  `json:"created_by" bson:"created_by"`
 	CreatedAt string  `json:"created_at" bson:"created_at"`
 	UpdatedAt string  `json:"updated_at" bson:"updated_at"`
-	DeletedAt string  `json:"deleted_at" bson:"deleted_at"`
 }
 
 type ContactDetail struct {
@@ -31,7 +30,6 @@ type ContactDetail struct {
 	CreatedBy *UserOverview `json:"created_by" bson:"created_by"`
 	CreatedAt string        `json:"created_at" bson:"created_at"`
 	UpdatedAt string        `json:"updated_at" bson:"updated_at"`
-	DeletedAt string        `json:"deleted_at" bson:"deleted_at"`
 }
 
 type ContactOverview struct {
