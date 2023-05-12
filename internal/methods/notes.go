@@ -20,9 +20,9 @@ func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*mod
 		return nil, err
 	}
 	if can_view_notes == 0 {
-		return nil, errors.New("no notes for this user and item")
+		return nil, errors.New("you're attempting to view notes on an item that you either didn't create, or doesn't exist")
 	}
-	filter := bson.D{{Key: "item_id", Value: item_id}}
+	filter := bson.D{{Key: "$match", Value: bson.D{{Key: "item_id", Value: item_id}}}}
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$author"}}
 	pipeline := mongo.Pipeline{filter, user_stage, unwind}
@@ -37,8 +37,7 @@ func FindItemNotes(item_id string, item_filter bson.D, item_type string) ([]*mod
 	}
 	return notes, nil
 }
-func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
-	filter := bson.D{{Key: "_id", Value: note_id}}
+func FindNoteDetail(filter bson.D) (*model.NoteDetail, error) {
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$author"}}
 	pipeline := mongo.Pipeline{filter, user_stage, unwind}
@@ -50,6 +49,9 @@ func FindNoteDetail(note_id string) (*model.NoteDetail, error) {
 	err = cursor.All(context.TODO(), &note)
 	if err != nil {
 		return nil, err
+	}
+	if len(note) == 0 {
+		return nil, errors.New("you're attempting to view a note that either doesn't exist, or you didn't create")
 	}
 	return note[0], nil
 }

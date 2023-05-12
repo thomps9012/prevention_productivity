@@ -149,7 +149,7 @@ type EventSummaryWithNotes struct {
 	Status           string            `json:"status" bson:"status"`
 	CreatedAt        string            `json:"created_at" bson:"created_at"`
 	UpdatedAt        string            `json:"updated_at" bson:"updated_at"`
-	Notes            []*Note           `json:"notes" bson:"notes"`
+	Notes            []*ItemNote       `json:"notes" bson:"notes"`
 }
 
 type EventWithNotes struct {
@@ -189,7 +189,7 @@ type EventWithNotes struct {
 	CreatedAt               string          `json:"created_at" bson:"created_at"`
 	UpdatedAt               string          `json:"updated_at" bson:"updated_at"`
 	Status                  string          `json:"status" bson:"status"`
-	Notes                   []*Note         `json:"notes" bson:"notes"`
+	Notes                   []*ItemNote     `json:"notes" bson:"notes"`
 }
 
 type Grant struct {
@@ -237,6 +237,14 @@ type GrantOverview struct {
 	Active      bool    `json:"active" bson:"active"`
 }
 
+type ItemNote struct {
+	ID        string        `json:"id" bson:"_id"`
+	Author    *UserOverview `json:"author" bson:"author"`
+	Title     string        `json:"title" bson:"title"`
+	Content   string        `json:"content" bson:"content"`
+	CreatedAt string        `json:"created_at" bson:"created_at"`
+}
+
 type Log struct {
 	ID            string `json:"id" bson:"_id"`
 	UserID        string `json:"user_id" bson:"user_id"`
@@ -275,7 +283,7 @@ type LogWithNotes struct {
 	Status        string        `json:"status" bson:"status"`
 	CreatedAt     string        `json:"created_at" bson:"created_at"`
 	UpdatedAt     string        `json:"updated_at" bson:"updated_at"`
-	Notes         []*Note       `json:"notes" bson:"notes"`
+	Notes         []*ItemNote   `json:"notes" bson:"notes"`
 }
 
 type LoginInput struct {
@@ -455,7 +463,7 @@ type SchoolReportDebriefWithNotes struct {
 	Status                 string                       `json:"status" bson:"status"`
 	CreatedAt              string                       `json:"created_at" bson:"created_at"`
 	UpdatedAt              string                       `json:"updated_at" bson:"updated_at"`
-	Notes                  []*Note                      `json:"notes" bson:"notes"`
+	Notes                  []*ItemNote                  `json:"notes" bson:"notes"`
 }
 
 type SchoolReportPlan struct {
@@ -507,7 +515,7 @@ type SchoolReportPlanWithNotes struct {
 	Status         string          `json:"status" bson:"status"`
 	CreatedAt      string          `json:"created_at" bson:"created_at"`
 	UpdatedAt      string          `json:"updated_at" bson:"updated_at"`
-	Notes          []*Note         `json:"notes" bson:"notes"`
+	Notes          []*ItemNote     `json:"notes" bson:"notes"`
 }
 
 type UpdateContact struct {

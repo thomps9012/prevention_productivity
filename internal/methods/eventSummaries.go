@@ -20,7 +20,10 @@ func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "summary_author"}}}}
 	event_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "events"}, {Key: "localField", Value: "event_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_description"}}}}
 	co_planner_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_planners"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_planners"}}}}
-	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}, {Key: "pipeline", Value: bson.A{
+		bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}},
+		bson.D{{Key: "$unwind", Value: "$author"}},
+	}}}}}
 	unwind_author := bson.D{{Key: "$unwind", Value: "$summary_author"}}
 	unwind_event := bson.D{{Key: "$unwind", Value: "$event_description"}}
 	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, event_stage, unwind_author, unwind_event}

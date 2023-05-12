@@ -19,7 +19,10 @@ func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWit
 	collection := database.Db.Collection("school_report_debriefs")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
 	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
-	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}, {Key: "pipeline", Value: bson.A{
+		bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}},
+		bson.D{{Key: "$unwind", Value: "$author"}},
+	}}}}}
 	unwind_author := bson.D{{Key: "$unwind", Value: "$debrief_author"}}
 	unwind_lesson_plan := bson.D{{Key: "$unwind", Value: "$lesson_plan"}}
 	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, plan_stage, unwind_author, unwind_lesson_plan}

@@ -631,7 +631,18 @@ func (r *queryResolver) ItemNotes(ctx context.Context, itemID string, itemType s
 }
 
 func (r *queryResolver) Note(ctx context.Context, id string) (*model.NoteDetail, error) {
-	res, err := methods.FindNoteDetail(id)
+	var filter bson.D
+	user_id, err := auth.ForUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+	} else {
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+	}
+	res, err := methods.FindNoteDetail(filter)
 	if err != nil {
 		return nil, err
 	}

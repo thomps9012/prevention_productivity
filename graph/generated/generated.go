@@ -275,6 +275,14 @@ type ComplexityRoot struct {
 		StartDate   func(childComplexity int) int
 	}
 
+	ItemNote struct {
+		Author    func(childComplexity int) int
+		Content   func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Title     func(childComplexity int) int
+	}
+
 	Log struct {
 		CreatedAt     func(childComplexity int) int
 		DailyActivity func(childComplexity int) int
@@ -1928,6 +1936,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GrantOverview.StartDate(childComplexity), true
+
+	case "ItemNote.author":
+		if e.complexity.ItemNote.Author == nil {
+			break
+		}
+
+		return e.complexity.ItemNote.Author(childComplexity), true
+
+	case "ItemNote.content":
+		if e.complexity.ItemNote.Content == nil {
+			break
+		}
+
+		return e.complexity.ItemNote.Content(childComplexity), true
+
+	case "ItemNote.created_at":
+		if e.complexity.ItemNote.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ItemNote.CreatedAt(childComplexity), true
+
+	case "ItemNote.id":
+		if e.complexity.ItemNote.ID == nil {
+			break
+		}
+
+		return e.complexity.ItemNote.ID(childComplexity), true
+
+	case "ItemNote.title":
+		if e.complexity.ItemNote.Title == nil {
+			break
+		}
+
+		return e.complexity.ItemNote.Title(childComplexity), true
 
 	case "Log.created_at":
 		if e.complexity.Log.CreatedAt == nil {
@@ -3779,6 +3822,14 @@ type Note {
   updated_at: String!
 }
 
+type ItemNote {
+  id: ID!
+  author: UserOverview!
+  title: String!
+  content: String!
+  created_at: String!
+}
+
 type NoteDetail {
   id: ID!
   item_id: ID!
@@ -3903,7 +3954,7 @@ type LogWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type LogOverview {
@@ -3952,7 +4003,7 @@ type EventWithNotes {
   created_at: String!
   updated_at: String!
   status: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type EventOverview {
@@ -3977,7 +4028,7 @@ type EventSummaryWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type EventSummaryOverview {
@@ -4001,7 +4052,7 @@ type SchoolReportPlanWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type SchoolReportPlanOverview {
@@ -4026,7 +4077,7 @@ type SchoolReportDebriefWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type SchoolReportDebriefOverview {
@@ -10346,9 +10397,9 @@ func (ec *executionContext) _EventSummaryWithNotes_notes(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Note)
+	res := resTmp.([]*model.ItemNote)
 	fc.Result = res
-	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventSummaryWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10360,21 +10411,17 @@ func (ec *executionContext) fieldContext_EventSummaryWithNotes_notes(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_ItemNote_id(ctx, field)
+			case "author":
+				return ec.fieldContext_ItemNote_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_ItemNote_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_ItemNote_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_ItemNote_created_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ItemNote", field.Name)
 		},
 	}
 	return fc, nil
@@ -12000,9 +12047,9 @@ func (ec *executionContext) _EventWithNotes_notes(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Note)
+	res := resTmp.([]*model.ItemNote)
 	fc.Result = res
-	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12014,21 +12061,17 @@ func (ec *executionContext) fieldContext_EventWithNotes_notes(ctx context.Contex
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_ItemNote_id(ctx, field)
+			case "author":
+				return ec.fieldContext_ItemNote_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_ItemNote_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_ItemNote_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_ItemNote_created_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ItemNote", field.Name)
 		},
 	}
 	return fc, nil
@@ -13626,6 +13669,234 @@ func (ec *executionContext) fieldContext_GrantOverview_active(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _ItemNote_id(ctx context.Context, field graphql.CollectedField, obj *model.ItemNote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ItemNote_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ItemNote_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ItemNote",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ItemNote_author(ctx context.Context, field graphql.CollectedField, obj *model.ItemNote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ItemNote_author(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Author, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserOverview)
+	fc.Result = res
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ItemNote_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ItemNote",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserOverview_id(ctx, field)
+			case "first_name":
+				return ec.fieldContext_UserOverview_first_name(ctx, field)
+			case "last_name":
+				return ec.fieldContext_UserOverview_last_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserOverview", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ItemNote_title(ctx context.Context, field graphql.CollectedField, obj *model.ItemNote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ItemNote_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ItemNote_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ItemNote",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ItemNote_content(ctx context.Context, field graphql.CollectedField, obj *model.ItemNote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ItemNote_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Content, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ItemNote_content(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ItemNote",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ItemNote_created_at(ctx context.Context, field graphql.CollectedField, obj *model.ItemNote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ItemNote_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ItemNote_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ItemNote",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Log_id(ctx context.Context, field graphql.CollectedField, obj *model.Log) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Log_id(ctx, field)
 	if err != nil {
@@ -14908,9 +15179,9 @@ func (ec *executionContext) _LogWithNotes_notes(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Note)
+	res := resTmp.([]*model.ItemNote)
 	fc.Result = res
-	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LogWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14922,21 +15193,17 @@ func (ec *executionContext) fieldContext_LogWithNotes_notes(ctx context.Context,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_ItemNote_id(ctx, field)
+			case "author":
+				return ec.fieldContext_ItemNote_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_ItemNote_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_ItemNote_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_ItemNote_created_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ItemNote", field.Name)
 		},
 	}
 	return fc, nil
@@ -21842,9 +22109,9 @@ func (ec *executionContext) _SchoolReportDebriefWithNotes_notes(ctx context.Cont
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Note)
+	res := resTmp.([]*model.ItemNote)
 	fc.Result = res
-	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21856,21 +22123,17 @@ func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_notes(ctx 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_ItemNote_id(ctx, field)
+			case "author":
+				return ec.fieldContext_ItemNote_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_ItemNote_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_ItemNote_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_ItemNote_created_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ItemNote", field.Name)
 		},
 	}
 	return fc, nil
@@ -23515,9 +23778,9 @@ func (ec *executionContext) _SchoolReportPlanWithNotes_notes(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Note)
+	res := resTmp.([]*model.ItemNote)
 	fc.Result = res
-	return ec.marshalNNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -23529,21 +23792,17 @@ func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_notes(ctx con
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "item_id":
-				return ec.fieldContext_Note_item_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
+				return ec.fieldContext_ItemNote_id(ctx, field)
+			case "author":
+				return ec.fieldContext_ItemNote_author(ctx, field)
 			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
+				return ec.fieldContext_ItemNote_title(ctx, field)
 			case "content":
-				return ec.fieldContext_Note_content(ctx, field)
+				return ec.fieldContext_ItemNote_content(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
+				return ec.fieldContext_ItemNote_created_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ItemNote", field.Name)
 		},
 	}
 	return fc, nil
@@ -29369,6 +29628,62 @@ func (ec *executionContext) _GrantOverview(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var itemNoteImplementors = []string{"ItemNote"}
+
+func (ec *executionContext) _ItemNote(ctx context.Context, sel ast.SelectionSet, obj *model.ItemNote) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, itemNoteImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ItemNote")
+		case "id":
+
+			out.Values[i] = ec._ItemNote_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "author":
+
+			out.Values[i] = ec._ItemNote_author(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+
+			out.Values[i] = ec._ItemNote_title(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "content":
+
+			out.Values[i] = ec._ItemNote_content(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "created_at":
+
+			out.Values[i] = ec._ItemNote_created_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var logImplementors = []string{"Log"}
 
 func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj *model.Log) graphql.Marshaler {
@@ -32525,6 +32840,60 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNItemNote2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNoteᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ItemNote) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNItemNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNote(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNItemNote2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐItemNote(ctx context.Context, sel ast.SelectionSet, v *model.ItemNote) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ItemNote(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNLog2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐLog(ctx context.Context, sel ast.SelectionSet, v model.Log) graphql.Marshaler {

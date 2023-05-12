@@ -58,6 +58,14 @@ type Note {
   updated_at: String!
 }
 
+type ItemNote {
+  id: ID!
+  author: UserOverview!
+  title: String!
+  content: String!
+  created_at: String!
+}
+
 type NoteDetail {
   id: ID!
   item_id: ID!
@@ -182,7 +190,7 @@ type LogWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type LogOverview {
@@ -231,7 +239,7 @@ type EventWithNotes {
   created_at: String!
   updated_at: String!
   status: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type EventOverview {
@@ -256,7 +264,7 @@ type EventSummaryWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type EventSummaryOverview {
@@ -280,7 +288,7 @@ type SchoolReportPlanWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type SchoolReportPlanOverview {
@@ -305,7 +313,7 @@ type SchoolReportDebriefWithNotes {
   status: String!
   created_at: String!
   updated_at: String!
-  notes: [Note!]!
+  notes: [ItemNote!]!
 }
 
 type SchoolReportDebriefOverview {

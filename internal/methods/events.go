@@ -19,7 +19,10 @@ func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 	collection := database.Db.Collection("events")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_lead"}}}}
 	co_planner_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_planners"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_planners"}}}}
-	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
+	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}, {Key: "pipeline", Value: bson.A{
+		bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}},
+		bson.D{{Key: "$unwind", Value: "$author"}},
+	}}}}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$event_lead"}}
 	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, unwind_stage}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
