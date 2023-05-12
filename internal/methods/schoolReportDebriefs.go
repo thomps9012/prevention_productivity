@@ -31,6 +31,9 @@ func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWit
 	if err != nil {
 		return nil, err
 	}
+	if len(debrief_detail) == 0 {
+		return nil, errors.New("you're attempting to view a debrief that either doesn't exist of you didn't create")
+	}
 	return debrief_detail[0], nil
 }
 func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOverview, error) {
@@ -118,6 +121,11 @@ func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief
 func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bson.D) (*model.SchoolReportDebrief, error) {
 	collection := database.Db.Collection("school_report_debriefs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var debrief model.SchoolReportDebrief
+	err := collection.FindOne(context.TODO(), filter).Decode(&debrief)
+	if err != nil {
+		return nil, errors.New("you're attempting to update a debrief that either doesn't exist, or you didn't create")
+	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "student_count", Value: update.StudentCount},
@@ -135,7 +143,7 @@ func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bs
 		Upsert:         &upsert,
 	}
 	var srd model.SchoolReportDebrief
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srd)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srd)
 	if err != nil {
 		return nil, err
 	}

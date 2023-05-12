@@ -114,7 +114,7 @@ func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) 
 	var plan model.SchoolReportPlan
 	err := collection.FindOne(context.TODO(), filter).Decode(&plan)
 	if err != nil {
-		return nil, errors.New("either plan doesn't exist or you're attempting to update a plan you didn't create")
+		return nil, errors.New("you're attempting to update a plan that either doesn't exist or you didn't create")
 	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{

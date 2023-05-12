@@ -103,6 +103,11 @@ func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, 
 func UpdateNote(update model.UpdateNote, filter bson.D) (*model.Note, error) {
 	collection := database.Db.Collection("notes")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var note model.Note
+	err := collection.FindOne(context.TODO(), filter).Decode(&note)
+	if err != nil {
+		return nil, errors.New("you're attempting to update a note that either doesn't exist or you didn't create")
+	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "title", Value: update.Title},
@@ -117,7 +122,7 @@ func UpdateNote(update model.UpdateNote, filter bson.D) (*model.Note, error) {
 		Upsert:         &upsert,
 	}
 	var n model.Note
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&n)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&n)
 	if err != nil {
 		return nil, err
 	}

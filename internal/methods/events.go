@@ -30,6 +30,9 @@ func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(EventWithNotes) == 0 {
+		return nil, errors.New("you're attempting to view an event that either doesn't exist or you didn't create")
+	}
 	return EventWithNotes[0], nil
 }
 func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
@@ -135,6 +138,11 @@ func CreateEvent(new_event model.NewEvent, event_creator string) (*model.EventRe
 func UpdateEvent(update model.UpdateEvent, filter bson.D) (*model.Event, error) {
 	collection := database.Db.Collection("events")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var event model.Event
+	err := collection.FindOne(context.TODO(), filter).Decode(&event)
+	if err != nil {
+		return nil, errors.New("you're attempting to update an event that either doesn't exist, or you didn't create")
+	}
 	after := options.After
 	upsert := true
 	opts := options.FindOneAndUpdateOptions{
@@ -142,7 +150,7 @@ func UpdateEvent(update model.UpdateEvent, filter bson.D) (*model.Event, error) 
 		ReturnDocument: &after,
 	}
 	var e model.Event
-	err := collection.FindOneAndUpdate(context.TODO(), filter, bson.D{{Key: "$set", Value: update}, {Key: "$set", Value: bson.D{{Key: "updated_at", Value: updated_at}}}}, &opts).Decode(&e)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, bson.D{{Key: "$set", Value: update}, {Key: "$set", Value: bson.D{{Key: "updated_at", Value: updated_at}}}}, &opts).Decode(&e)
 	if err != nil {
 		return nil, err
 	}

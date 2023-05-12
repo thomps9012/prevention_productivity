@@ -42,6 +42,9 @@ func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(contactDetail) == 0 {
+		return nil, errors.New("you're attempting to view a contact that either doesn't exist, or you didn't create")
+	}
 	return &contactDetail[0], nil
 }
 func FindUserContacts(user_id string) ([]*model.ContactOverview, error) {
@@ -115,6 +118,11 @@ func CreateContact(new_contact model.NewContact, contact_creator string) (*model
 }
 func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, error) {
 	collection := database.Db.Collection("contacts")
+	var contact model.Contact
+	err := collection.FindOne(context.TODO(), filter).Decode(&contact)
+	if err != nil {
+		return nil, errors.New("you're attempting to update a contact that either doesn't exist, or you didn't create")
+	}
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	update_fields := bson.D{
 		{Key: "$set", Value: bson.D{
@@ -133,7 +141,7 @@ func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, e
 		Upsert:         &upsert,
 	}
 	var c model.Contact
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_fields, &opts).Decode(&c)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_fields, &opts).Decode(&c)
 	if err != nil {
 		return nil, err
 	}

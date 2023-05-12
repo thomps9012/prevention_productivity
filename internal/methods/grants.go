@@ -28,6 +28,9 @@ func FindGrantDetail(grant_id string) (*model.GrantDetail, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(res) == 0 {
+		return nil, errors.New("no grant found for this id")
+	}
 	return res[0], nil
 }
 func FindAllGrants() ([]*model.GrantOverview, error) {

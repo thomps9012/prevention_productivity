@@ -115,7 +115,7 @@ func UpdateLog(update model.UpdateLog, filter bson.D) (*model.Log, error) {
 	var log model.Log
 	err := collection.FindOne(context.TODO(), filter).Decode(&log)
 	if err != nil {
-		return nil, errors.New("either log doesn't exist or you're attempting to update a log you didn't create")
+		return nil, errors.New("you're attempting to update a log that either doesn't exist or you didn't create")
 	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.M{

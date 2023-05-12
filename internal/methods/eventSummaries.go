@@ -32,6 +32,9 @@ func EventSummaryDetail(filter bson.D) (*model.EventSummaryWithNotes, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(event_summary) == 0 {
+		return nil, errors.New("you're attempting to view an event summary that either doesn't exist, or you didn't create")
+	}
 	return event_summary[0], nil
 }
 func FindEventSummaries(filter bson.D) ([]*model.EventSummaryOverview, error) {
@@ -121,6 +124,11 @@ func CreateEventSummary(new_summary model.NewEventSummary, summary_creator strin
 func UpdateEventSummary(update model.UpdateEventSummary, filter bson.D) (*model.EventSummary, error) {
 	collection := database.Db.Collection("event_summaries")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var summary model.EventSummary
+	err := collection.FindOne(context.TODO(), filter).Decode(&summary)
+	if err != nil {
+		return nil, errors.New("you're attempting to update an event summary that either doesn't exist, or you didn't create")
+	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "event_id", Value: update.EventID},
@@ -138,7 +146,7 @@ func UpdateEventSummary(update model.UpdateEventSummary, filter bson.D) (*model.
 		Upsert:         &upsert,
 	}
 	var e model.EventSummary
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&e)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&e)
 	if err != nil {
 		return nil, err
 	}
