@@ -23,7 +23,7 @@ func GenerateToken(email string, admin bool, user_id string) (string, error) {
 	claims["email"] = email
 	claims["admin"] = admin
 	claims["user_id"] = user_id
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 2).Unix()
 	tokenString, err := token.SignedString(key)
 	if err != nil {
 		return "", err
