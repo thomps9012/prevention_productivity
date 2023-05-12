@@ -56,7 +56,7 @@ func FindEvents(filter bson.D) ([]*model.EventOverview, error) {
 func FindUserEvents(user_id string) ([]*model.EventOverview, error) {
 	events := make([]*model.EventOverview, 0)
 	collection := database.Db.Collection("events")
-	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "log_author"}}}}
+	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "event_lead"}}}}
 	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
 	note_count := bson.D{{Key: "$addFields", Value: bson.M{"note_count": bson.M{"$size": "$notes"}}}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$event_lead"}}
