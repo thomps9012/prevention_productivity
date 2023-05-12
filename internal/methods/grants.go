@@ -104,10 +104,11 @@ func UpdateGrant(update model.UpdateGrant) (*model.Grant, error) {
 	collection := database.Db.Collection("grants")
 	updated_at := time.Now().Format("01-02-2006 15:04:05")
 	filter := bson.D{{Key: "_id", Value: update.ID}}
+	var active bool
 	if update.EndDate > time.Now().Format("01-02-2006 15:04:05") {
-		update.Active = true
+		active = true
 	} else {
-		update.Active = false
+		active = false
 	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
@@ -119,7 +120,7 @@ func UpdateGrant(update model.UpdateGrant) (*model.Grant, error) {
 			{Key: "award_date", Value: update.AwardDate},
 			{Key: "end_date", Value: update.EndDate},
 			{Key: "award_number", Value: update.AwardNumber},
-			{Key: "active", Value: update.Active},
+			{Key: "active", Value: active},
 			{Key: "budget", Value: update.Budget},
 			{Key: "updated_at", Value: updated_at},
 		}},

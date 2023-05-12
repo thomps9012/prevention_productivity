@@ -109,13 +109,17 @@ func CreateNewLog(new_log model.NewLog, log_author string) (*model.LogRes, error
 func UpdateLog(update model.UpdateLog, filter bson.D) (*model.Log, error) {
 	collection := database.Db.Collection("logs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var log model.Log
+	err := collection.FindOne(context.TODO(), filter).Decode(&log)
+	if err != nil {
+		return nil, errors.New("log doesn't exist or you're attempting to update a log for which you are unauthorized")
+	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.M{
 			"daily_activity": update.DailyActivity,
 			"positives":      update.Positives,
 			"improvements":   update.Improvements,
 			"next_steps":     update.NextSteps,
-			"status":         update.Status,
 			"updated_at":     updated_at,
 		}},
 	}
@@ -126,7 +130,7 @@ func UpdateLog(update model.UpdateLog, filter bson.D) (*model.Log, error) {
 		Upsert:         &upsert,
 	}
 	var l model.Log
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&l)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&l)
 	if err != nil {
 		return nil, err
 	}

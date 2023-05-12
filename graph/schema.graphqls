@@ -444,7 +444,6 @@ input UpdateLog {
   positives: String!
   improvements: String!
   next_steps: String!
-  status: String!
 }
 
 input NewEvent {
@@ -533,7 +532,6 @@ input UpdateEventSummary {
   challenges: String!
   successes: String!
   improvements: String!
-  status: String!
 }
 
 input NewSchoolReportPlan {
@@ -551,7 +549,6 @@ input UpdateSchoolReportPlan {
   curriculum: String!
   lesson_topics: String!
   school: String!
-  status: String!
 }
 
 input NewSchoolReportDebrief {
@@ -571,7 +568,6 @@ input UpdateSchoolReportDebrief {
   challenges_improvements: String!
   positives: String!
   discussion: String!
-  status: String!
 }
 
 input NewGrant {
@@ -597,7 +593,6 @@ input UpdateGrant {
   budget: Float!
   award_number: String!
   award_date: String!
-  active: Boolean!
 }
 
 input NewContact {

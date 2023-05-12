@@ -128,7 +128,6 @@ func UpdateEventSummary(update model.UpdateEventSummary, filter bson.D) (*model.
 			{Key: "challenges", Value: update.Challenges},
 			{Key: "successes", Value: update.Successes},
 			{Key: "improvements", Value: update.Improvements},
-			{Key: "status", Value: update.Status},
 			{Key: "updated_at", Value: updated_at},
 		}},
 	}

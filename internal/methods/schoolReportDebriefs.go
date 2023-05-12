@@ -125,7 +125,6 @@ func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bs
 			{Key: "discussion", Value: update.Discussion},
 			{Key: "positives", Value: update.Positives},
 			{Key: "challenges_improvements", Value: update.ChallengesImprovements},
-			{Key: "status", Value: update.Status},
 			{Key: "updated_at", Value: updated_at},
 		}},
 	}

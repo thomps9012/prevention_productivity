@@ -562,7 +562,6 @@ type UpdateEventSummary struct {
 	Challenges    string    `json:"challenges" bson:"challenges"`
 	Successes     string    `json:"successes" bson:"successes"`
 	Improvements  string    `json:"improvements" bson:"improvements"`
-	Status        string    `json:"status" bson:"status"`
 }
 
 type UpdateGrant struct {
@@ -576,7 +575,6 @@ type UpdateGrant struct {
 	Budget      float64  `json:"budget" bson:"budget"`
 	AwardNumber string   `json:"award_number" bson:"award_number"`
 	AwardDate   string   `json:"award_date" bson:"award_date"`
-	Active      bool     `json:"active" bson:"active"`
 }
 
 type UpdateLog struct {
@@ -585,7 +583,6 @@ type UpdateLog struct {
 	Positives     string `json:"positives" bson:"positives"`
 	Improvements  string `json:"improvements" bson:"improvements"`
 	NextSteps     string `json:"next_steps" bson:"next_steps"`
-	Status        string `json:"status" bson:"status"`
 }
 
 type UpdateNote struct {
@@ -602,7 +599,6 @@ type UpdateSchoolReportDebrief struct {
 	ChallengesImprovements string   `json:"challenges_improvements" bson:"challenges_improvements"`
 	Positives              string   `json:"positives" bson:"positives"`
 	Discussion             string   `json:"discussion" bson:"discussion"`
-	Status                 string   `json:"status" bson:"status"`
 }
 
 type UpdateSchoolReportPlan struct {
@@ -612,7 +608,6 @@ type UpdateSchoolReportPlan struct {
 	Curriculum     string    `json:"curriculum" bson:"curriculum"`
 	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
 	School         string    `json:"school" bson:"school"`
-	Status         string    `json:"status" bson:"status"`
 }
 
 type UpdateUser struct {

@@ -249,9 +249,9 @@ func (r *mutationResolver) DeleteLog(ctx context.Context, id string) (bool, erro
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+		filter = bson.D{{Key: "_id", Value: id}}
 	}
 	res, err := methods.DeleteLog(filter)
 	if err != nil {
@@ -680,7 +680,7 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.LogOverview, erro
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
 		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindAllLogs(filter)
 	if err != nil {

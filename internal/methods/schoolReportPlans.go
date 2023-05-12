@@ -114,7 +114,6 @@ func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) 
 			{Key: "date", Value: update.Date},
 			{Key: "lesson_topics", Value: update.LessonTopics},
 			{Key: "co_facilitators", Value: update.CoFacilitators},
-			{Key: "status", Value: update.Status},
 			{Key: "updated_at", Value: updated_at},
 		}},
 	}

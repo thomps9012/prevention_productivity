@@ -4165,7 +4165,6 @@ input UpdateLog {
   positives: String!
   improvements: String!
   next_steps: String!
-  status: String!
 }
 
 input NewEvent {
@@ -4254,7 +4253,6 @@ input UpdateEventSummary {
   challenges: String!
   successes: String!
   improvements: String!
-  status: String!
 }
 
 input NewSchoolReportPlan {
@@ -4272,7 +4270,6 @@ input UpdateSchoolReportPlan {
   curriculum: String!
   lesson_topics: String!
   school: String!
-  status: String!
 }
 
 input NewSchoolReportDebrief {
@@ -4292,7 +4289,6 @@ input UpdateSchoolReportDebrief {
   challenges_improvements: String!
   positives: String!
   discussion: String!
-  status: String!
 }
 
 input NewGrant {
@@ -4318,7 +4314,6 @@ input UpdateGrant {
   budget: Float!
   award_number: String!
   award_date: String!
-  active: Boolean!
 }
 
 input NewContact {
@@ -27356,14 +27351,6 @@ func (ec *executionContext) unmarshalInputUpdateEventSummary(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "status":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -27459,14 +27446,6 @@ func (ec *executionContext) unmarshalInputUpdateGrant(ctx context.Context, obj i
 			if err != nil {
 				return it, err
 			}
-		case "active":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
-			it.Active, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -27519,14 +27498,6 @@ func (ec *executionContext) unmarshalInputUpdateLog(ctx context.Context, obj int
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("next_steps"))
 			it.NextSteps, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "status":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27640,14 +27611,6 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportDebrief(ctx context.
 			if err != nil {
 				return it, err
 			}
-		case "status":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		}
 	}
 
@@ -27708,14 +27671,6 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportPlan(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school"))
 			it.School, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "status":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
