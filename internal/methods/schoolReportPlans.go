@@ -18,9 +18,10 @@ func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes
 	plan_detail := make([]*model.SchoolReportPlanWithNotes, 0)
 	collection := database.Db.Collection("school_report_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
+	co_facilitators := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_facilitators"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_facilitators"}}}}
 	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
 	unwind := bson.D{{Key: "$unwind", Value: "$plan_author"}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, unwind}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_facilitators, unwind}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
@@ -28,6 +29,9 @@ func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes
 	err = cursor.All(context.TODO(), &plan_detail)
 	if err != nil {
 		return nil, err
+	}
+	if len(plan_detail) == 0 {
+		return nil, errors.New("you're attempting to view a plan that either doesn't exist, or you didn't create")
 	}
 	return plan_detail[0], nil
 }
@@ -107,6 +111,11 @@ func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator str
 func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) (*model.SchoolReportPlan, error) {
 	collection := database.Db.Collection("school_report_plans")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
+	var plan model.SchoolReportPlan
+	err := collection.FindOne(context.TODO(), filter).Decode(&plan)
+	if err != nil {
+		return nil, errors.New("either plan doesn't exist or you're attempting to update a plan you didn't create")
+	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "curriculum", Value: update.Curriculum},
@@ -124,7 +133,7 @@ func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) 
 		Upsert:         &upsert,
 	}
 	var srp model.SchoolReportPlan
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srp)
+	err = collection.FindOneAndUpdate(context.TODO(), filter, update_args, &opts).Decode(&srp)
 	if err != nil {
 		return nil, err
 	}

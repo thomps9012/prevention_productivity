@@ -323,9 +323,9 @@ func (r *mutationResolver) DeleteEvent(ctx context.Context, id string) (bool, er
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+		filter = bson.D{{Key: "_id", Value: id}}
 	}
 	res, err := methods.DeleteEvent(filter)
 	if err != nil {
@@ -397,9 +397,9 @@ func (r *mutationResolver) DeleteEventSummary(ctx context.Context, id string) (b
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+		filter = bson.D{{Key: "_id", Value: id}}
 	}
 	res, err := methods.DeleteEventSummary(filter)
 	if err != nil {
@@ -471,9 +471,9 @@ func (r *mutationResolver) DeleteSchoolReportPlan(ctx context.Context, id string
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+		filter = bson.D{{Key: "_id", Value: id}}
 	}
 	res, err := methods.DeleteSchoolReportPlan(filter)
 	if err != nil {
@@ -545,9 +545,9 @@ func (r *mutationResolver) DeleteSchoolReportDebrief(ctx context.Context, id str
 	var filter bson.D
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "_id", Value: id}, {Key: "user_id", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: id}}}}
+		filter = bson.D{{Key: "_id", Value: id}}
 	}
 	res, err := methods.DeleteDebrief(filter)
 	if err != nil {
@@ -679,7 +679,6 @@ func (r *queryResolver) AllLogs(ctx context.Context) ([]*model.LogOverview, erro
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
-		// possible refactor
 		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindAllLogs(filter)
@@ -730,8 +729,7 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.EventOverview, err
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
-		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindEvents(filter)
 	if err != nil {
@@ -781,8 +779,7 @@ func (r *queryResolver) EventSummaries(ctx context.Context) ([]*model.EventSumma
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
-		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindEventSummaries(filter)
 	if err != nil {
@@ -832,8 +829,7 @@ func (r *queryResolver) SchoolReportPlans(ctx context.Context) ([]*model.SchoolR
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
-		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindSchoolReportPlans(filter)
 	if err != nil {
@@ -883,8 +879,7 @@ func (r *queryResolver) SchoolReportDebriefs(ctx context.Context) ([]*model.Scho
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
 	} else {
-		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindSchoolReportDebriefs(filter)
 	if err != nil {
@@ -950,8 +945,7 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.ContactOverview,
 	if admin_err != nil {
 		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "created_by", Value: user_id}}}}
 	} else {
-		// possible refactor
-		filter = bson.D{{}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
 	res, err := methods.FindContacts(filter)
 	if err != nil {

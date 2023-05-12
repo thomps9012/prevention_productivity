@@ -481,13 +481,13 @@ type ComplexityRoot struct {
 	}
 
 	SchoolReportPlanOverview struct {
-		CreatedAt    func(childComplexity int) int
-		Date         func(childComplexity int) int
-		ID           func(childComplexity int) int
-		NoteCount    func(childComplexity int) int
-		ReportAuthor func(childComplexity int) int
-		School       func(childComplexity int) int
-		Status       func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Date       func(childComplexity int) int
+		ID         func(childComplexity int) int
+		NoteCount  func(childComplexity int) int
+		PlanAuthor func(childComplexity int) int
+		School     func(childComplexity int) int
+		Status     func(childComplexity int) int
 	}
 
 	SchoolReportPlanRes struct {
@@ -507,7 +507,7 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		LessonTopics   func(childComplexity int) int
 		Notes          func(childComplexity int) int
-		ReportAuthor   func(childComplexity int) int
+		PlanAuthor     func(childComplexity int) int
 		School         func(childComplexity int) int
 		Status         func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
@@ -3352,12 +3352,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportPlanOverview.NoteCount(childComplexity), true
 
-	case "SchoolReportPlanOverview.report_author":
-		if e.complexity.SchoolReportPlanOverview.ReportAuthor == nil {
+	case "SchoolReportPlanOverview.plan_author":
+		if e.complexity.SchoolReportPlanOverview.PlanAuthor == nil {
 			break
 		}
 
-		return e.complexity.SchoolReportPlanOverview.ReportAuthor(childComplexity), true
+		return e.complexity.SchoolReportPlanOverview.PlanAuthor(childComplexity), true
 
 	case "SchoolReportPlanOverview.school":
 		if e.complexity.SchoolReportPlanOverview.School == nil {
@@ -3464,12 +3464,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportPlanWithNotes.Notes(childComplexity), true
 
-	case "SchoolReportPlanWithNotes.report_author":
-		if e.complexity.SchoolReportPlanWithNotes.ReportAuthor == nil {
+	case "SchoolReportPlanWithNotes.plan_author":
+		if e.complexity.SchoolReportPlanWithNotes.PlanAuthor == nil {
 			break
 		}
 
-		return e.complexity.SchoolReportPlanWithNotes.ReportAuthor(childComplexity), true
+		return e.complexity.SchoolReportPlanWithNotes.PlanAuthor(childComplexity), true
 
 	case "SchoolReportPlanWithNotes.school":
 		if e.complexity.SchoolReportPlanWithNotes.School == nil {
@@ -3993,7 +3993,7 @@ type EventSummaryOverview {
 type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
-  report_author: UserOverview!
+  plan_author: UserOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -4007,7 +4007,7 @@ type SchoolReportPlanWithNotes {
 type SchoolReportPlanOverview {
   id: ID!
   date: String!
-  report_author: UserOverview!
+  plan_author: UserOverview!
   school: String!
   status: String!
   created_at: String!
@@ -4071,7 +4071,7 @@ type GrantDetail {
   award_number: String!
   budget: Float!
   active: Boolean!
-  created_by: [UserOverview!]!
+  created_by: UserOverview!
   created_at: String!
   updated_at: String!
 }
@@ -13160,9 +13160,9 @@ func (ec *executionContext) _GrantDetail_created_by(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOverview)
+	res := resTmp.(*model.UserOverview)
 	fc.Result = res
-	return ec.marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrantDetail_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -19467,8 +19467,8 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlan(ctx context.Cont
 				return ec.fieldContext_SchoolReportPlanWithNotes_id(ctx, field)
 			case "date":
 				return ec.fieldContext_SchoolReportPlanWithNotes_date(ctx, field)
-			case "report_author":
-				return ec.fieldContext_SchoolReportPlanWithNotes_report_author(ctx, field)
+			case "plan_author":
+				return ec.fieldContext_SchoolReportPlanWithNotes_plan_author(ctx, field)
 			case "co_facilitators":
 				return ec.fieldContext_SchoolReportPlanWithNotes_co_facilitators(ctx, field)
 			case "curriculum":
@@ -19546,8 +19546,8 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlans(ctx context.Con
 				return ec.fieldContext_SchoolReportPlanOverview_id(ctx, field)
 			case "date":
 				return ec.fieldContext_SchoolReportPlanOverview_date(ctx, field)
-			case "report_author":
-				return ec.fieldContext_SchoolReportPlanOverview_report_author(ctx, field)
+			case "plan_author":
+				return ec.fieldContext_SchoolReportPlanOverview_plan_author(ctx, field)
 			case "school":
 				return ec.fieldContext_SchoolReportPlanOverview_school(ctx, field)
 			case "status":
@@ -19606,8 +19606,8 @@ func (ec *executionContext) fieldContext_Query_userSchoolReportPlans(ctx context
 				return ec.fieldContext_SchoolReportPlanOverview_id(ctx, field)
 			case "date":
 				return ec.fieldContext_SchoolReportPlanOverview_date(ctx, field)
-			case "report_author":
-				return ec.fieldContext_SchoolReportPlanOverview_report_author(ctx, field)
+			case "plan_author":
+				return ec.fieldContext_SchoolReportPlanOverview_plan_author(ctx, field)
 			case "school":
 				return ec.fieldContext_SchoolReportPlanOverview_school(ctx, field)
 			case "status":
@@ -22533,8 +22533,8 @@ func (ec *executionContext) fieldContext_SchoolReportPlanOverview_date(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReportPlanOverview_report_author(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanOverview) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReportPlanOverview_report_author(ctx, field)
+func (ec *executionContext) _SchoolReportPlanOverview_plan_author(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanOverview) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanOverview_plan_author(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22547,7 +22547,7 @@ func (ec *executionContext) _SchoolReportPlanOverview_report_author(ctx context.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ReportAuthor, nil
+		return obj.PlanAuthor, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22564,7 +22564,7 @@ func (ec *executionContext) _SchoolReportPlanOverview_report_author(ctx context.
 	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReportPlanOverview_report_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportPlanOverview_plan_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SchoolReportPlanOverview",
 		Field:      field,
@@ -23121,8 +23121,8 @@ func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_date(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _SchoolReportPlanWithNotes_report_author(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_report_author(ctx, field)
+func (ec *executionContext) _SchoolReportPlanWithNotes_plan_author(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_plan_author(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23135,7 +23135,7 @@ func (ec *executionContext) _SchoolReportPlanWithNotes_report_author(ctx context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ReportAuthor, nil
+		return obj.PlanAuthor, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23152,7 +23152,7 @@ func (ec *executionContext) _SchoolReportPlanWithNotes_report_author(ctx context
 	return ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_report_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_plan_author(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SchoolReportPlanWithNotes",
 		Field:      field,
@@ -31347,9 +31347,9 @@ func (ec *executionContext) _SchoolReportPlanOverview(ctx context.Context, sel a
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "report_author":
+		case "plan_author":
 
-			out.Values[i] = ec._SchoolReportPlanOverview_report_author(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportPlanOverview_plan_author(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -31480,9 +31480,9 @@ func (ec *executionContext) _SchoolReportPlanWithNotes(ctx context.Context, sel 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "report_author":
+		case "plan_author":
 
-			out.Values[i] = ec._SchoolReportPlanWithNotes_report_author(ctx, field, obj)
+			out.Values[i] = ec._SchoolReportPlanWithNotes_plan_author(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -33171,50 +33171,6 @@ func (ec *executionContext) marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_p
 
 	}
 	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalNUserOverview2ᚕᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.UserOverview) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUserOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUserOverview(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
 
 	return ret
 }

@@ -272,7 +272,7 @@ type EventSummaryOverview {
 type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
-  report_author: UserOverview!
+  plan_author: UserOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -286,7 +286,7 @@ type SchoolReportPlanWithNotes {
 type SchoolReportPlanOverview {
   id: ID!
   date: String!
-  report_author: UserOverview!
+  plan_author: UserOverview!
   school: String!
   status: String!
   created_at: String!
@@ -350,7 +350,7 @@ type GrantDetail {
   award_number: String!
   budget: Float!
   active: Boolean!
-  created_by: [UserOverview!]!
+  created_by: UserOverview!
   created_at: String!
   updated_at: String!
 }

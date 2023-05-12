@@ -95,7 +95,7 @@ func CreateGrant(new_grant model.NewGrant, grant_creator string) (*model.GrantDe
 		AwardNumber: grant.AwardNumber,
 		Budget:      grant.Budget,
 		Active:      grant.Active,
-		CreatedBy:   []*model.UserOverview{&grant_creator_info},
+		CreatedBy:   &grant_creator_info,
 		CreatedAt:   grant.CreatedAt,
 		UpdatedAt:   grant.UpdatedAt,
 	}, nil

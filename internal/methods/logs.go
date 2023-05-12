@@ -30,6 +30,9 @@ func FindLogDetail(filter bson.D) (*model.LogWithNotes, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(LogWithNotes) == 0 {
+		return nil, errors.New("you're attempting to view a log that either doesn't exist, or you didn't create")
+	}
 	return LogWithNotes[0], nil
 }
 func FindAllLogs(filter bson.D) ([]*model.LogOverview, error) {
@@ -112,7 +115,7 @@ func UpdateLog(update model.UpdateLog, filter bson.D) (*model.Log, error) {
 	var log model.Log
 	err := collection.FindOne(context.TODO(), filter).Decode(&log)
 	if err != nil {
-		return nil, errors.New("log doesn't exist or you're attempting to update a log for which you are unauthorized")
+		return nil, errors.New("either log doesn't exist or you're attempting to update a log you didn't create")
 	}
 	update_args := bson.D{
 		{Key: "$set", Value: bson.M{

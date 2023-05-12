@@ -210,20 +210,20 @@ type Grant struct {
 }
 
 type GrantDetail struct {
-	ID          string          `json:"id" bson:"_id"`
-	Name        string          `json:"name" bson:"name"`
-	Description string          `json:"description" bson:"description"`
-	Goals       []string        `json:"goals" bson:"goals"`
-	Objectives  []string        `json:"objectives" bson:"objectives"`
-	StartDate   string          `json:"start_date" bson:"start_date"`
-	AwardDate   string          `json:"award_date" bson:"award_date"`
-	EndDate     string          `json:"end_date" bson:"end_date"`
-	AwardNumber string          `json:"award_number" bson:"award_number"`
-	Budget      float64         `json:"budget" bson:"budget"`
-	Active      bool            `json:"active" bson:"active"`
-	CreatedBy   []*UserOverview `json:"created_by" bson:"created_by"`
-	CreatedAt   string          `json:"created_at" bson:"created_at"`
-	UpdatedAt   string          `json:"updated_at" bson:"updated_at"`
+	ID          string        `json:"id" bson:"_id"`
+	Name        string        `json:"name" bson:"name"`
+	Description string        `json:"description" bson:"description"`
+	Goals       []string      `json:"goals" bson:"goals"`
+	Objectives  []string      `json:"objectives" bson:"objectives"`
+	StartDate   string        `json:"start_date" bson:"start_date"`
+	AwardDate   string        `json:"award_date" bson:"award_date"`
+	EndDate     string        `json:"end_date" bson:"end_date"`
+	AwardNumber string        `json:"award_number" bson:"award_number"`
+	Budget      float64       `json:"budget" bson:"budget"`
+	Active      bool          `json:"active" bson:"active"`
+	CreatedBy   *UserOverview `json:"created_by" bson:"created_by"`
+	CreatedAt   string        `json:"created_at" bson:"created_at"`
+	UpdatedAt   string        `json:"updated_at" bson:"updated_at"`
 }
 
 type GrantOverview struct {
@@ -478,13 +478,13 @@ type SchoolReportPlanDescription struct {
 }
 
 type SchoolReportPlanOverview struct {
-	ID           string        `json:"id" bson:"_id"`
-	Date         string        `json:"date" bson:"date"`
-	ReportAuthor *UserOverview `json:"report_author" bson:"report_author"`
-	School       string        `json:"school" bson:"school"`
-	Status       string        `json:"status" bson:"status"`
-	CreatedAt    string        `json:"created_at" bson:"created_at"`
-	NoteCount    int           `json:"note_count" bson:"note_count"`
+	ID         string        `json:"id" bson:"_id"`
+	Date       string        `json:"date" bson:"date"`
+	PlanAuthor *UserOverview `json:"plan_author" bson:"plan_author"`
+	School     string        `json:"school" bson:"school"`
+	Status     string        `json:"status" bson:"status"`
+	CreatedAt  string        `json:"created_at" bson:"created_at"`
+	NoteCount  int           `json:"note_count" bson:"note_count"`
 }
 
 type SchoolReportPlanRes struct {
@@ -499,7 +499,7 @@ type SchoolReportPlanRes struct {
 type SchoolReportPlanWithNotes struct {
 	ID             string          `json:"id" bson:"_id"`
 	Date           string          `json:"date" bson:"date"`
-	ReportAuthor   *UserOverview   `json:"report_author" bson:"report_author"`
+	PlanAuthor     *UserOverview   `json:"plan_author" bson:"plan_author"`
 	CoFacilitators []*UserOverview `json:"co_facilitators" bson:"co_facilitators"`
 	Curriculum     string          `json:"curriculum" bson:"curriculum"`
 	School         string          `json:"school" bson:"school"`
