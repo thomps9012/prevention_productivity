@@ -691,7 +691,7 @@ type Mutation {
   createContact(newContact: NewContact!): ContactDetail!
   updateContact(updateContact: UpdateContact!): Contact!
   deleteContact(id: ID!): Boolean!
-  createNote(newNote: NewNote!): NoteDetail!
+  createNote(newNote: NewNote!, itemType: String!): NoteDetail!
   updateNote(updateNote: UpdateNote!): Note!
   deleteNote(id: ID!): Boolean!
   createLog(newLog: NewLog!): LogRes!

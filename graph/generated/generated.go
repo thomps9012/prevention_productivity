@@ -344,7 +344,7 @@ type ComplexityRoot struct {
 		CreateEventSummary         func(childComplexity int, newEventSummary model.NewEventSummary) int
 		CreateGrant                func(childComplexity int, newGrant model.NewGrant) int
 		CreateLog                  func(childComplexity int, newLog model.NewLog) int
-		CreateNote                 func(childComplexity int, newNote model.NewNote) int
+		CreateNote                 func(childComplexity int, newNote model.NewNote, itemType string) int
 		CreateSchoolReportDebrief  func(childComplexity int, newSchoolReportDebrief model.NewSchoolReportDebrief) int
 		CreateSchoolReportPlan     func(childComplexity int, newSchoolReportPlan model.NewSchoolReportPlan) int
 		CreateUser                 func(childComplexity int, newUser model.NewUser) int
@@ -562,7 +562,7 @@ type MutationResolver interface {
 	CreateContact(ctx context.Context, newContact model.NewContact) (*model.ContactDetail, error)
 	UpdateContact(ctx context.Context, updateContact model.UpdateContact) (*model.Contact, error)
 	DeleteContact(ctx context.Context, id string) (bool, error)
-	CreateNote(ctx context.Context, newNote model.NewNote) (*model.NoteDetail, error)
+	CreateNote(ctx context.Context, newNote model.NewNote, itemType string) (*model.NoteDetail, error)
 	UpdateNote(ctx context.Context, updateNote model.UpdateNote) (*model.Note, error)
 	DeleteNote(ctx context.Context, id string) (bool, error)
 	CreateLog(ctx context.Context, newLog model.NewLog) (*model.LogRes, error)
@@ -2347,7 +2347,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateNote(childComplexity, args["newNote"].(model.NewNote)), true
+		return e.complexity.Mutation.CreateNote(childComplexity, args["newNote"].(model.NewNote), args["itemType"].(string)), true
 
 	case "Mutation.createSchoolReportDebrief":
 		if e.complexity.Mutation.CreateSchoolReportDebrief == nil {
@@ -4455,7 +4455,7 @@ type Mutation {
   createContact(newContact: NewContact!): ContactDetail!
   updateContact(updateContact: UpdateContact!): Contact!
   deleteContact(id: ID!): Boolean!
-  createNote(newNote: NewNote!): NoteDetail!
+  createNote(newNote: NewNote!, itemType: String!): NoteDetail!
   updateNote(updateNote: UpdateNote!): Note!
   deleteNote(id: ID!): Boolean!
   createLog(newLog: NewLog!): LogRes!
@@ -4662,6 +4662,15 @@ func (ec *executionContext) field_Mutation_createNote_args(ctx context.Context, 
 		}
 	}
 	args["newNote"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["itemType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("itemType"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["itemType"] = arg1
 	return args, nil
 }
 
@@ -16205,7 +16214,7 @@ func (ec *executionContext) _Mutation_createNote(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateNote(rctx, fc.Args["newNote"].(model.NewNote))
+		return ec.resolvers.Mutation().CreateNote(rctx, fc.Args["newNote"].(model.NewNote), fc.Args["itemType"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

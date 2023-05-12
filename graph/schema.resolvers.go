@@ -160,12 +160,22 @@ func (r *mutationResolver) DeleteContact(ctx context.Context, id string) (bool, 
 	return res, nil
 }
 
-func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote) (*model.NoteDetail, error) {
+func (r *mutationResolver) CreateNote(ctx context.Context, newNote model.NewNote, itemType string) (*model.NoteDetail, error) {
+	if itemType == "" {
+		return nil, errors.New("not using a valid item type")
+	}
+	var filter bson.D
 	user_id, err := auth.ForUserID(ctx)
 	if err != nil {
 		return nil, err
 	}
-	res, err := methods.CreateNote(newNote, user_id)
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		filter = bson.D{{Key: "_id", Value: newNote.ItemID}, {Key: "user_id", Value: user_id}}
+	} else {
+		filter = bson.D{{Key: "_id", Value: newNote.ItemID}}
+	}
+	res, err := methods.CreateNote(newNote, user_id, itemType, filter)
 	if err != nil {
 		return nil, err
 	}

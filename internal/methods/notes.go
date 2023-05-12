@@ -69,7 +69,14 @@ func FindUserNotes(user_id string) ([]*model.Note, error) {
 }
 
 // mutations
-func CreateNote(new_note model.NewNote, note_author string) (*model.NoteDetail, error) {
+func CreateNote(new_note model.NewNote, note_author string, item_type string, item_filter bson.D) (*model.NoteDetail, error) {
+	can_view_notes, err := database.Db.Collection(item_type).CountDocuments(context.TODO(), item_filter)
+	if err != nil {
+		return nil, err
+	}
+	if can_view_notes == 0 {
+		return nil, errors.New("you're attempting to create a note for an item that you either didn't create, or doesn't exist")
+	}
 	collection := database.Db.Collection("notes")
 	note := model.Note{
 		ID:        uuid.New().String(),
