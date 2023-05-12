@@ -3,7 +3,6 @@ package methods
 import (
 	"context"
 	"errors"
-	"fmt"
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
@@ -32,7 +31,6 @@ func FindContactDetail(filter bson.D) (*model.ContactDetail, error) {
 	contactDetail := make([]model.ContactDetail, 0)
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}}}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$created_by"}}
-	fmt.Println(filter)
 	pipeline := mongo.Pipeline{filter, user_stage, unwind_stage}
 	cursor, err := database.Db.Collection("contacts").Aggregate(context.TODO(), pipeline)
 	if err != nil {
@@ -123,6 +121,14 @@ func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, e
 	if err != nil {
 		return nil, errors.New("you're attempting to update a contact that either doesn't exist, or you didn't create")
 	}
+	exists_filter := bson.D{{Key: "name", Value: update.Name}, {Key: "email", Value: update.Email}, {Key: "phone", Value: update.Phone}}
+	exists, err := collection.CountDocuments(context.TODO(), exists_filter)
+	if err != nil {
+		return nil, err
+	}
+	if exists > 0 {
+		return nil, errors.New("contact already exists")
+	}
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	update_fields := bson.D{
 		{Key: "$set", Value: bson.D{
@@ -149,23 +155,9 @@ func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, e
 }
 func DeleteContact(filter bson.D) (bool, error) {
 	collection := database.Db.Collection("contacts")
-	deleted_at := time.Now().Format("2006-01-02 15:04:05")
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			{Key: "active", Value: false},
-			{Key: "deleted_at", Value: deleted_at},
-		}},
-	}
-	after := options.After
-	upsert := true
-	opts := options.FindOneAndUpdateOptions{
-		ReturnDocument: &after,
-		Upsert:         &upsert,
-	}
-	var c model.Contact
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update, &opts).Decode(&c)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err
 	}
-	return !c.Active, nil
+	return res.DeletedCount == 1, nil
 }

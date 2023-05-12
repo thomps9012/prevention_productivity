@@ -943,9 +943,9 @@ func (r *queryResolver) Contacts(ctx context.Context) ([]*model.ContactOverview,
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "created_by", Value: user_id}}}}
+		filter = bson.D{{Key: "created_by", Value: user_id}}
 	} else {
-		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
+		filter = bson.D{{}}
 	}
 	res, err := methods.FindContacts(filter)
 	if err != nil {

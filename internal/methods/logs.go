@@ -3,7 +3,6 @@ package methods
 import (
 	"context"
 	"errors"
-	"fmt"
 	"thomps9012/prevention_productivity/graph/model"
 	database "thomps9012/prevention_productivity/internal/db"
 	"time"
@@ -72,7 +71,6 @@ func FindUserLogs(user_id string) ([]*model.LogOverview, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(len(userLogs))
 	return userLogs, nil
 }
 
