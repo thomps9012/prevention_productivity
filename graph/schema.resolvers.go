@@ -748,7 +748,7 @@ func (r *queryResolver) Events(ctx context.Context) ([]*model.EventOverview, err
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "$or", Value: bson.A{bson.M{"user_id": user_id}, bson.M{"co_planners": user_id}}}}}}
 	} else {
 		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
@@ -848,7 +848,7 @@ func (r *queryResolver) SchoolReportPlans(ctx context.Context) ([]*model.SchoolR
 	}
 	admin_err := auth.ForAdmin(ctx)
 	if admin_err != nil {
-		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "user_id", Value: user_id}}}}
+		filter = bson.D{{Key: "$match", Value: bson.D{{Key: "$or", Value: bson.A{bson.M{"user_id": user_id}, bson.M{"co_facilitators": user_id}}}}}}
 	} else {
 		filter = bson.D{{Key: "$match", Value: bson.D{{}}}}
 	}
