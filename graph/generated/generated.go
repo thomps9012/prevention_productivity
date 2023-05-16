@@ -472,6 +472,7 @@ type ComplexityRoot struct {
 		CreatedAt      func(childComplexity int) int
 		Curriculum     func(childComplexity int) int
 		Date           func(childComplexity int) int
+		Educator       func(childComplexity int) int
 		ID             func(childComplexity int) int
 		LessonTopics   func(childComplexity int) int
 		School         func(childComplexity int) int
@@ -489,6 +490,7 @@ type ComplexityRoot struct {
 	SchoolReportPlanOverview struct {
 		CreatedAt  func(childComplexity int) int
 		Date       func(childComplexity int) int
+		Educator   func(childComplexity int) int
 		ID         func(childComplexity int) int
 		NoteCount  func(childComplexity int) int
 		PlanAuthor func(childComplexity int) int
@@ -510,6 +512,7 @@ type ComplexityRoot struct {
 		CreatedAt      func(childComplexity int) int
 		Curriculum     func(childComplexity int) int
 		Date           func(childComplexity int) int
+		Educator       func(childComplexity int) int
 		ID             func(childComplexity int) int
 		LessonTopics   func(childComplexity int) int
 		Notes          func(childComplexity int) int
@@ -3288,6 +3291,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SchoolReportPlan.Date(childComplexity), true
 
+	case "SchoolReportPlan.educator":
+		if e.complexity.SchoolReportPlan.Educator == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlan.Educator(childComplexity), true
+
 	case "SchoolReportPlan.id":
 		if e.complexity.SchoolReportPlan.ID == nil {
 			break
@@ -3364,6 +3374,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SchoolReportPlanOverview.Date(childComplexity), true
+
+	case "SchoolReportPlanOverview.educator":
+		if e.complexity.SchoolReportPlanOverview.Educator == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlanOverview.Educator(childComplexity), true
 
 	case "SchoolReportPlanOverview.id":
 		if e.complexity.SchoolReportPlanOverview.ID == nil {
@@ -3469,6 +3486,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SchoolReportPlanWithNotes.Date(childComplexity), true
+
+	case "SchoolReportPlanWithNotes.educator":
+		if e.complexity.SchoolReportPlanWithNotes.Educator == nil {
+			break
+		}
+
+		return e.complexity.SchoolReportPlanWithNotes.Educator(childComplexity), true
 
 	case "SchoolReportPlanWithNotes.id":
 		if e.complexity.SchoolReportPlanWithNotes.ID == nil {
@@ -3900,6 +3924,7 @@ type SchoolReportPlan {
   date: String!
   co_facilitators: [ID]
   curriculum: String!
+  educator: ID!
   school: String!
   lesson_topics: String!
   status: String!
@@ -4028,6 +4053,7 @@ type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
   plan_author: UserOverview!
+  educator: ContactOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -4042,6 +4068,7 @@ type SchoolReportPlanOverview {
   id: ID!
   date: String!
   plan_author: UserOverview!
+  educator: ContactOverview!
   school: String!
   status: String!
   created_at: String!
@@ -4291,6 +4318,7 @@ input UpdateEventSummary {
 input NewSchoolReportPlan {
   date: String!
   co_facilitators: [ID]!
+  educator: ID!
   curriculum: String!
   school: String!
   lesson_topics: String!
@@ -4300,6 +4328,7 @@ input UpdateSchoolReportPlan {
   id: ID!
   date: String!
   co_facilitators: [ID]!
+  educator: ID!
   curriculum: String!
   lesson_topics: String!
   school: String!
@@ -17384,6 +17413,8 @@ func (ec *executionContext) fieldContext_Mutation_updateSchoolReportPlan(ctx con
 				return ec.fieldContext_SchoolReportPlan_co_facilitators(ctx, field)
 			case "curriculum":
 				return ec.fieldContext_SchoolReportPlan_curriculum(ctx, field)
+			case "educator":
+				return ec.fieldContext_SchoolReportPlan_educator(ctx, field)
 			case "school":
 				return ec.fieldContext_SchoolReportPlan_school(ctx, field)
 			case "lesson_topics":
@@ -19635,6 +19666,8 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlan(ctx context.Cont
 				return ec.fieldContext_SchoolReportPlanWithNotes_date(ctx, field)
 			case "plan_author":
 				return ec.fieldContext_SchoolReportPlanWithNotes_plan_author(ctx, field)
+			case "educator":
+				return ec.fieldContext_SchoolReportPlanWithNotes_educator(ctx, field)
 			case "co_facilitators":
 				return ec.fieldContext_SchoolReportPlanWithNotes_co_facilitators(ctx, field)
 			case "curriculum":
@@ -19714,6 +19747,8 @@ func (ec *executionContext) fieldContext_Query_schoolReportPlans(ctx context.Con
 				return ec.fieldContext_SchoolReportPlanOverview_date(ctx, field)
 			case "plan_author":
 				return ec.fieldContext_SchoolReportPlanOverview_plan_author(ctx, field)
+			case "educator":
+				return ec.fieldContext_SchoolReportPlanOverview_educator(ctx, field)
 			case "school":
 				return ec.fieldContext_SchoolReportPlanOverview_school(ctx, field)
 			case "status":
@@ -19774,6 +19809,8 @@ func (ec *executionContext) fieldContext_Query_userSchoolReportPlans(ctx context
 				return ec.fieldContext_SchoolReportPlanOverview_date(ctx, field)
 			case "plan_author":
 				return ec.fieldContext_SchoolReportPlanOverview_plan_author(ctx, field)
+			case "educator":
+				return ec.fieldContext_SchoolReportPlanOverview_educator(ctx, field)
 			case "school":
 				return ec.fieldContext_SchoolReportPlanOverview_school(ctx, field)
 			case "status":
@@ -22253,6 +22290,50 @@ func (ec *executionContext) fieldContext_SchoolReportPlan_curriculum(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _SchoolReportPlan_educator(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlan_educator(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Educator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlan_educator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlan",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _SchoolReportPlan_school(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlan) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_SchoolReportPlan_school(ctx, field)
 	if err != nil {
@@ -22740,6 +22821,60 @@ func (ec *executionContext) fieldContext_SchoolReportPlanOverview_plan_author(ct
 				return ec.fieldContext_UserOverview_last_name(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserOverview", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlanOverview_educator(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanOverview) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanOverview_educator(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Educator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContactOverview)
+	fc.Result = res
+	return ec.marshalNContactOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactOverview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlanOverview_educator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlanOverview",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ContactOverview_id(ctx, field)
+			case "type":
+				return ec.fieldContext_ContactOverview_type(ctx, field)
+			case "name":
+				return ec.fieldContext_ContactOverview_name(ctx, field)
+			case "active":
+				return ec.fieldContext_ContactOverview_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ContactOverview", field.Name)
 		},
 	}
 	return fc, nil
@@ -23328,6 +23463,60 @@ func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_plan_author(c
 				return ec.fieldContext_UserOverview_last_name(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserOverview", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SchoolReportPlanWithNotes_educator(ctx context.Context, field graphql.CollectedField, obj *model.SchoolReportPlanWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SchoolReportPlanWithNotes_educator(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Educator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ContactOverview)
+	fc.Result = res
+	return ec.marshalNContactOverview2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐContactOverview(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SchoolReportPlanWithNotes_educator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SchoolReportPlanWithNotes",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ContactOverview_id(ctx, field)
+			case "type":
+				return ec.fieldContext_ContactOverview_type(ctx, field)
+			case "name":
+				return ec.fieldContext_ContactOverview_name(ctx, field)
+			case "active":
+				return ec.fieldContext_ContactOverview_active(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ContactOverview", field.Name)
 		},
 	}
 	return fc, nil
@@ -27031,6 +27220,14 @@ func (ec *executionContext) unmarshalInputNewSchoolReportPlan(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
+		case "educator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educator"))
+			it.Educator, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "curriculum":
 			var err error
 
@@ -27803,6 +28000,14 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportPlan(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("co_facilitators"))
 			it.CoFacilitators, err = ec.unmarshalNID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "educator":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educator"))
+			it.Educator, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -31433,6 +31638,13 @@ func (ec *executionContext) _SchoolReportPlan(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "educator":
+
+			out.Values[i] = ec._SchoolReportPlan_educator(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "school":
 
 			out.Values[i] = ec._SchoolReportPlan_school(ctx, field, obj)
@@ -31548,6 +31760,13 @@ func (ec *executionContext) _SchoolReportPlanOverview(ctx context.Context, sel a
 		case "plan_author":
 
 			out.Values[i] = ec._SchoolReportPlanOverview_plan_author(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "educator":
+
+			out.Values[i] = ec._SchoolReportPlanOverview_educator(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -31681,6 +31900,13 @@ func (ec *executionContext) _SchoolReportPlanWithNotes(ctx context.Context, sel 
 		case "plan_author":
 
 			out.Values[i] = ec._SchoolReportPlanWithNotes_plan_author(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "educator":
+
+			out.Values[i] = ec._SchoolReportPlanWithNotes_educator(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

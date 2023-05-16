@@ -386,6 +386,7 @@ type NewSchoolReportDebrief struct {
 type NewSchoolReportPlan struct {
 	Date           string    `json:"date" bson:"date"`
 	CoFacilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
+	Educator       string    `json:"educator" bson:"educator"`
 	Curriculum     string    `json:"curriculum" bson:"curriculum"`
 	School         string    `json:"school" bson:"school"`
 	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
@@ -470,6 +471,7 @@ type SchoolReportPlan struct {
 	Date           string    `json:"date" bson:"date"`
 	CoFacilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
 	Curriculum     string    `json:"curriculum" bson:"curriculum"`
+	Educator       string    `json:"educator" bson:"educator"`
 	School         string    `json:"school" bson:"school"`
 	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
 	Status         string    `json:"status" bson:"status"`
@@ -484,13 +486,14 @@ type SchoolReportPlanDescription struct {
 }
 
 type SchoolReportPlanOverview struct {
-	ID         string        `json:"id" bson:"_id"`
-	Date       string        `json:"date" bson:"date"`
-	PlanAuthor *UserOverview `json:"plan_author" bson:"plan_author"`
-	School     string        `json:"school" bson:"school"`
-	Status     string        `json:"status" bson:"status"`
-	CreatedAt  string        `json:"created_at" bson:"created_at"`
-	NoteCount  int           `json:"note_count" bson:"note_count"`
+	ID         string           `json:"id" bson:"_id"`
+	Date       string           `json:"date" bson:"date"`
+	PlanAuthor *UserOverview    `json:"plan_author" bson:"plan_author"`
+	Educator   *ContactOverview `json:"educator" bson:"educator"`
+	School     string           `json:"school" bson:"school"`
+	Status     string           `json:"status" bson:"status"`
+	CreatedAt  string           `json:"created_at" bson:"created_at"`
+	NoteCount  int              `json:"note_count" bson:"note_count"`
 }
 
 type SchoolReportPlanRes struct {
@@ -503,17 +506,18 @@ type SchoolReportPlanRes struct {
 }
 
 type SchoolReportPlanWithNotes struct {
-	ID             string          `json:"id" bson:"_id"`
-	Date           string          `json:"date" bson:"date"`
-	PlanAuthor     *UserOverview   `json:"plan_author" bson:"plan_author"`
-	CoFacilitators []*UserOverview `json:"co_facilitators" bson:"co_facilitators"`
-	Curriculum     string          `json:"curriculum" bson:"curriculum"`
-	School         string          `json:"school" bson:"school"`
-	LessonTopics   string          `json:"lesson_topics" bson:"lesson_topics"`
-	Status         string          `json:"status" bson:"status"`
-	CreatedAt      string          `json:"created_at" bson:"created_at"`
-	UpdatedAt      string          `json:"updated_at" bson:"updated_at"`
-	Notes          []*ItemNote     `json:"notes" bson:"notes"`
+	ID             string           `json:"id" bson:"_id"`
+	Date           string           `json:"date" bson:"date"`
+	PlanAuthor     *UserOverview    `json:"plan_author" bson:"plan_author"`
+	Educator       *ContactOverview `json:"educator" bson:"educator"`
+	CoFacilitators []*UserOverview  `json:"co_facilitators" bson:"co_facilitators"`
+	Curriculum     string           `json:"curriculum" bson:"curriculum"`
+	School         string           `json:"school" bson:"school"`
+	LessonTopics   string           `json:"lesson_topics" bson:"lesson_topics"`
+	Status         string           `json:"status" bson:"status"`
+	CreatedAt      string           `json:"created_at" bson:"created_at"`
+	UpdatedAt      string           `json:"updated_at" bson:"updated_at"`
+	Notes          []*ItemNote      `json:"notes" bson:"notes"`
 }
 
 type UpdateContact struct {
@@ -611,6 +615,7 @@ type UpdateSchoolReportPlan struct {
 	ID             string    `json:"id" bson:"_id"`
 	Date           string    `json:"date" bson:"date"`
 	CoFacilitators []*string `json:"co_facilitators" bson:"co_facilitators"`
+	Educator       string    `json:"educator" bson:"educator"`
 	Curriculum     string    `json:"curriculum" bson:"curriculum"`
 	LessonTopics   string    `json:"lesson_topics" bson:"lesson_topics"`
 	School         string    `json:"school" bson:"school"`

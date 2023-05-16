@@ -152,6 +152,7 @@ type SchoolReportPlan {
   date: String!
   co_facilitators: [ID]
   curriculum: String!
+  educator: ID!
   school: String!
   lesson_topics: String!
   status: String!
@@ -280,6 +281,7 @@ type SchoolReportPlanWithNotes {
   id: ID!
   date: String!
   plan_author: UserOverview!
+  educator: ContactOverview!
   co_facilitators: [UserOverview]!
   curriculum: String!
   school: String!
@@ -294,6 +296,7 @@ type SchoolReportPlanOverview {
   id: ID!
   date: String!
   plan_author: UserOverview!
+  educator: ContactOverview!
   school: String!
   status: String!
   created_at: String!
@@ -543,6 +546,7 @@ input UpdateEventSummary {
 input NewSchoolReportPlan {
   date: String!
   co_facilitators: [ID]!
+  educator: ID!
   curriculum: String!
   school: String!
   lesson_topics: String!
@@ -552,6 +556,7 @@ input UpdateSchoolReportPlan {
   id: ID!
   date: String!
   co_facilitators: [ID]!
+  educator: ID!
   curriculum: String!
   lesson_topics: String!
   school: String!
