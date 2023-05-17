@@ -17,7 +17,7 @@ import (
 func FindGrantDetail(grant_id string) (*model.GrantDetail, error) {
 	collection := database.Db.Collection("grants")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "created_by"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "created_by"}}}}
-	unwind := bson.D{{Key: "$unwind", Value: "created_by"}}
+	unwind := bson.D{{Key: "$unwind", Value: "$created_by"}}
 	pipeline := mongo.Pipeline{bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: grant_id}}}}, user_stage, unwind}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
