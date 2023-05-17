@@ -34,8 +34,8 @@ type Grant {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   award_date: String!
   end_date: String!
@@ -103,24 +103,24 @@ type Event {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String!
   vendors: String!
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String!
   food_head_count: Int!
-  event_team: [String]
-  volunteer_list: [String]
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
   created_at: String!
   updated_at: String!
   status: String!
@@ -171,7 +171,7 @@ type SchoolReportDebrief {
   user_id: ID!
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -218,24 +218,24 @@ type EventWithNotes {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String!
   vendors: String!
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String!
   food_head_count: Int!
-  event_team: [String]
-  volunteer_list: [String]
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
   created_at: String!
   updated_at: String!
   status: String!
@@ -308,7 +308,7 @@ type SchoolReportDebriefWithNotes {
   debrief_author: UserOverview!
   lesson_plan: SchoolReportPlanDescription!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -351,8 +351,8 @@ type GrantDetail {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   award_date: String!
   end_date: String!
@@ -469,24 +469,24 @@ input NewEvent {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String
   vendors: String
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String
   food_head_count: Int!
-  event_team: [String]!
-  volunteer_list: [String]!
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
 }
 
 input UpdateEvent {
@@ -504,24 +504,24 @@ input UpdateEvent {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String
   vendors: String
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String
   food_head_count: Int!
-  event_team: [String]!
-  volunteer_list: [String]!
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
 }
 
 input NewEventSummary {
@@ -565,7 +565,7 @@ input UpdateSchoolReportPlan {
 input NewSchoolReportDebrief {
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -575,7 +575,7 @@ input UpdateSchoolReportDebrief {
   id: ID!
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -584,8 +584,8 @@ input UpdateSchoolReportDebrief {
 input NewGrant {
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   end_date: String!
   budget: Float!
@@ -597,8 +597,8 @@ input UpdateGrant {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   end_date: String!
   budget: Float!

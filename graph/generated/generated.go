@@ -3806,8 +3806,8 @@ type Grant {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   award_date: String!
   end_date: String!
@@ -3875,24 +3875,24 @@ type Event {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String!
   vendors: String!
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String!
   food_head_count: Int!
-  event_team: [String]
-  volunteer_list: [String]
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
   created_at: String!
   updated_at: String!
   status: String!
@@ -3943,7 +3943,7 @@ type SchoolReportDebrief {
   user_id: ID!
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -3990,24 +3990,24 @@ type EventWithNotes {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String!
   vendors: String!
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String!
   food_head_count: Int!
-  event_team: [String]
-  volunteer_list: [String]
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
   created_at: String!
   updated_at: String!
   status: String!
@@ -4080,7 +4080,7 @@ type SchoolReportDebriefWithNotes {
   debrief_author: UserOverview!
   lesson_plan: SchoolReportPlanDescription!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -4123,8 +4123,8 @@ type GrantDetail {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   award_date: String!
   end_date: String!
@@ -4241,24 +4241,24 @@ input NewEvent {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String
   vendors: String
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String
   food_head_count: Int!
-  event_team: [String]!
-  volunteer_list: [String]!
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
 }
 
 input UpdateEvent {
@@ -4276,24 +4276,24 @@ input UpdateEvent {
   annual_event: Boolean!
   new_event: Boolean!
   volunteers_needed: Boolean!
-  agenda: [String!]!
+  agenda: String!
   target_audience: String!
-  parting_gifts: [String]!
-  marketing_materials: [String]!
-  supplies: [String]!
-  special_orders: [String]!
+  parting_gifts: String
+  marketing_materials: String
+  supplies: String
+  special_orders: String
   performance: String
   vendors: String
-  food_and_beverage: [String]!
+  food_and_beverage: String
   caterer: String
   food_head_count: Int!
-  event_team: [String]!
-  volunteer_list: [String]!
+  event_team: String
+  volunteer_list: String
   budget: Float!
-  affiliated_organizations: [String]!
-  educational_goals: [String!]!
-  educational_outcomes: [String!]!
-  grant_goals: [String!]!
+  affiliated_organizations: String
+  educational_goals: String!
+  educational_outcomes: String!
+  grant_goals: String!
 }
 
 input NewEventSummary {
@@ -4337,7 +4337,7 @@ input UpdateSchoolReportPlan {
 input NewSchoolReportDebrief {
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -4347,7 +4347,7 @@ input UpdateSchoolReportDebrief {
   id: ID!
   lesson_plan_id: ID!
   student_count: Int!
-  student_list: [String!]!
+  student_list: String!
   challenges_improvements: String!
   positives: String!
   discussion: String!
@@ -4356,8 +4356,8 @@ input UpdateSchoolReportDebrief {
 input NewGrant {
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   end_date: String!
   budget: Float!
@@ -4369,8 +4369,8 @@ input UpdateGrant {
   id: ID!
   name: String!
   description: String!
-  goals: [String!]!
-  objectives: [String!]!
+  goals: String!
+  objectives: String!
   start_date: String!
   end_date: String!
   budget: Float!
@@ -7139,9 +7139,9 @@ func (ec *executionContext) _Event_agenda(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_agenda(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7222,14 +7222,11 @@ func (ec *executionContext) _Event_parting_gifts(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_parting_gifts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7266,14 +7263,11 @@ func (ec *executionContext) _Event_marketing_materials(ctx context.Context, fiel
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_marketing_materials(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7310,14 +7304,11 @@ func (ec *executionContext) _Event_supplies(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_supplies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7354,14 +7345,11 @@ func (ec *executionContext) _Event_special_orders(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_special_orders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7486,14 +7474,11 @@ func (ec *executionContext) _Event_food_and_beverage(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_food_and_beverage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7620,9 +7605,9 @@ func (ec *executionContext) _Event_event_team(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_event_team(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7661,9 +7646,9 @@ func (ec *executionContext) _Event_volunteer_list(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_volunteer_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7744,14 +7729,11 @@ func (ec *executionContext) _Event_affiliated_organizations(ctx context.Context,
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_affiliated_organizations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7793,9 +7775,9 @@ func (ec *executionContext) _Event_educational_goals(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_educational_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7837,9 +7819,9 @@ func (ec *executionContext) _Event_educational_outcomes(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_educational_outcomes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7881,9 +7863,9 @@ func (ec *executionContext) _Event_grant_goals(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_grant_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11061,9 +11043,9 @@ func (ec *executionContext) _EventWithNotes_agenda(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_agenda(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11144,14 +11126,11 @@ func (ec *executionContext) _EventWithNotes_parting_gifts(ctx context.Context, f
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_parting_gifts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11188,14 +11167,11 @@ func (ec *executionContext) _EventWithNotes_marketing_materials(ctx context.Cont
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_marketing_materials(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11232,14 +11208,11 @@ func (ec *executionContext) _EventWithNotes_supplies(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_supplies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11276,14 +11249,11 @@ func (ec *executionContext) _EventWithNotes_special_orders(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_special_orders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11408,14 +11378,11 @@ func (ec *executionContext) _EventWithNotes_food_and_beverage(ctx context.Contex
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_food_and_beverage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11542,9 +11509,9 @@ func (ec *executionContext) _EventWithNotes_event_team(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_event_team(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11583,9 +11550,9 @@ func (ec *executionContext) _EventWithNotes_volunteer_list(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_volunteer_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11666,14 +11633,11 @@ func (ec *executionContext) _EventWithNotes_affiliated_organizations(ctx context
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_affiliated_organizations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11715,9 +11679,9 @@ func (ec *executionContext) _EventWithNotes_educational_goals(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_educational_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11759,9 +11723,9 @@ func (ec *executionContext) _EventWithNotes_educational_outcomes(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_educational_outcomes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11803,9 +11767,9 @@ func (ec *executionContext) _EventWithNotes_grant_goals(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_EventWithNotes_grant_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12167,9 +12131,9 @@ func (ec *executionContext) _Grant_goals(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Grant_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12211,9 +12175,9 @@ func (ec *executionContext) _Grant_objectives(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Grant_objectives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12783,9 +12747,9 @@ func (ec *executionContext) _GrantDetail_goals(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrantDetail_goals(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12827,9 +12791,9 @@ func (ec *executionContext) _GrantDetail_objectives(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GrantDetail_objectives(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20719,9 +20683,9 @@ func (ec *executionContext) _SchoolReportDebrief_student_list(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebrief_student_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21735,9 +21699,9 @@ func (ec *executionContext) _SchoolReportDebriefWithNotes_student_list(ctx conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_SchoolReportDebriefWithNotes_student_list(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -26750,7 +26714,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26766,7 +26730,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26774,7 +26738,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_materials"))
-			it.MarketingMaterials, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.MarketingMaterials, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26782,7 +26746,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26790,7 +26754,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("special_orders"))
-			it.SpecialOrders, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.SpecialOrders, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26814,7 +26778,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26838,7 +26802,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event_team"))
-			it.EventTeam, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.EventTeam, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26846,7 +26810,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volunteer_list"))
-			it.VolunteerList, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.VolunteerList, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26862,7 +26826,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("affiliated_organizations"))
-			it.AffiliatedOrganizations, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.AffiliatedOrganizations, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26870,7 +26834,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_goals"))
-			it.EducationalGoals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.EducationalGoals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26878,7 +26842,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_outcomes"))
-			it.EducationalOutcomes, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.EducationalOutcomes, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26886,7 +26850,7 @@ func (ec *executionContext) unmarshalInputNewEvent(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grant_goals"))
-			it.GrantGoals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.GrantGoals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26988,7 +26952,7 @@ func (ec *executionContext) unmarshalInputNewGrant(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("goals"))
-			it.Goals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Goals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26996,7 +26960,7 @@ func (ec *executionContext) unmarshalInputNewGrant(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectives"))
-			it.Objectives, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Objectives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27161,7 +27125,7 @@ func (ec *executionContext) unmarshalInputNewSchoolReportDebrief(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("student_list"))
-			it.StudentList, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.StudentList, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27493,7 +27457,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agenda"))
-			it.Agenda, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Agenda, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27509,7 +27473,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parting_gifts"))
-			it.PartingGifts, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.PartingGifts, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27517,7 +27481,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("marketing_materials"))
-			it.MarketingMaterials, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.MarketingMaterials, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27525,7 +27489,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supplies"))
-			it.Supplies, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.Supplies, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27533,7 +27497,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("special_orders"))
-			it.SpecialOrders, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.SpecialOrders, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27557,7 +27521,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("food_and_beverage"))
-			it.FoodAndBeverage, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.FoodAndBeverage, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27581,7 +27545,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event_team"))
-			it.EventTeam, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.EventTeam, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27589,7 +27553,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volunteer_list"))
-			it.VolunteerList, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.VolunteerList, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27605,7 +27569,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("affiliated_organizations"))
-			it.AffiliatedOrganizations, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.AffiliatedOrganizations, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27613,7 +27577,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_goals"))
-			it.EducationalGoals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.EducationalGoals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27621,7 +27585,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("educational_outcomes"))
-			it.EducationalOutcomes, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.EducationalOutcomes, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27629,7 +27593,7 @@ func (ec *executionContext) unmarshalInputUpdateEvent(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grant_goals"))
-			it.GrantGoals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.GrantGoals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27747,7 +27711,7 @@ func (ec *executionContext) unmarshalInputUpdateGrant(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("goals"))
-			it.Goals, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Goals, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27755,7 +27719,7 @@ func (ec *executionContext) unmarshalInputUpdateGrant(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("objectives"))
-			it.Objectives, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.Objectives, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27936,7 +27900,7 @@ func (ec *executionContext) unmarshalInputUpdateSchoolReportDebrief(ctx context.
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("student_list"))
-			it.StudentList, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			it.StudentList, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -28489,30 +28453,18 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Event_parting_gifts(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "marketing_materials":
 
 			out.Values[i] = ec._Event_marketing_materials(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "supplies":
 
 			out.Values[i] = ec._Event_supplies(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "special_orders":
 
 			out.Values[i] = ec._Event_special_orders(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "performance":
 
 			out.Values[i] = ec._Event_performance(ctx, field, obj)
@@ -28531,9 +28483,6 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Event_food_and_beverage(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "caterer":
 
 			out.Values[i] = ec._Event_caterer(ctx, field, obj)
@@ -28567,9 +28516,6 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Event_affiliated_organizations(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "educational_goals":
 
 			out.Values[i] = ec._Event_educational_goals(ctx, field, obj)
@@ -29260,30 +29206,18 @@ func (ec *executionContext) _EventWithNotes(ctx context.Context, sel ast.Selecti
 
 			out.Values[i] = ec._EventWithNotes_parting_gifts(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "marketing_materials":
 
 			out.Values[i] = ec._EventWithNotes_marketing_materials(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "supplies":
 
 			out.Values[i] = ec._EventWithNotes_supplies(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "special_orders":
 
 			out.Values[i] = ec._EventWithNotes_special_orders(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "performance":
 
 			out.Values[i] = ec._EventWithNotes_performance(ctx, field, obj)
@@ -29302,9 +29236,6 @@ func (ec *executionContext) _EventWithNotes(ctx context.Context, sel ast.Selecti
 
 			out.Values[i] = ec._EventWithNotes_food_and_beverage(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "caterer":
 
 			out.Values[i] = ec._EventWithNotes_caterer(ctx, field, obj)
@@ -29338,9 +29269,6 @@ func (ec *executionContext) _EventWithNotes(ctx context.Context, sel ast.Selecti
 
 			out.Values[i] = ec._EventWithNotes_affiliated_organizations(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "educational_goals":
 
 			out.Values[i] = ec._EventWithNotes_educational_goals(ctx, field, obj)
@@ -33498,64 +33426,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalNUpdateContact2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐUpdateContact(ctx context.Context, v interface{}) (model.UpdateContact, error) {
 	res, err := ec.unmarshalInputUpdateContact(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -34056,38 +33926,6 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	}
 	res := graphql.MarshalID(*v)
 	return res
-}
-
-func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
