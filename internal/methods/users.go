@@ -162,7 +162,7 @@ func DeleteUser(filter bson.D) (*model.UserUpdateRes, error) {
 func GetUserOverviews() ([]model.UserOverview, error) {
 	collection := database.Db.Collection("users")
 	users := make([]model.UserOverview, 0)
-	cursor, err := collection.Find(context.TODO(), bson.D{}, options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}}))
+	cursor, err := collection.Find(context.TODO(), bson.D{}, options.Find().SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "first_name", Value: 1}, {Key: "last_name", Value: 1}, {Key: "email", Value: 1}, {Key: "admin", Value: 1}, {Key: "active", Value: 1}, {Key: "created_at", Value: 1}}))
 	if err != nil {
 		return nil, err
 	}
@@ -184,4 +184,13 @@ func GetUsers() ([]model.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+func GetUser(id string) (*model.User, error) {
+	collection := database.Db.Collection("users")
+	var u model.User
+	err := collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&u)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }

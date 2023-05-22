@@ -618,7 +618,15 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	return nil, errors.New("method unimplemented")
+	admin_err := auth.ForAdmin(ctx)
+	if admin_err != nil {
+		return nil, admin_err
+	}
+	user, err := methods.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (r *queryResolver) ItemNotes(ctx context.Context, itemID string, itemType string) ([]*model.NoteDetail, error) {
