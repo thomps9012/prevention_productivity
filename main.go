@@ -15,23 +15,17 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/handlers"
-	"github.com/joho/godotenv"
 )
 
 const defaultPort = "8080"
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
 	router := chi.NewRouter()
-	// router.Use(auth.Middleware())
 	database.InitDB()
 	defer database.CloseDB()
 
