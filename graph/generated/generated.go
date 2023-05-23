@@ -205,8 +205,8 @@ type ComplexityRoot struct {
 		EventTeam               func(childComplexity int) int
 		FoodAndBeverage         func(childComplexity int) int
 		FoodHeadCount           func(childComplexity int) int
+		Grant                   func(childComplexity int) int
 		GrantGoals              func(childComplexity int) int
-		GrantID                 func(childComplexity int) int
 		ID                      func(childComplexity int) int
 		MarketingMaterials      func(childComplexity int) int
 		NewEvent                func(childComplexity int) int
@@ -243,6 +243,11 @@ type ComplexityRoot struct {
 		Objectives  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+	}
+
+	GrantDescription struct {
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 
 	GrantDetail struct {
@@ -1525,19 +1530,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EventWithNotes.FoodHeadCount(childComplexity), true
 
+	case "EventWithNotes.grant":
+		if e.complexity.EventWithNotes.Grant == nil {
+			break
+		}
+
+		return e.complexity.EventWithNotes.Grant(childComplexity), true
+
 	case "EventWithNotes.grant_goals":
 		if e.complexity.EventWithNotes.GrantGoals == nil {
 			break
 		}
 
 		return e.complexity.EventWithNotes.GrantGoals(childComplexity), true
-
-	case "EventWithNotes.grant_id":
-		if e.complexity.EventWithNotes.GrantID == nil {
-			break
-		}
-
-		return e.complexity.EventWithNotes.GrantID(childComplexity), true
 
 	case "EventWithNotes.id":
 		if e.complexity.EventWithNotes.ID == nil {
@@ -1769,6 +1774,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grant.UpdatedAt(childComplexity), true
+
+	case "GrantDescription.id":
+		if e.complexity.GrantDescription.ID == nil {
+			break
+		}
+
+		return e.complexity.GrantDescription.ID(childComplexity), true
+
+	case "GrantDescription.name":
+		if e.complexity.GrantDescription.Name == nil {
+			break
+		}
+
+		return e.complexity.GrantDescription.Name(childComplexity), true
 
 	case "GrantDetail.active":
 		if e.complexity.GrantDetail.Active == nil {
@@ -3984,7 +4003,7 @@ type EventWithNotes {
   set_up: String!
   clean_up: String!
   end_date: String!
-  grant_id: ID!
+  grant: GrantDescription!
   public_event: Boolean!
   rsvp_required: Boolean!
   annual_event: Boolean!
@@ -4117,6 +4136,11 @@ type ContactOverview {
   type: String!
   name: String!
   active: Boolean!
+}
+
+type GrantDescription {
+  id: ID!
+  name: String!
 }
 
 type GrantDetail {
@@ -10753,8 +10777,8 @@ func (ec *executionContext) fieldContext_EventWithNotes_end_date(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _EventWithNotes_grant_id(ctx context.Context, field graphql.CollectedField, obj *model.EventWithNotes) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EventWithNotes_grant_id(ctx, field)
+func (ec *executionContext) _EventWithNotes_grant(ctx context.Context, field graphql.CollectedField, obj *model.EventWithNotes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EventWithNotes_grant(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10767,7 +10791,7 @@ func (ec *executionContext) _EventWithNotes_grant_id(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GrantID, nil
+		return obj.Grant, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10779,19 +10803,25 @@ func (ec *executionContext) _EventWithNotes_grant_id(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.GrantDescription)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNGrantDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDescription(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_EventWithNotes_grant_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_EventWithNotes_grant(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "EventWithNotes",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GrantDescription_id(ctx, field)
+			case "name":
+				return ec.fieldContext_GrantDescription_name(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GrantDescription", field.Name)
 		},
 	}
 	return fc, nil
@@ -12579,6 +12609,94 @@ func (ec *executionContext) _Grant_updated_at(ctx context.Context, field graphql
 func (ec *executionContext) fieldContext_Grant_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Grant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GrantDescription_id(ctx context.Context, field graphql.CollectedField, obj *model.GrantDescription) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GrantDescription_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GrantDescription_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GrantDescription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GrantDescription_name(ctx context.Context, field graphql.CollectedField, obj *model.GrantDescription) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GrantDescription_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GrantDescription_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GrantDescription",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -19168,8 +19286,8 @@ func (ec *executionContext) fieldContext_Query_event(ctx context.Context, field 
 				return ec.fieldContext_EventWithNotes_clean_up(ctx, field)
 			case "end_date":
 				return ec.fieldContext_EventWithNotes_end_date(ctx, field)
-			case "grant_id":
-				return ec.fieldContext_EventWithNotes_grant_id(ctx, field)
+			case "grant":
+				return ec.fieldContext_EventWithNotes_grant(ctx, field)
 			case "public_event":
 				return ec.fieldContext_EventWithNotes_public_event(ctx, field)
 			case "rsvp_required":
@@ -29146,9 +29264,9 @@ func (ec *executionContext) _EventWithNotes(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "grant_id":
+		case "grant":
 
-			out.Values[i] = ec._EventWithNotes_grant_id(ctx, field, obj)
+			out.Values[i] = ec._EventWithNotes_grant(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -29433,6 +29551,41 @@ func (ec *executionContext) _Grant(ctx context.Context, sel ast.SelectionSet, ob
 		case "updated_at":
 
 			out.Values[i] = ec._Grant_updated_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var grantDescriptionImplementors = []string{"GrantDescription"}
+
+func (ec *executionContext) _GrantDescription(ctx context.Context, sel ast.SelectionSet, obj *model.GrantDescription) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, grantDescriptionImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GrantDescription")
+		case "id":
+
+			out.Values[i] = ec._GrantDescription_id(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+
+			out.Values[i] = ec._GrantDescription_name(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -32753,6 +32906,16 @@ func (ec *executionContext) marshalNGrant2ᚖthomps9012ᚋprevention_productivit
 		return graphql.Null
 	}
 	return ec._Grant(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGrantDescription2ᚖthomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDescription(ctx context.Context, sel ast.SelectionSet, v *model.GrantDescription) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GrantDescription(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGrantDetail2thomps9012ᚋprevention_productivityᚋgraphᚋmodelᚐGrantDetail(ctx context.Context, sel ast.SelectionSet, v model.GrantDetail) graphql.Marshaler {

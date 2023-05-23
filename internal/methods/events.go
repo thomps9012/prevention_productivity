@@ -23,8 +23,10 @@ func FindEventDetails(filter bson.D) (*model.EventWithNotes, error) {
 		bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "author"}}}},
 		bson.D{{Key: "$unwind", Value: "$author"}},
 	}}}}}
+	grant_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "grants"}, {Key: "localField", Value: "grant_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "grant"}}}}
+	unwind_grant := bson.D{{Key: "$unwind", Value: "$grant"}}
 	unwind_stage := bson.D{{Key: "$unwind", Value: "$event_lead"}}
-	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, unwind_stage}
+	pipeline := mongo.Pipeline{filter, notes_stage, user_stage, co_planner_stage, grant_stage, unwind_stage, unwind_grant}
 	cursor, err := collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err

@@ -124,7 +124,7 @@ func UpdateContact(update model.UpdateContact, filter bson.D) (*model.Contact, e
 	if err != nil {
 		return nil, err
 	}
-	if exists > 0 {
+	if exists > 1 {
 		return nil, errors.New("contact already exists")
 	}
 	updated_at := time.Now().Format("2006-01-02 15:04:05")

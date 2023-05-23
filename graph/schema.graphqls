@@ -212,7 +212,7 @@ type EventWithNotes {
   set_up: String!
   clean_up: String!
   end_date: String!
-  grant_id: ID!
+  grant: GrantDescription!
   public_event: Boolean!
   rsvp_required: Boolean!
   annual_event: Boolean!
@@ -345,6 +345,11 @@ type ContactOverview {
   type: String!
   name: String!
   active: Boolean!
+}
+
+type GrantDescription {
+  id: ID!
+  name: String!
 }
 
 type GrantDetail {
