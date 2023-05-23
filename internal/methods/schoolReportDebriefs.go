@@ -16,7 +16,7 @@ import (
 // queries
 func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWithNotes, error) {
 	debrief_detail := make([]*model.SchoolReportDebriefWithNotes, 0)
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
 	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	notes_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}, {Key: "pipeline", Value: bson.A{
@@ -41,7 +41,7 @@ func FindSchoolReportDebriefDetail(filter bson.D) (*model.SchoolReportDebriefWit
 }
 func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOverview, error) {
 	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
 	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
@@ -61,7 +61,7 @@ func FindSchoolReportDebriefs(filter bson.D) ([]*model.SchoolReportDebriefOvervi
 }
 func FindUserSchoolReportDebriefs(user_id string) ([]*model.SchoolReportDebriefOverview, error) {
 	debriefs := make([]*model.SchoolReportDebriefOverview, 0)
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "debrief_author"}}}}
 	plan_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "school_report_plans"}, {Key: "localField", Value: "lesson_plan_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "lesson_plan"}}}}
 	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
@@ -82,7 +82,7 @@ func FindUserSchoolReportDebriefs(user_id string) ([]*model.SchoolReportDebriefO
 
 // mutations
 func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief_author string) (*model.SchoolReportDebriefRes, error) {
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	debrief := model.SchoolReportDebrief{
 		ID:                     uuid.New().String(),
 		UserID:                 debrief_author,
@@ -122,7 +122,7 @@ func CreateSchoolReportDebrief(new_debrief model.NewSchoolReportDebrief, debrief
 	}, nil
 }
 func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bson.D) (*model.SchoolReportDebrief, error) {
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	var debrief model.SchoolReportDebrief
 	err := collection.FindOne(context.TODO(), filter).Decode(&debrief)
@@ -153,7 +153,7 @@ func UpdateSchoolReportDebrief(update model.UpdateSchoolReportDebrief, filter bs
 	return &srd, nil
 }
 func DeleteDebrief(filter bson.D) (bool, error) {
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err
@@ -161,7 +161,7 @@ func DeleteDebrief(filter bson.D) (bool, error) {
 	return result.DeletedCount == 1, nil
 }
 func ApproveDebrief(debrief_id string) (bool, error) {
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	filter := bson.D{{Key: "_id", Value: debrief_id}}
 	update := bson.D{
@@ -177,7 +177,7 @@ func ApproveDebrief(debrief_id string) (bool, error) {
 	return result.ModifiedCount == 1, nil
 }
 func RejectDebrief(debrief_id string) (bool, error) {
-	collection := database.Db.Collection("school_report_debriefs")
+	collection := database.Db.Collection("lesson_debriefs")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	filter := bson.D{{Key: "_id", Value: debrief_id}}
 	update := bson.D{

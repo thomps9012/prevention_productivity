@@ -16,7 +16,7 @@ import (
 // queries
 func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes, error) {
 	plan_detail := make([]*model.SchoolReportPlanWithNotes, 0)
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
 	educator_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "contacts"}, {Key: "localField", Value: "educator"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "educator"}}}}
 	co_facilitators := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "co_facilitators"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "co_facilitators"}}}}
@@ -42,7 +42,7 @@ func FindSchoolReportPlanDetail(filter bson.D) (*model.SchoolReportPlanWithNotes
 }
 func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, error) {
 	plans := make([]*model.SchoolReportPlanOverview, 0)
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
 	educator_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "contacts"}, {Key: "localField", Value: "educator"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "educator"}}}}
 	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
@@ -62,7 +62,7 @@ func FindSchoolReportPlans(filter bson.D) ([]*model.SchoolReportPlanOverview, er
 }
 func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOverview, error) {
 	plans := make([]*model.SchoolReportPlanOverview, 0)
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	user_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "users"}, {Key: "localField", Value: "user_id"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "plan_author"}}}}
 	educator_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "contacts"}, {Key: "localField", Value: "educator"}, {Key: "foreignField", Value: "_id"}, {Key: "as", Value: "educator"}}}}
 	note_stage := bson.D{{Key: "$lookup", Value: bson.D{{Key: "from", Value: "notes"}, {Key: "localField", Value: "_id"}, {Key: "foreignField", Value: "item_id"}, {Key: "as", Value: "notes"}}}}
@@ -83,7 +83,7 @@ func FindUserSchoolReportPlans(user_id string) ([]*model.SchoolReportPlanOvervie
 
 // mutations
 func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator string) (*model.SchoolReportPlanRes, error) {
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	plan := model.SchoolReportPlan{
 		ID:             uuid.New().String(),
 		UserID:         plan_creator,
@@ -119,7 +119,7 @@ func CreateSchoolReportPlan(new_plan model.NewSchoolReportPlan, plan_creator str
 	}, nil
 }
 func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) (*model.SchoolReportPlan, error) {
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	var plan model.SchoolReportPlan
 	err := collection.FindOne(context.TODO(), filter).Decode(&plan)
@@ -152,7 +152,7 @@ func UpdateSchoolReportPlan(update model.UpdateSchoolReportPlan, filter bson.D) 
 	return &srp, nil
 }
 func DeleteSchoolReportPlan(filter bson.D) (bool, error) {
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return false, err
@@ -160,7 +160,7 @@ func DeleteSchoolReportPlan(filter bson.D) (bool, error) {
 	return result.DeletedCount == 1, nil
 }
 func ApproveSchoolReportPlan(plan_id string) (bool, error) {
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	filter := bson.D{{Key: "_id", Value: plan_id}}
 	update := bson.D{
@@ -176,7 +176,7 @@ func ApproveSchoolReportPlan(plan_id string) (bool, error) {
 	return result.ModifiedCount == 1, nil
 }
 func RejectSchoolReportPlan(plan_id string) (bool, error) {
-	collection := database.Db.Collection("school_report_plans")
+	collection := database.Db.Collection("lesson_plans")
 	updated_at := time.Now().Format("2006-01-02 15:04:05")
 	filter := bson.D{{Key: "_id", Value: plan_id}}
 	update := bson.D{
